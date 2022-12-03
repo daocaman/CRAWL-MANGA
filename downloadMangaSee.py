@@ -16,9 +16,6 @@ f = open("link.txt", "r")
 for x in f:
     links.append(x)
 
-# print(links)
-
-# if you want to use chrome, replace Firefox() with Chrome()
 driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
 
 imgChapters = open("chapters.txt", "w+", encoding="utf8")
@@ -66,7 +63,6 @@ try:
     imgChapters.close()
 except:
     n.show_toast("Error progress", "Error", duration=2)
-
     imgChapters.close()
 
 
