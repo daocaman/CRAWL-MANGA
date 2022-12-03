@@ -1,6 +1,7 @@
 import os
 import requests
 from win10toast import ToastNotifier
+from icecream import ic
 
 n = ToastNotifier()
 
@@ -26,9 +27,8 @@ try:
 
     for i, x in enumerate(f):
 
-        print(x)
-
         if "Fol: " in x:
+            ic(x)
 
             countChapter += 1
 
@@ -45,7 +45,7 @@ try:
                 count += 1
                 r = requests.get(x.replace("\n", ""), headers={
                                  'User-agent': 'Mozilla/5.0', 'Referer': servers["mangasee"]}, timeout=(3, 5))
-                print(r)
+                ic(r)
 
                 # two digit for one file image (mod=2)
                 mod = 2
@@ -77,7 +77,7 @@ try:
                             fd.write(r.content)
 
             except Exception as e:
-                print(e)
+                ic(e)
                 errFile.write(crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
                 continue
 
