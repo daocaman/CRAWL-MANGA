@@ -2,8 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 
+
 def generateName(num, l):
     return "0"*(l - len(num))+num
+
 
 n = ToastNotifier()
 
@@ -21,7 +23,7 @@ driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
 
 imgChapters = open("chapters.txt", "w+", encoding="utf8")
 
-
+keyword = "Cardcaptor-Sakura-Clear-Card-Arc"
 
 try:
 
@@ -46,26 +48,26 @@ try:
         target = ""
 
         for img in imgs:
-            if "Cardcaptor-Sakura-Clear-Card-Arc" in img.get_attribute('src'):
+            if keyword in img.get_attribute('src'):
                 print(img.get_attribute('src'))
                 target = img.get_attribute('src')
 
-        [info_target, page] = target.split('Cardcaptor-Sakura-Clear-Card-Arc/')
+        [info_target, page] = target.split(keyword+'/')
         img_info = page.split(".")
-        [pg, ext] = [page.replace(img_info[len(img_info)-1],""),img_info[len(img_info)-1] ]
+        [pg, ext] = [page.replace(
+            img_info[len(img_info)-1], ""), img_info[len(img_info)-1]]
         print(pg, ext)
         [chap, p] = pg.split("-")
 
-        
         for i in range(1, len(cols)+1):
-            img_tmp = info_target+"Cardcaptor-Sakura-Clear-Card-Arc/"+chap+"-"+generateName(str(i),3)+"."+ext
+            img_tmp = info_target+keyword+'/' + \
+                chap+"-"+generateName(str(i), 3)+"."+ext
             print(img_tmp)
             imgChapters.write(img_tmp+'\n')
-     
 
     n.show_toast("Download Manga see", "Complete get img src", duration=2)
     imgChapters.close()
-except :
+except:
     n.show_toast("Error progress", "Error", duration=2)
 
     imgChapters.close()
