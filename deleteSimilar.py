@@ -1,6 +1,7 @@
 from skimage.metrics import structural_similarity as compare_ssim
 import cv2
 import os
+from icecream import ic
 
 checkFolder = "Check"
 
@@ -26,14 +27,12 @@ for fol in listFiles:
     if os.path.isdir(fol):
         for img in os.listdir(fol):
             if os.path.isfile(fol+"/"+img):
-                # print(fol+"/"+img)
                 imgB = cv2.imread("./"+fol+"/"+img)
-                # cv2.imshow("test",imgB)
                 imgB = cv2.cvtColor(imgB, cv2.COLOR_BGR2GRAY)
                 if imgB.shape in shapes:
                     for i in imgs:
                         if imgB.shape == i.shape:
                             (score, diff) = compare_ssim(i, imgB, full=True)
                             if score > 0.9:
-                                print(score)
+                                ic(score)
                                 os.remove(fol+"/"+img)
