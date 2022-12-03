@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
+from icecream import ic
 
 
 def generateName(num, l):
@@ -13,7 +14,6 @@ links = []
 f = open("link.txt", "r")
 
 for x in f:
-    print(x)
     links.append(x)
 
 # print(links)
@@ -31,17 +31,16 @@ try:
         driver.get(link)  # load the web page
 
         modal_page = driver.find_element(By.ID, "PageModal")
-
         cols = modal_page.find_elements(By.CLASS_NAME, "col-md-2")
 
-        print(len(cols))
+        ic("Number imgs: ", len(cols))
 
         title = driver.title
-        print(title+"\n")
+        title = title.replace(" Page 1", "")
+        ic(title)
 
         imgChapters.write("Fol: "+title+"\n")
 
-        tmpLink = link.replace("-page-1.html", "")
         gal = driver.find_element(By.CLASS_NAME, "ImageGallery")
         imgs = gal.find_elements(By.TAG_NAME, "img")
 
@@ -49,20 +48,18 @@ try:
 
         for img in imgs:
             if keyword in img.get_attribute('src'):
-                print(img.get_attribute('src'))
                 target = img.get_attribute('src')
+                break
 
         [info_target, page] = target.split(keyword+'/')
         img_info = page.split(".")
         [pg, ext] = [page.replace(
             img_info[len(img_info)-1], ""), img_info[len(img_info)-1]]
-        print(pg, ext)
         [chap, p] = pg.split("-")
 
         for i in range(1, len(cols)+1):
             img_tmp = info_target+keyword+'/' + \
                 chap+"-"+generateName(str(i), 3)+"."+ext
-            print(img_tmp)
             imgChapters.write(img_tmp+'\n')
 
     n.show_toast("Download Manga see", "Complete get img src", duration=2)
