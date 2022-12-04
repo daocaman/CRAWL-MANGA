@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
 from win10toast import ToastNotifier
 from icecream import ic
 
@@ -10,10 +9,8 @@ links = []
 f = open("link.txt", "r")
 
 for x in f:
-    print(x)
     links.append(x)
 
-# if you want to use chrome, replace Firefox() with Chrome()
 driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
 
 imgChapters = open("chapters.txt","w+",encoding="utf8")
@@ -31,15 +28,13 @@ try:
 
         imgs = imgs.find_elements(By.CLASS_NAME, 'bbImageWrapper')
 
-        ic(len(imgs))
-
         # handle title
         title = driver.title
         title = title.split(" [Tiếng Việt] ")[0]
  
         imgChapters.write("Fol: "+title+"\n")
 
-        print(title+"\n")
+        ic(title)
 
         for img in imgs:
             img = img.find_element(By.TAG_NAME, 'img')
