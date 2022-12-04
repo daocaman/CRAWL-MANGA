@@ -1,23 +1,43 @@
-
 import os
 import shutil
 from icecream import ic
 
-Volumes = [[1, 1, 4], [2, 5, 8], [3, 9, 12], [4, 13, 16], [5, 17, 21], [6, 22, 25], [7, 26, 29], [8, 30, 33], [9, 34, 37], [10, 38, 41], [11, 42, 45], [12, 46, 49], [13, 50, 53], [14, 54, 57], [
-    15, 58, 61], [16, 62, 65], [17, 66, 69], [18, 70, 73], [19, 74, 78], [20, 79, 83], [21, 84, 87], [22, 88, 91], [23, 92, 95], [24, 96, 99], [25, 100, 103], [26, 104, 106], [27, 107, 108]]
+def generateName(num, l):
+    return "0"*(l - len(num))+num
+
+
+keyword = ""
+
+Volumes = [
+    # [1, 1, 4],
+    # [2, 5, 8],
+    # [3, 9, 12],
+    # [4, 13, 16],
+    # [5, 17 , 20],
+    # [6, 21, 24],
+    # [7, 25, 28],
+    # [8, 29, 32],
+    # [9, 33, 36],
+    # [10, 37, 40],
+    # [11, 41, 44],
+    [12, 45, 51],
+    [13, 52, 55],
+    [14, 56, 59],
+    # [15, 60, 81],
+    # [16, 73, 81],
+    # [17, 73, 81],
+]
 
 tmpDir = os.listdir()
 
 for volume in Volumes:
-    print(volume[0])
     tmps = []
     for i in range(volume[1], volume[2]+1):
-        print("Chap " + str(i))
-        filenames = [x for x in tmpDir if "Chapter " + str(i) + " -" in x]
-        print(filenames)
+        filenames = [x for x in tmpDir if "Chapter " +
+                     generateName(str(i), 2) in x]
         tmps.extend(filenames)
-    
-    print(tmps)
-    for i in tmps:
-        shutil.move(i, "Fullmetal Alchemist - Vol"+ str(volume[0]),copy_function=shutil.copytree)
 
+    ic(tmps)
+    for i in tmps:
+        shutil.move(i, keyword+" - Vol" +
+                    str(volume[0]), copy_function=shutil.copytree)
