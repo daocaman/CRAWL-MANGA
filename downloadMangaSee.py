@@ -2,7 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from win10toast import ToastNotifier
 from icecream import ic
+from bs4 import BeautifulSoup
+import re
+from selenium.webdriver.firefox.options import Options
 
+options = Options()
+options.headless = True
 
 def generateName(num, l):
     return "0"*(l - len(num))+num
@@ -16,37 +21,39 @@ f = open("link.txt", "r")
 for x in f:
     links.append(x)
 
-driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
+driver = webdriver.Firefox(
+    options=options, executable_path=r'./geckodriver.exe')
 
 imgChapters = open("chapters.txt", "w+", encoding="utf8")
 
-keyword = "Cardcaptor-Sakura-Clear-Card-Arc"
+keyword = "Hyde-Closer"
 
 try:
 
     for link in links:
         driver.get(link)  # load the web page
 
-        modal_page = driver.find_element(By.ID, "PageModal")
-        cols = modal_page.find_elements(By.CLASS_NAME, "col-md-2")
+        htmlSource = driver.page_source
+        soup = BeautifulSoup(htmlSource, 'html.parser')
 
+        modal_page = soup.find(id="PageModal")
+        cols = modal_page.find_all(class_="col-md-2")
+
+        gal = soup.find(class_="ImageGallery")
+        img = gal.find_all(src=re.compile(keyword))[0]
+
+        target = img['src']
+        
         ic("Number imgs: ", len(cols))
 
-        title = driver.title
-        title = title.replace(" Page 1", "")
+        ic(target)
+
+        title = soup.find('title')
+        title = title.text.replace(" Page 1","").strip()
+        
         ic(title)
 
         imgChapters.write("Fol: "+title+"\n")
-
-        gal = driver.find_element(By.CLASS_NAME, "ImageGallery")
-        imgs = gal.find_elements(By.TAG_NAME, "img")
-
-        target = ""
-
-        for img in imgs:
-            if keyword in img.get_attribute('src'):
-                target = img.get_attribute('src')
-                break
 
         [info_target, page] = target.split(keyword+'/')
         img_info = page.split(".")

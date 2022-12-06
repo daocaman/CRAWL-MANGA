@@ -1,8 +1,12 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
 from win10toast import ToastNotifier
 from icecream import ic
+from bs4 import BeautifulSoup
+import re
+from selenium.webdriver.firefox.options import Options
+
+options = Options()
+options.headless = True
 
 n = ToastNotifier()
 
@@ -12,7 +16,8 @@ f = open("link.txt", "r")
 for x in f:
     links.append(x)
 
-driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
+driver = webdriver.Firefox(
+    options=options, executable_path=r'./geckodriver.exe')
 
 imgChapters = open("chapters.txt", "w+", encoding="utf8")
 
@@ -21,25 +26,29 @@ try:
     for link in links:
         driver.get(link)  # load the web page
 
-        time.sleep(2)
+        htmlSource = driver.page_source
+        soup = BeautifulSoup(htmlSource, 'html.parser')
 
-        imgs = driver.find_elements(By.CLASS_NAME, "page-chapter")
-
-        title = driver.title
-        title = title.split(" Next Chap ")[0]
+        title = soup.find('title')
+        title = title.text.split(" Next Chap ")[0].strip()
+        
+        ic(title)
 
         imgChapters.write("Fol: "+title+"\n")
 
-        ic(title)
+        imgs = soup.find_all("img", src=re.compile('-fix'))
+
+        ic(len(imgs))
+
 
         for idxx, img in enumerate(imgs):
-            targetImg = img.find_element(By.TAG_NAME, "img")
-            srcImg = targetImg.get_attribute("src")
-            imgChapters.write(srcImg+"\n")
+            ic('https:'+img['src'])
+            imgChapters.write('https:'+img['src']+"\n")
 
     n.show_toast("Download Net Truyen", "Complete get img src", duration=2)
     imgChapters.close()
-except:
+except Exception as e:
+    ic(e)
     n.show_toast("Error progress", "Error", duration=2)
     imgChapters.close()
 

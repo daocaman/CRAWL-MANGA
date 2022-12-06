@@ -1,11 +1,24 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+from icecream import ic
+from bs4 import BeautifulSoup
+import re
 
-link = 'https://mangasee123.com/manga/Anima'
+from win10toast import ToastNotifier
+n = ToastNotifier()
 
-driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
+options = Options()
+options.headless = True
+
+link = 'https://mangasee123.com/manga/Hyde-Closer'
+
+driver = webdriver.Firefox(
+    options=options, executable_path=r'./geckodriver.exe')
 
 driver.get(link)
+
+
 
 target = []
 
@@ -16,30 +29,37 @@ mode = 2
 
 if mode == 1:
 
-    keyword = "code-breaker"
+    htmlSource = driver.page_source
+    soup = BeautifulSoup(htmlSource, 'html.parser')
 
-    elements = driver.find_elements(By.CLASS_NAME, 'chapter')
+    links = soup.find_all(id="nt_listchapter")
+    links = links[0].find_all(href=re.compile('kimi-ga-shinu-natsu-ni'))
+    ic(len(links))
 
-    for ele in elements:
-        find_ele = ele.find_element(By.TAG_NAME, 'a')
-        if keyword in find_ele.get_attribute('href'):
-            target.insert(0, find_ele.get_attribute('href'))
-
+    for link in links:
+        target.insert(0, link['href'])
 
 else:
     show_ele = driver.find_element(By.CLASS_NAME, "ShowAllChapters")
 
     if show_ele:
         show_ele.click()
+    
+    htmlSource = driver.page_source
 
-    elements = driver.find_elements(By.CLASS_NAME, 'ChapterLink')
+    soup = BeautifulSoup(htmlSource, 'html.parser')
 
-    for ele in elements:
-        target.insert(0, ele.get_attribute('href'))
+    links = soup.find_all(class_="ChapterLink")
+
+    for link in links:
+        ic('https://mangasee123.com'+link['href'])
+        target.insert(0, 'https://mangasee123.com'+link['href'])
 
 f = open("link.txt", "w+")
 for i in target:
     f.write(i + "\n")
+
+n.show_toast("Finish getting link chap", "Success", duration=2)
 
 driver.close()
 f.close()
