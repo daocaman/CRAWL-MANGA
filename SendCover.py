@@ -7,9 +7,9 @@ def takeKey(elem):
     tmp = re.split(" |_",tmp)
     return int(tmp[len(tmp)-1])
 
-coverFolderTxt = "Cover"
+coverFolderTxt = "covers"
 
-prefix = "xxxHOLIC"
+prefix = "Tantei Gakuen Q"
 
 listFiles = os.listdir(coverFolderTxt)
 
@@ -28,8 +28,9 @@ for idx, cover in enumerate(listFiles):
 
     if not os.path.exists(prefix+" - Vol"+str(idx+1)):
         os.mkdir(prefix+" - Vol"+str(idx+1))
-    if not os.path.exists(prefix+" - Vol"+str(idx+1)+"/00_Cover") and opt == 1:
-        os.mkdir(prefix+" - Vol"+str(idx+1)+"/00_Cover")
+    if opt == 1:
+        if not os.path.exists(prefix+" - Vol"+str(idx+1)+"/00_Cover"):
+            os.mkdir(prefix+" - Vol"+str(idx+1)+"/00_Cover")
 
         shutil.copyfile(coverFolderTxt+"/"+cover, prefix+" - Vol"+str(idx+1) +
                         "/00_Cover"+"/"+"0000"+"."+extFile)

@@ -11,7 +11,7 @@ n = ToastNotifier()
 options = Options()
 options.headless = True
 
-link = 'https://mangasee123.com/manga/Hyde-Closer'
+link = 'https://www.nettruyenmin.com/truyen-tranh/reborn-nguoi-dao-tao-sat-thu-73870'
 
 driver = webdriver.Firefox(
     options=options, executable_path=r'./geckodriver.exe')
@@ -25,15 +25,17 @@ target = []
 # mode 1 nettruyen
 # mode 2 mangasee
 
-mode = 2
+mode = 1
 
 if mode == 1:
+
+    keyword = "reborn-nguoi-dao-tao-sat-thu"
 
     htmlSource = driver.page_source
     soup = BeautifulSoup(htmlSource, 'html.parser')
 
     links = soup.find_all(id="nt_listchapter")
-    links = links[0].find_all(href=re.compile('kimi-ga-shinu-natsu-ni'))
+    links = links[0].find_all(href=re.compile(keyword))
     ic(len(links))
 
     for link in links:

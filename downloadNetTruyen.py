@@ -36,7 +36,7 @@ try:
 
         imgChapters.write("Fol: "+title+"\n")
 
-        imgs = soup.find_all("img", src=re.compile('-fix'))
+        imgs = soup.find_all("img", src=re.compile('data=net'))
 
         ic(len(imgs))
 

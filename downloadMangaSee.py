@@ -26,7 +26,7 @@ driver = webdriver.Firefox(
 
 imgChapters = open("chapters.txt", "w+", encoding="utf8")
 
-keyword = "Hyde-Closer"
+keyword = "Defense-Devil"
 
 try:
 
