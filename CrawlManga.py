@@ -1,16 +1,24 @@
 import sys
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QGridLayout, QWidget,  QTableWidget, QTableWidgetItem, QHeaderView
-from PyQt5.QtWidgets import QLabel, QTabWidget, QLineEdit, QTextEdit, QMessageBox,  QPushButton, QProgressBar, QCheckBox
+from PyQt5.QtWidgets import QLabel, QTabWidget, QLineEdit, QTextEdit, QMessageBox,  QPushButton, QProgressBar, QCheckBox, QFileDialog
 from PyQt5.QtGui import QIcon, QIntValidator
 from PyQt5.QtCore import Qt, QThread, QObject, pyqtSignal
 
+from win10toast import ToastNotifier
+
+import os
+from icecream import ic
+
 import qtawesome as qta
 
+from SupportFunction import *
 
 import ctypes
 myappid = 'crawl_img.v2'  # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
+n = ToastNotifier()
 
 
 class CrawlManga(QWidget):
@@ -75,7 +83,7 @@ class CrawlManga(QWidget):
         self.RN_lb_main_title.setStyleSheet(
             "color: #198754; font-weight: bold; font-size: 14pt;")
         self.tab_rn.layout.addWidget(
-            self.RN_lb_main_title, 0, 1, Qt.AlignCenter)
+            self.RN_lb_main_title, 0, 1, alignment=Qt.AlignCenter)
 
         self.RN_lb_src_folder = QLabel("Source folder")
         self.tab_rn.layout.addWidget(self.RN_lb_src_folder, 1, 0)
@@ -84,19 +92,97 @@ class CrawlManga(QWidget):
         self.tab_rn.layout.addWidget(self.RN_tb_src_folder, 1, 1)
 
         self.RN_btn_get_list = QPushButton("Get list")
-        self.RN_btn_get_list.setStyleSheet(
-            "color: #fff; background-color: #007bff")
         self.tab_rn.layout.addWidget(self.RN_btn_get_list, 1, 2)
 
         self.RN_lb_result = QLabel("Result file")
         self.tab_rn.layout.addWidget(self.RN_lb_result, 2, 0)
 
-        self.RN_lb_result_file = QLabel("rn.txt")
-        self.RN_lb_result_file.setStyleSheet("color: #007bff; text-decoration: underline")
+        self.RN_lb_result_file = QLabel("")
+
+        self.RN_lb_result_file.setStyleSheet(
+            "color: #007bff; text-decoration: underline")
         self.tab_rn.layout.addWidget(self.RN_lb_result_file, 2, 1)
-        
+
+        self.RN_btn_edit_file = QPushButton("Edit")
+        self.tab_rn.layout.addWidget(self.RN_btn_edit_file, 2, 2)
+
+        self.RN_progress_rename = QProgressBar()
+        self.RN_progress_rename.setValue(0)
+        self.tab_rn.layout.addWidget(self.RN_progress_rename, 3, 0, 1, 2)
+
+        self.RN_btn_rename = QPushButton("Rename")
+        self.tab_rn.layout.addWidget(self.RN_btn_rename, 3, 2)
+
+        self.tab_rn.layout.setSpacing(15)
+        self.tab_rn.layout.setRowStretch(4, 1)
+
+        self.RN_resetState()
+
+        # actions
+
+        self.RN_btn_get_list.clicked.connect(self.RN_chooseFolder)
+        self.RN_btn_edit_file.clicked.connect(self.RN_openfile)
+        self.RN_btn_rename.clicked.connect(self.RN_rename)
 
         self.tab_rn.setLayout(self.tab_rn.layout)
+
+    def RN_openfile(self):
+        os.system('code ' + 'resource/list_files_new.txt')
+
+    def RN_resetState(self):
+        self.RN_lb_result_file.setText("")
+        self.RN_btn_edit_file.setEnabled(False)
+        self.RN_btn_rename.setEnabled(False)
+        self.RN_progress_rename.setValue(0)
+
+    def RN_chooseFolder(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.ShowDirsOnly
+        dir = QFileDialog.getExistingDirectory(self, "Choose folder to rename")
+        if dir:
+            self.RN_tb_src_folder.setText(dir)
+            f = open("resource/list_files.txt", encoding="utf8", mode="w+")
+            f2 = open("resource/list_files_new.txt",
+                      encoding="utf8", mode="w+")
+            for file in os.listdir(dir):
+                f.write(file+"\n")
+                f2.write(file+"\n")
+            self.RN_lb_result_file.setText("list_files.txt")
+            self.RN_btn_edit_file.setEnabled(True)
+            self.RN_btn_rename.setEnabled(True)
+            f.close()
+            f2.close()
+        else:
+            self.RN_resetState()
+
+    def RN_rename(self):
+        self.RN_thread = QThread()
+        self.worker = RenameFolder(self.RN_tb_src_folder.text())
+
+        self.worker.moveToThread(self.RN_thread)
+
+        self.RN_thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.RN_thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.RN_thread.finished.connect(self.RN_thread.deleteLater)
+        self.worker.progress.connect(self.RN_update_progress)
+
+        self.RN_thread.start()
+
+        self.RN_thread.finished.connect(self.RN_finish_rename)
+
+    def RN_update_progress(self, progress):
+        if progress != 1:
+            self.RN_files = progress
+            self.RN_progress = 0
+        else:
+            self.RN_progress += 1
+            tmp_progress = int(self.RN_progress * 100 / self.RN_files)
+            self.RN_progress_rename.setValue(tmp_progress)
+
+
+    def RN_finish_rename(self):
+        n.show_toast('Finish', "Rename folder done!!!", duration=2, threaded=True)
 
 
 def main():
