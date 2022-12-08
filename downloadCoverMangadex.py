@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 import os
 
+n = ToastNotifier()
 
 options = Options()
 options.headless = True
@@ -45,6 +46,8 @@ for idx, cover in enumerate(covers):
             ic("error")
         else:
             fd.write(r.content)
+
+n.show_toast("Download cover complete","Download success",duration=2)
 
 # from selenium.webdriver.firefox.options import Options
 
