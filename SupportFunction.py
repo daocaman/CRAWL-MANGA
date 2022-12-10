@@ -1,5 +1,13 @@
 import os
-from PyQt5.QtCore import  QThread, QObject, pyqtSignal
+from PyQt5.QtCore import QThread, QObject, pyqtSignal
+from bs4 import BeautifulSoup
+from icecream import ic
+import requests
+from docx import Document
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+import re
 
 
 class RenameFolder(QObject):
@@ -9,7 +17,7 @@ class RenameFolder(QObject):
     def __init__(self, link):
         QObject.__init__(self)
         self.link = link
-    
+
     def run(self):
 
         chapter = []
@@ -28,25 +36,117 @@ class RenameFolder(QObject):
 
         for old, new in zip(chapter, chapter_new):
             os.rename(self.link+"/"+old.replace("\n", ""),
-                    self.link+"/"+new.replace("\n", ""))
+                      self.link+"/"+new.replace("\n", ""))
             self.progress.emit(1)
-        
+
         self.finished.emit()
 
 
-def rename_folder(link):
-    chapter = []
-    f = open("resource/list_files.txt", "r", encoding="utf-8")
+class DownloadNovel(QObject):
+    finished = pyqtSignal(str)
+    progress = pyqtSignal(int)
 
-    for x in f:
-        chapter.append(x)
+    def __init__(self, link, start, end, novelName):
+        QObject.__init__(self)
+        self.link, self.start, self.end, self.novelName = link, start, end, novelName
 
-    chapter_new = []
-    f = open("resource/list_files_new.txt", "r", encoding="utf-8")
+    def run(self):
+        document = Document()
 
-    for x in f:
-        chapter_new.append(x)
+        filename = "resource/"+self.novelName + ' chap' + \
+            str(self.start)+'_'+str(self.end)
 
-    for old, new in zip(chapter, chapter_new):
-        os.rename(link+"/"+old.replace("\n", ""),
-                  link+"/"+new.replace("\n", ""))
+        try:
+
+            count = 0
+            for i in range(self.start, self.end+1):
+                count += 1
+                r = requests.get(self.link+str(i))
+
+                soup = BeautifulSoup(r.content, 'html.parser')
+
+                title = soup.find(class_="nh-read__title")
+
+                ic(title.text.strip())
+
+                content = soup.find_all(id="js-read__content")[0]
+
+                content_text = content.decode_contents()
+
+                divs = content.find_all("div")
+                a_s = content.find_all("a")
+
+                divs.sort(key=len, reverse=True)
+                for div in divs:
+                    if str(div) in content_text:
+                        content_text = content_text.replace(str(div), "")
+
+                for a in a_s:
+                    if str(a) in content_text:
+                        content_text = content_text.replace(str(a), "")
+
+                content_text = content_text.replace("<br/>", "\n")
+
+                document.add_heading(title.text.strip(), level=1)
+                document.add_paragraph(content_text.strip())
+
+                self.progress.emit(int(count*100/(self.end-self.start+1)))
+
+            self.finished.emit(self.novelName + ' chap' +
+                               str(self.start)+'_'+str(self.end)+'.docx')
+        except Exception as e:
+            ic(e)
+            document.save(filename+".docx")
+            
+        document.save(filename+".docx")
+
+        # os.system("ebook-convert "+doc_name + " " + azw3_name)
+
+
+class GetChapterLink(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def __init__(self, link, server, keyword=""):
+        QObject.__init__(self)
+        self.link, self.server, self.keyword = link, server, keyword
+
+    def run(self):
+        options = Options()
+        options.headless = True
+        driver = webdriver.Firefox(
+            options=options, executable_path=r'./resource/geckodriver.exe')
+
+        target = []
+        if self.server == "nettruyen":
+
+            htmlSource = driver.page_source
+            soup = BeautifulSoup(htmlSource, 'html.parser')
+
+            links = soup.find_all(id="nt_listchapter")
+            links = links[0].find_all(href=re.compile(self.keyword))
+
+            for link in links:
+                target.insert(0, link['href'])
+            self.progress.emit(len(target))
+
+        else:
+            show_ele = driver.find_element(By.CLASS_NAME, "ShowAllChapters")
+
+            if show_ele:
+                show_ele.click()
+
+            htmlSource = driver.page_source
+
+            soup = BeautifulSoup(htmlSource, 'html.parser')
+
+            links = soup.find_all(class_="ChapterLink")
+
+            for link in links:
+                target.insert(0, 'https://mangasee123.com'+link['href'])
+
+        f = open("./resource/link.txt", "w+")
+        for idx, link in enumerate(target):
+            f.write(link + "\n")
+            self.progress.emit(int((idx+1)*100/len(target)))
+        f.close()

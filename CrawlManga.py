@@ -1,8 +1,8 @@
 import sys
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QGridLayout, QWidget,  QTableWidget, QTableWidgetItem, QHeaderView
-from PyQt5.QtWidgets import QLabel, QTabWidget, QLineEdit, QTextEdit, QMessageBox,  QPushButton, QProgressBar, QCheckBox, QFileDialog
-from PyQt5.QtGui import QIcon, QIntValidator
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QGridLayout, QWidget,  QButtonGroup,  QHeaderView, QRadioButton
+from PyQt5.QtWidgets import QLabel, QTabWidget, QLineEdit, QSpinBox, QMessageBox,  QPushButton, QProgressBar, QCheckBox, QFileDialog
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QThread, QObject, pyqtSignal
 
 from win10toast import ToastNotifier
@@ -55,8 +55,11 @@ btns = {
 }
 
 msg = {
-    "suc_rn": {"t": "Success", "m": "Rename folder done!!!"}
+    "suc_rn": {"t": "Success", "m": "Rename folder done!!!"},
+    "suc_dv": {"t": "Complete", "m": "Download novel done!!!"},
+    "suc_gc": {"t": "Complete", "m": "Getting chapter complete!!!"}
 }
+
 
 class CrawlManga(QWidget):
     def __init__(self, *args, **kwargs):
@@ -111,10 +114,13 @@ class CrawlManga(QWidget):
         self.tab_dv = QWidget()
         self.initDvLayout()
         self.tab_gc = QWidget()
+        self.initGcLayout()
 
         self.tabs.addTab(self.tab_rn, tabs["RN"])
         self.tabs.addTab(self.tab_dv, tabs["DV"])
         self.tabs.addTab(self.tab_gc, tabs["GC"])
+
+    # region Rename tab
 
     def initRnLayout(self):
 
@@ -157,7 +163,8 @@ class CrawlManga(QWidget):
             common_font["underline"]+common_color["primiary"])
         self.tab_rn.layout.addWidget(self.RN_lb_result_file, 2, 1)
 
-        self.RN_btn_edit_file = QPushButton(self.RN_common_str["btn_edit_file"])
+        self.RN_btn_edit_file = QPushButton(
+            self.RN_common_str["btn_edit_file"])
         self.RN_btn_edit_file.setStyleSheet(btns["default"])
         self.tab_rn.layout.addWidget(self.RN_btn_edit_file, 2, 2)
 
@@ -239,35 +246,185 @@ class CrawlManga(QWidget):
     def RN_finish_rename(self):
         n.show_toast(msg["suc_rn"]["t"], msg["suc_rn"]["m"],
                      duration=2, threaded=True)
-    
+
+    # endregion
+
+    # region Download novel
     def initDvLayout(self):
+
         self.tab_dv.layout = QGridLayout(self)
 
         self.DV_common_str = {
             "lb_link": "Link: ",
-            "lb_result": "Resut file: "
+            "lb_novel_name": "Novel name: ",
+            "lb_start_chap": "From chap: ",
+            "lb_end_chap": "To chap: ",
+            "lb_result": "Resut file: ",
+            "btn_open_location": "Open",
+            "btn_download": "Download"
         }
 
         self.DV_lb_main_title = QLabel(tabs["DV"])
         self.DV_lb_main_title.setStyleSheet(
             common_font["bold"]+common_color["success"]+font["title"])
         self.tab_dv.layout.addWidget(
-            self.DV_lb_main_title, 0, 0,1,3, alignment=Qt.AlignCenter)
+            self.DV_lb_main_title, 0, 0, 1, 4, alignment=Qt.AlignCenter)
 
         self.DV_lb_link = QLabel(self.DV_common_str["lb_link"])
         self.DV_lb_link.setStyleSheet(common_font["bold"]+common_color["info"])
         self.tab_dv.layout.addWidget(self.DV_lb_link, 1, 0)
 
         self.DV_tb_link = QLineEdit()
-        self.tab_dv.layout.addWidget(self.DV_tb_link, 1, 1, 1, 2)
+        self.tab_dv.layout.addWidget(self.DV_tb_link, 1, 1, 1, 3)
+
+        self.DV_lb_novel_name = QLabel(self.DV_common_str["lb_novel_name"])
+        self.DV_lb_novel_name.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.tab_dv.layout.addWidget(self.DV_lb_novel_name, 2, 0)
+
+        self.DV_tb_novel_name = QLineEdit()
+        self.tab_dv.layout.addWidget(self.DV_tb_novel_name, 2, 1, 1, 3)
+
+        self.DV_lb_start_chap = QLabel(self.DV_common_str["lb_start_chap"])
+        self.DV_lb_start_chap.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.tab_dv.layout.addWidget(self.DV_lb_start_chap, 3, 0)
+
+        self.DV_spb_start_chap = QSpinBox()
+        self.DV_spb_start_chap.setValue(1)
+        self.DV_spb_start_chap.setMinimum(1)
+        self.DV_spb_start_chap.setMaximum(10000)
+        self.tab_dv.layout.addWidget(self.DV_spb_start_chap, 3, 1)
+
+        self.DV_lb_end_chap = QLabel(self.DV_common_str["lb_end_chap"])
+        self.DV_lb_end_chap.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.tab_dv.layout.addWidget(self.DV_lb_end_chap, 3, 2)
+
+        self.DV_spb_end_chap = QSpinBox()
+        self.DV_spb_end_chap.setValue(1)
+        self.DV_spb_end_chap.setMinimum(1)
+        self.DV_spb_end_chap.setMaximum(10000)
+        self.tab_dv.layout.addWidget(self.DV_spb_end_chap, 3, 3)
 
         self.DV_lb_result = QLabel(self.DV_common_str["lb_result"])
-        self.DV_lb_result.setStyleSheet(common_font["bold"]+common_color["info"])
-        self.tab_dv.layout.addWidget(self.DV_lb_result, 2,0)
+        self.DV_lb_result.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.tab_dv.layout.addWidget(self.DV_lb_result, 4, 0)
+
+        self.DV_lb_file_name = QLabel("")
+        self.DV_lb_file_name.setStyleSheet(
+            common_font["underline"]+common_color["primiary"])
+        self.tab_dv.layout.addWidget(self.DV_lb_file_name, 4, 1, 1, 2)
+
+        self.DV_btn_open_location = QPushButton(
+            self.DV_common_str["btn_open_location"])
+        self.DV_btn_open_location.setStyleSheet(btns["default"]+btns["info"])
+        self.DV_btn_open_location.setEnabled(False)
+        self.tab_dv.layout.addWidget(self.DV_btn_open_location, 4, 3)
+
+        self.DV_progress_down = QProgressBar()
+        self.DV_progress_down.setValue(0)
+        self.tab_dv.layout.addWidget(self.DV_progress_down, 5, 0, 1, 3)
+
+        self.DV_btn_download = QPushButton(self.DV_common_str["btn_download"])
+        self.DV_btn_download.setStyleSheet(btns["default"]+btns["danger"])
+        self.DV_btn_download.setEnabled(False)
+        self.tab_dv.layout.addWidget(self.DV_btn_download, 5, 3)
+
+        self.tab_dv.layout.setSpacing(15)
+        self.tab_dv.layout.setRowStretch(6, 1)
+
+        self.DV_tb_link.textChanged.connect(self.DV_updateState)
+        self.DV_tb_novel_name.textChanged.connect(self.DV_updateState)
+
+        self.DV_btn_download.clicked.connect(self.DV_downloadNovel)
+        self.DV_btn_open_location.clicked.connect(self.DV_openFolder)
 
         self.tab_dv.setLayout(self.tab_dv.layout)
 
+    def DV_updateState(self, newStr):
+        if "http" in self.DV_tb_link.text() and self.DV_tb_novel_name.text() != "":
+            self.DV_btn_download.setEnabled(True)
 
+    def DV_downloadNovel(self):
+        self.DV_thread = QThread()
+        self.worker = DownloadNovel(self.DV_tb_link.text(), self.DV_spb_start_chap.value(
+        ), self.DV_spb_end_chap.value(), self.DV_tb_novel_name.text())
+
+        self.worker.moveToThread(self.DV_thread)
+
+        self.DV_thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.DV_thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.DV_thread.finished.connect(self.DV_thread.deleteLater)
+        self.worker.progress.connect(self.DV_updateProgress)
+
+        self.DV_thread.start()
+
+        self.worker.finished.connect(self.DV_finish_download)
+
+    def DV_openFolder(self):
+        # os.system("./resource")
+        ic(os.getcwd())
+        os.system("start " + "resource")
+
+    def DV_updateProgress(self, percent):
+        self.DV_progress_down.setValue(percent)
+
+    def DV_finish_download(self, filename):
+        self.DV_btn_open_location.setEnabled(True)
+        self.DV_lb_file_name.setText(filename)
+
+        n.show_toast(msg["suc_dv"]["t"], msg["suc_dv"]
+                     ["m"], duration=2, threaded=True)
+
+    # endregion
+
+    def initGcLayout(self):
+        self.tab_gc.layout = QGridLayout(self)
+
+        self.GC_common_str = {
+            "lb_link": "Link: ",
+            "rb_nettruyen": "nettruyen",
+            "rb_mangasee": "mangasee",
+            "lb_server": "Server: "
+        }
+
+        self.GC_lb_main_title = QLabel(tabs["GC"])
+        self.GC_lb_main_title.setStyleSheet(
+            common_font["bold"]+common_color["success"]+font["title"])
+        self.tab_gc.layout.addWidget(
+            self.GC_lb_main_title, 0, 0, 1, 4, alignment=Qt.AlignCenter)
+
+        self.GC_lb_link = QLabel(self.GC_common_str["lb_link"])
+        self.GC_lb_link.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.tab_gc.layout.addWidget(self.GC_lb_link, 1, 0)
+
+        self.GC_tb_link = QLineEdit()
+        self.tab_gc.layout.addWidget(self.GC_tb_link, 1, 1, 1, 3)
+
+        self.GC_rb_nettruyen = QRadioButton(
+            text=self.GC_common_str["rb_nettruyen"])
+        self.GC_rb_mangasee = QRadioButton(
+            text=self.GC_common_str["rb_mangasee"])
+
+        self.GC_bg = QButtonGroup()
+        self.GC_bg.addButton(self.GC_rb_nettruyen)
+        self.GC_bg.addButton(self.GC_rb_mangasee)
+
+        self.GC_lb_server = QLabel(self.GC_common_str["lb_server"])
+        self.GC_lb_server.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.tab_gc.layout.addWidget(self.GC_lb_server, 2,0)
+
+        
+
+        self.tab_gc.layout.addWidget(self.GC_rb_nettruyen, 2, 1)
+        self.tab_gc.layout.addWidget(self.GC_rb_mangasee, 2, 2, 1, 2, alignment=Qt.AlignCenter)
+
+        self.tab_gc.setLayout(self.tab_gc.layout)
 
 
 def main():
