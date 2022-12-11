@@ -44,7 +44,7 @@ class RenameFolder(QObject):
 
 class DownloadNovel(QObject):
     finished = pyqtSignal(str)
-    progress = pyqtSignal(int)
+    progress = pyqtSignal(tuple)
 
     def __init__(self, link, start, end, novelName):
         QObject.__init__(self)
@@ -90,7 +90,7 @@ class DownloadNovel(QObject):
                 document.add_heading(title.text.strip(), level=1)
                 document.add_paragraph(content_text.strip())
 
-                self.progress.emit(int(count*100/(self.end-self.start+1)))
+                self.progress.emit((title.text.strip(),int(count*100/(self.end-self.start+1))))
 
             self.finished.emit(self.novelName + ' chap' +
                                str(self.start)+'_'+str(self.end)+'.docx')

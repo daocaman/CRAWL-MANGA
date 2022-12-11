@@ -19,7 +19,6 @@ class RenameTab(QWidget):
             "lb_src_folder": "Source folder: ",
             "btn_get_list": "Get list",
             "lb_result": "Result file: ",
-            "btn_edit_file": "Edit",
             "btn_rename": "Rename"
         }
 
@@ -47,22 +46,16 @@ class RenameTab(QWidget):
         self.layout.addWidget(self.RN_lb_result, 2, 0)
 
         self.RN_lb_result_file = QLabelLink()
-
         self.layout.addWidget(self.RN_lb_result_file, 2, 1)
-
-        self.RN_btn_edit_file = QPushButton(
-            self.RN_common_str["btn_edit_file"])
-        self.RN_btn_edit_file.setStyleSheet(btns["default"])
-        self.layout.addWidget(self.RN_btn_edit_file, 2, 2)
-
-        self.RN_progress_rename = QProgressBar()
-        self.RN_progress_rename.setValue(0)
-        self.layout.addWidget(self.RN_progress_rename, 3, 0, 1, 2)
 
         self.RN_btn_rename = QPushButton(self.RN_common_str["btn_rename"])
         self.RN_btn_rename.setStyleSheet(btns["default"] + btns["success"])
-        self.layout.addWidget(self.RN_btn_rename, 3, 2)
+        self.layout.addWidget(self.RN_btn_rename, 2, 2)
 
+        self.RN_progress_rename = QProgressBar()
+        self.RN_progress_rename.setValue(0)
+        self.layout.addWidget(self.RN_progress_rename, 3, 0, 1, 3)
+ 
         self.layout.setSpacing(15)
         self.layout.setRowStretch(4, 1)
 
@@ -71,7 +64,6 @@ class RenameTab(QWidget):
         # actions
 
         self.RN_btn_get_list.clicked.connect(self.RN_chooseFolder)
-        # self.RN_btn_edit_file.clicked.connect(self.RN_openfile)
         self.RN_lb_result_file.clicked.connect(self.RN_openfile)
         self.RN_btn_rename.clicked.connect(self.RN_rename)
 
@@ -82,7 +74,6 @@ class RenameTab(QWidget):
 
     def RN_resetState(self):
         self.RN_lb_result_file.setText("")
-        self.RN_btn_edit_file.setEnabled(False)
         self.RN_btn_rename.setEnabled(False)
         self.RN_progress_rename.setValue(0)
 
@@ -99,7 +90,6 @@ class RenameTab(QWidget):
                 f.write(file+"\n")
                 f2.write(file+"\n")
             self.RN_lb_result_file.setText("list_files.txt")
-            self.RN_btn_edit_file.setEnabled(True)
             self.RN_btn_rename.setEnabled(True)
             f.close()
             f2.close()

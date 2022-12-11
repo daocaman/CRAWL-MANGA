@@ -1,11 +1,12 @@
 import os
 
 from PyQt5.QtCore import Qt, QThread
-from PyQt5.QtWidgets import ( QGridLayout, QLabel, QLineEdit,
+from PyQt5.QtWidgets import (QGridLayout, QLabel, QLineEdit,
                              QProgressBar, QPushButton, QWidget, QSpinBox)
-
+from QLabelLink import *
 from common import *
 from SupportFunction import *
+
 
 class DownloadNovelTab(QWidget):
     def __init__(self, *args, **kwargs):
@@ -19,7 +20,6 @@ class DownloadNovelTab(QWidget):
             "lb_start_chap": "From chap: ",
             "lb_end_chap": "To chap: ",
             "lb_result": "Resut file: ",
-            "btn_open_location": "Open",
             "btn_download": "Download"
         }
 
@@ -71,34 +71,33 @@ class DownloadNovelTab(QWidget):
             common_font["bold"]+common_color["info"])
         self.layout.addWidget(self.DV_lb_result, 4, 0)
 
-        self.DV_lb_file_name = QLabel("")
+        self.DV_lb_file_name = QLabelLink("")
         self.DV_lb_file_name.setStyleSheet(
             common_font["underline"]+common_color["primiary"])
+        self.DV_lb_file_name.setEnabled(False)
         self.layout.addWidget(self.DV_lb_file_name, 4, 1, 1, 2)
-
-        self.DV_btn_open_location = QPushButton(
-            self.DV_common_str["btn_open_location"])
-        self.DV_btn_open_location.setStyleSheet(btns["default"]+btns["info"])
-        self.DV_btn_open_location.setEnabled(False)
-        self.layout.addWidget(self.DV_btn_open_location, 4, 3)
-
-        self.DV_progress_down = QProgressBar()
-        self.DV_progress_down.setValue(0)
-        self.layout.addWidget(self.DV_progress_down, 5, 0, 1, 3)
 
         self.DV_btn_download = QPushButton(self.DV_common_str["btn_download"])
         self.DV_btn_download.setStyleSheet(btns["default"]+btns["danger"])
         self.DV_btn_download.setEnabled(False)
-        self.layout.addWidget(self.DV_btn_download, 5, 3)
+        self.layout.addWidget(self.DV_btn_download, 4, 3)
+
+        self.DV_progress_down = QProgressBar()
+        self.DV_progress_down.setValue(0)
+        self.layout.addWidget(self.DV_progress_down, 5, 0, 1, 4)
+
+        self.DV_lb_progress = QLabel()
+        self.DV_lb_progress.setStyleSheet(common_color["warning"])
+        self.layout.addWidget(self.DV_lb_progress, 6, 0, 1, 4)
 
         self.layout.setSpacing(15)
-        self.layout.setRowStretch(6, 1)
+        self.layout.setRowStretch(7, 1)
 
         self.DV_tb_link.textChanged.connect(self.DV_updateState)
         self.DV_tb_novel_name.textChanged.connect(self.DV_updateState)
 
         self.DV_btn_download.clicked.connect(self.DV_downloadNovel)
-        self.DV_btn_open_location.clicked.connect(self.DV_openFolder)
+        self.DV_lb_file_name.clicked.connect(self.DV_openFolder)
 
         self.setLayout(self.layout)
 
@@ -124,17 +123,15 @@ class DownloadNovelTab(QWidget):
         self.worker.finished.connect(self.DV_finish_download)
 
     def DV_openFolder(self):
-        # os.system("./resource")
-        ic(os.getcwd())
         os.system("start " + "resource")
 
-    def DV_updateProgress(self, percent):
-        self.DV_progress_down.setValue(percent)
+    def DV_updateProgress(self, data):
+        self.DV_lb_progress.setText(data[0])
+        self.DV_progress_down.setValue(data[1])
 
     def DV_finish_download(self, filename):
-        self.DV_btn_open_location.setEnabled(True)
+        self.DV_lb_file_name.setEnabled(True)
         self.DV_lb_file_name.setText(filename)
 
         n.show_toast(msg["suc_dv"]["t"], msg["suc_dv"]
                      ["m"], duration=2, threaded=True)
-
