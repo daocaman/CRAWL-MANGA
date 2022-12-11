@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (QButtonGroup, QGridLayout, QLabel, QLineEdit,
 
 from common import *
 from SupportFunction import *
+from QLabelLink import *
 
 
 class GettingChapterTab(QWidget):
@@ -22,7 +23,10 @@ class GettingChapterTab(QWidget):
             "rb_nettruyen": "nettruyen",
             "rb_mangasee": "mangasee",
             "lb_server": "Server: ",
-            "lb_keyword": "Keyword: "
+            "lb_keyword": "Keyword: ",
+            "lb_result": "Result file: ",
+            "btn_get_chapter": "Get",
+            "lb_progress": "Progress: "
         }
 
         self.GC_lb_main_title = QLabel(tabs["GC"])
@@ -69,3 +73,82 @@ class GettingChapterTab(QWidget):
 
         self.GC_rb_nettruyen.toggled.connect(
             lambda: self.GC_tb_keyword.setEnabled(self.GC_rb_nettruyen.isChecked()))
+
+        self.GC_lb_result = QLabel(self.GC_common_str["lb_result"])
+        self.GC_lb_result.setStyleSheet(
+            common_color["info"]+common_font["bold"])
+        self.layout.addWidget(self.GC_lb_result, 4, 0)
+
+        self.GC_lb_result_file = QLabelLink()
+        self.GC_lb_result_file.setEnabled(False)
+        self.layout.addWidget(self.GC_lb_result_file, 4, 1)
+
+        self.GC_btn_get_chapter = QPushButton(self.GC_common_str["btn_get_chapter"])
+        self.GC_btn_get_chapter.setStyleSheet(btns["default"]+btns["primary"])
+        self.layout.addWidget(self.GC_btn_get_chapter, 4, 3)
+
+        self.GC_lb_progress = QLabel(self.GC_common_str["lb_progress"])
+        self.GC_lb_progress.setStyleSheet(
+            common_color["info"]+common_font["bold"])
+        self.layout.addWidget(self.GC_lb_progress, 5, 0)
+
+        self.GC_progress_getting = QProgressBar()
+        self.GC_progress_getting.setValue(0)
+        self.layout.addWidget(self.GC_progress_getting, 5, 1, 1, 3)
+
+        self.layout.setSpacing(15)
+        self.layout.setRowStretch(6, 1)
+
+        self.GC_lb_result_file.clicked.connect(lambda: os.system('code ' + 'resource/link.txt'))
+        self.GC_btn_get_chapter.clicked.connect(self.GC_getting)
+
+
+    def GC_getting(self):
+
+        self.GC_refresh()
+        self.GC_thread = QThread()
+
+        link = self.GC_tb_link.text()
+        server = "mangasee"
+        if self.GC_rb_nettruyen.isChecked():
+            server = "nettruyen"
+
+        keyword = self.GC_tb_keyword.text()
+
+        ic(keyword)
+
+        flag = self.GC_rb_mangasee.isChecked() or (not self.GC_rb_mangasee.isChecked() and keyword != "")
+
+        if flag:
+        
+            self.worker = GetChapterLink(link, server, keyword)
+
+            self.worker.moveToThread(self.GC_thread)
+
+            self.GC_thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.GC_thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.GC_thread.finished.connect(self.GC_thread.deleteLater)
+            self.worker.progress.connect(self.GC_update_progress)
+
+            self.GC_thread.start()
+
+            self.GC_thread.finished.connect(self.GC_finish_getting)
+        else:
+            n.show_toast("Error", "Missing value!!!", duration=2, threaded=True)
+
+    def GC_refresh(self):
+        self.GC_lb_result_file.setText("")
+        self.GC_lb_result_file.setEnabled(False)
+        self.GC_progress_getting.setValue(0)
+
+    def GC_update_progress(self, percent):
+        self.GC_progress_getting.setValue(percent)
+
+    def GC_finish_getting(self):
+        self.GC_lb_result_file.setText("link.txt")
+        self.GC_lb_result_file.setEnabled(True)
+        n.show_toast("Success", "Getting link chapter complete!!!", duration=2, threaded=True)
+
+    
+

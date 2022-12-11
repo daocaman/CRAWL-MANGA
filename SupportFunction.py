@@ -72,32 +72,26 @@ class DownloadNovel(QObject):
                 content = soup.find_all(id="js-read__content")[0]
 
                 content_text = content.decode_contents()
-
-                divs = content.find_all("div")
-                a_s = content.find_all("a")
-
-                divs.sort(key=len, reverse=True)
-                for div in divs:
-                    if str(div) in content_text:
-                        content_text = content_text.replace(str(div), "")
-
-                for a in a_s:
-                    if str(a) in content_text:
-                        content_text = content_text.replace(str(a), "")
-
                 content_text = content_text.replace("<br/>", "\n")
+
+                soup = BeautifulSoup(content_text, 'html.parser')
+                content_text = soup.text
+
+                if "— QUẢNG CÁO —" in content_text:
+                    content_text = content_text.replace("— QUẢNG CÁO —", "")
 
                 document.add_heading(title.text.strip(), level=1)
                 document.add_paragraph(content_text.strip())
 
-                self.progress.emit((title.text.strip(),int(count*100/(self.end-self.start+1))))
+                self.progress.emit((title.text.strip(), int(
+                    count*100/(self.end-self.start+1))))
 
             self.finished.emit(self.novelName + ' chap' +
                                str(self.start)+'_'+str(self.end)+'.docx')
         except Exception as e:
             ic(e)
             document.save(filename+".docx")
-            
+
         document.save(filename+".docx")
 
         # os.system("ebook-convert "+doc_name + " " + azw3_name)
@@ -110,6 +104,7 @@ class GetChapterLink(QObject):
     def __init__(self, link, server, keyword=""):
         QObject.__init__(self)
         self.link, self.server, self.keyword = link, server, keyword
+        ic(self.keyword)
 
     def run(self):
         options = Options()
@@ -117,6 +112,7 @@ class GetChapterLink(QObject):
         driver = webdriver.Firefox(
             options=options, executable_path=r'./resource/geckodriver.exe')
 
+        driver.get(self.link)
         target = []
         if self.server == "nettruyen":
 
@@ -128,7 +124,6 @@ class GetChapterLink(QObject):
 
             for link in links:
                 target.insert(0, link['href'])
-            self.progress.emit(len(target))
 
         else:
             show_ele = driver.find_element(By.CLASS_NAME, "ShowAllChapters")
@@ -150,3 +145,4 @@ class GetChapterLink(QObject):
             f.write(link + "\n")
             self.progress.emit(int((idx+1)*100/len(target)))
         f.close()
+        self.finished.emit()
