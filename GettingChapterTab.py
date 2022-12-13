@@ -148,7 +148,7 @@ class GettingChapterTab(QWidget):
     def GC_finish_getting(self):
         self.GC_lb_result_file.setText("link.txt")
         self.GC_lb_result_file.setEnabled(True)
-        n.show_toast("Success", "Getting link chapter complete!!!", duration=2, threaded=True)
+        n.show_toast(msg["suc_gc"]["t"],msg["suc_gc"]["m"], duration=2, threaded=True)
 
     
 

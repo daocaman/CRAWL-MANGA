@@ -19,6 +19,7 @@ from win10toast import ToastNotifier
 from RenameTab import *
 from DownloadNovelTab import *
 from GettingChapterTab import *
+from GetImageLinkTab import *
     
 
 myappid = 'crawl_img.v2'  # arbitrary string
@@ -76,10 +77,12 @@ class CrawlManga(QWidget):
         self.tab_rn = RenameTab()
         self.tab_dv = DownloadNovelTab()
         self.tab_gc = GettingChapterTab()
+        self.tab_gi = GetImageLinkTab()
 
         self.tabs.addTab(self.tab_rn, tabs["RN"])
         self.tabs.addTab(self.tab_dv, tabs["DV"])
         self.tabs.addTab(self.tab_gc, tabs["GC"])
+        self.tabs.addTab(self.tab_gi, tabs["GI"])
 
     
 def main():
