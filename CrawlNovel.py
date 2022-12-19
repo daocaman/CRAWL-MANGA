@@ -10,11 +10,11 @@ import re
 document = Document()
 
 start = 1
-end = 405
+end = 55
 
-link_novel = 'https://sstruyen.vn/ma-thoi-den/chuong-'
+link_novel = 'https://sstruyen.vn/me-tong-chi-quoc/chuong-'
 
-book_name = "Ma thổi đèn"
+book_name = "Mê tông chi quốc"
 
 
 # mode 1 : metruyencv
