@@ -1,7 +1,7 @@
 import os
 
 from PyQt5.QtCore import Qt, QThread
-from PyQt5.QtWidgets import (QGridLayout, QLabel, QLineEdit,
+from PyQt5.QtWidgets import (QGridLayout, QLabel, QLineEdit, QComboBox,
                              QProgressBar, QPushButton, QWidget, QSpinBox)
 from QLabelLink import *
 from common import *
@@ -20,7 +20,8 @@ class DownloadNovelTab(QWidget):
             "lb_start_chap": "From chap: ",
             "lb_end_chap": "To chap: ",
             "lb_result": "Resut file: ",
-            "btn_download": "Download"
+            "btn_download": "Download",
+            "lb_server": "Servers: "
         }
 
         self.DV_lb_main_title = QLabel(tabs["DV"])
@@ -36,62 +37,71 @@ class DownloadNovelTab(QWidget):
         self.DV_tb_link = QLineEdit()
         self.layout.addWidget(self.DV_tb_link, 1, 1, 1, 3)
 
+        self.DV_lb_server = QLabel(self.DV_common_str["lb_server"])
+        self.DV_lb_server.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.layout.addWidget(self.DV_lb_server, 2, 0)
+
+        self.DV_sb_server = QComboBox()
+        self.DV_sb_server.addItems(["metruyencv", "sstruyen"])
+        self.layout.addWidget(self.DV_sb_server, 2, 1, 1, 3)
+
+
         self.DV_lb_novel_name = QLabel(self.DV_common_str["lb_novel_name"])
         self.DV_lb_novel_name.setStyleSheet(
             common_font["bold"]+common_color["info"])
-        self.layout.addWidget(self.DV_lb_novel_name, 2, 0)
+        self.layout.addWidget(self.DV_lb_novel_name, 3, 0)
 
         self.DV_tb_novel_name = QLineEdit()
-        self.layout.addWidget(self.DV_tb_novel_name, 2, 1, 1, 3)
+        self.layout.addWidget(self.DV_tb_novel_name, 3, 1, 1, 3)
 
         self.DV_lb_start_chap = QLabel(self.DV_common_str["lb_start_chap"])
         self.DV_lb_start_chap.setStyleSheet(
             common_font["bold"]+common_color["info"])
-        self.layout.addWidget(self.DV_lb_start_chap, 3, 0)
+        self.layout.addWidget(self.DV_lb_start_chap, 4, 0)
 
         self.DV_spb_start_chap = QSpinBox()
         self.DV_spb_start_chap.setValue(1)
         self.DV_spb_start_chap.setMinimum(1)
         self.DV_spb_start_chap.setMaximum(10000)
-        self.layout.addWidget(self.DV_spb_start_chap, 3, 1)
+        self.layout.addWidget(self.DV_spb_start_chap, 4, 1)
 
         self.DV_lb_end_chap = QLabel(self.DV_common_str["lb_end_chap"])
         self.DV_lb_end_chap.setStyleSheet(
             common_font["bold"]+common_color["info"])
-        self.layout.addWidget(self.DV_lb_end_chap, 3, 2)
+        self.layout.addWidget(self.DV_lb_end_chap, 4, 2)
 
         self.DV_spb_end_chap = QSpinBox()
         self.DV_spb_end_chap.setValue(1)
         self.DV_spb_end_chap.setMinimum(1)
         self.DV_spb_end_chap.setMaximum(10000)
-        self.layout.addWidget(self.DV_spb_end_chap, 3, 3)
+        self.layout.addWidget(self.DV_spb_end_chap, 4, 3)
 
         self.DV_lb_result = QLabel(self.DV_common_str["lb_result"])
         self.DV_lb_result.setStyleSheet(
             common_font["bold"]+common_color["info"])
-        self.layout.addWidget(self.DV_lb_result, 4, 0)
+        self.layout.addWidget(self.DV_lb_result, 5, 0)
 
         self.DV_lb_file_name = QLabelLink("")
         self.DV_lb_file_name.setStyleSheet(
             common_font["underline"]+common_color["primiary"])
         self.DV_lb_file_name.setEnabled(False)
-        self.layout.addWidget(self.DV_lb_file_name, 4, 1, 1, 2)
+        self.layout.addWidget(self.DV_lb_file_name, 5, 1, 1, 2)
 
         self.DV_btn_download = QPushButton(self.DV_common_str["btn_download"])
         self.DV_btn_download.setStyleSheet(btns["default"]+btns["danger"])
         self.DV_btn_download.setEnabled(False)
-        self.layout.addWidget(self.DV_btn_download, 4, 3)
+        self.layout.addWidget(self.DV_btn_download, 5, 3)
 
         self.DV_progress_down = QProgressBar()
         self.DV_progress_down.setValue(0)
-        self.layout.addWidget(self.DV_progress_down, 5, 0, 1, 4)
+        self.layout.addWidget(self.DV_progress_down, 6, 0, 1, 4)
 
         self.DV_lb_progress = QLabel()
         self.DV_lb_progress.setStyleSheet(common_color["warning"])
-        self.layout.addWidget(self.DV_lb_progress, 6, 0, 1, 4)
+        self.layout.addWidget(self.DV_lb_progress, 7, 0, 1, 4)
 
         self.layout.setSpacing(15)
-        self.layout.setRowStretch(7, 1)
+        self.layout.setRowStretch(8, 1)
 
         self.DV_tb_link.textChanged.connect(self.DV_updateState)
         self.DV_tb_novel_name.textChanged.connect(self.DV_updateState)
