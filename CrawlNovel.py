@@ -4,22 +4,24 @@ import requests
 from docx import Document
 from win10toast import ToastNotifier
 n = ToastNotifier()
+import time
 
 import re
 
 document = Document()
 
 start = 1
-end = 55
+end = 1940
 
-link_novel = 'https://sstruyen.vn/me-tong-chi-quoc/chuong-'
+link_novel = 'https://trumtruyen.vn/nguoi-tim-xac-290421/chuong-'
 
-book_name = "Mê tông chi quốc"
+book_name = "Người tìm xác"
 
 
 # mode 1 : metruyencv
 # mode 2: sstruyen
-mode = 2
+# mode 3
+mode = 3
 
 try:
     if mode == 1:
@@ -53,7 +55,7 @@ try:
             
             document.add_heading(title.text.strip(), level=1)
             document.add_paragraph(content_text.strip())
-    else:
+    elif mode == 2:
 
         for i in range(start, end+1):
             r = requests.get(link_novel+str(i))
@@ -68,6 +70,31 @@ try:
             content = str(content[0]).replace("<br/>","\n")
             soup = BeautifulSoup(content, 'html.parser')
             content_text =soup.text.strip()
+
+            document.add_heading(title.text.strip(), level=1)
+            document.add_paragraph(content_text.strip())
+    else:
+
+        for i in range(start, end+1):
+            r = requests.get(link_novel+str(i))
+
+            time.sleep(0.5)
+            # ic(r.status_code)
+            # while r.status_code != 200:
+            #     r = requests.get(link_novel+str(i))
+
+            soup = BeautifulSoup(r.content, 'html.parser')
+
+            title = soup.find_all(class_=re.compile("chapter-title"))[0]
+            ic(title.text.strip())
+
+            content = soup.find_all(id="chapter-c")
+
+            content = str(content[0]).replace("<br/>","\n")
+            soup = BeautifulSoup(content, 'html.parser')
+            content_text = soup.text.strip()
+
+            # ic(content_text)
 
             document.add_heading(title.text.strip(), level=1)
             document.add_paragraph(content_text.strip())
