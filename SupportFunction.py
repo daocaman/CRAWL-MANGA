@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 import re
+from common import *
 
 
 class RenameFolder(QObject):
@@ -46,9 +47,9 @@ class DownloadNovel(QObject):
     finished = pyqtSignal(str)
     progress = pyqtSignal(tuple)
 
-    def __init__(self, link, start, end, novelName):
+    def __init__(self, link, start, end, novelName, server):
         QObject.__init__(self)
-        self.link, self.start, self.end, self.novelName = link, start, end, novelName
+        self.link, self.start, self.end, self.novelName, self.server = link, start, end, novelName, server
 
     def run(self):
         document = Document()
@@ -57,37 +58,96 @@ class DownloadNovel(QObject):
             str(self.start)+'_'+str(self.end)
 
         try:
+            if self.server == servers_novel["metruyencv"]:
+                count = 0
+                for i in range(self.start, self.end+1):
+                    count += 1
+                    r = requests.get(self.link+str(i))
 
-            count = 0
-            for i in range(self.start, self.end+1):
-                count += 1
-                r = requests.get(self.link+str(i))
+                    soup = BeautifulSoup(r.content, 'html.parser')
 
-                soup = BeautifulSoup(r.content, 'html.parser')
+                    title = soup.find(class_="nh-read__title")
 
-                title = soup.find(class_="nh-read__title")
+                    ic(title.text.strip())
 
-                ic(title.text.strip())
+                    content = soup.find_all(id="js-read__content")[0]
 
-                content = soup.find_all(id="js-read__content")[0]
+                    content_text = content.decode_contents()
+                    content_text = content_text.replace("<br/>", "\n")
 
-                content_text = content.decode_contents()
-                content_text = content_text.replace("<br/>", "\n")
+                    soup = BeautifulSoup(content_text, 'html.parser')
+                    content_text = soup.text
 
-                soup = BeautifulSoup(content_text, 'html.parser')
-                content_text = soup.text
+                    if "— QUẢNG CÁO —" in content_text:
+                        content_text = content_text.replace(
+                            "— QUẢNG CÁO —", "")
 
-                if "— QUẢNG CÁO —" in content_text:
-                    content_text = content_text.replace("— QUẢNG CÁO —", "")
+                    document.add_heading(title.text.strip(), level=1)
+                    document.add_paragraph(content_text.strip())
 
-                document.add_heading(title.text.strip(), level=1)
-                document.add_paragraph(content_text.strip())
+                    self.progress.emit((title.text.strip(), int(
+                        count*100/(self.end-self.start+1))))
 
-                self.progress.emit((title.text.strip(), int(
-                    count*100/(self.end-self.start+1))))
+                self.finished.emit(self.novelName + ' chap' +
+                                   str(self.start)+'_'+str(self.end)+'.docx')
+            elif self.server == servers_novel["sstruyen"]:
 
-            self.finished.emit(self.novelName + ' chap' +
-                               str(self.start)+'_'+str(self.end)+'.docx')
+                count = 0
+                for i in range(self.start, self.end+1):
+                    count += 1
+                    r = requests.get(self.link+str(i))
+
+                    soup = BeautifulSoup(r.content, 'html.parser')
+
+                    title = soup.find_all(
+                        class_=re.compile("rv-chapt-title"))[0]
+                    ic(title.text.strip())
+
+                    content = soup.find_all(class_=re.compile("container1"))
+
+                    content = str(content[0]).replace("<br/>", "\n")
+                    soup = BeautifulSoup(content, 'html.parser')
+                    content_text = soup.text.strip()
+
+                    document.add_heading(title.text.strip(), level=1)
+                    document.add_paragraph(content_text.strip())
+
+                    self.progress.emit((title.text.strip(), int(
+                        count*100/(self.end-self.start+1))))
+                self.finished.emit(self.novelName + ' chap' +
+                                   str(self.start)+'_'+str(self.end)+'.docx')
+
+            elif self.server == servers_novel["trumtruyen"]:
+
+                count = 0
+                for i in range(self.start, self.end+1):
+                    count += 1
+                    r = requests.get(self.link+str(i))
+
+                    QThread.sleep(1)
+                    # ic(r.status_code)
+                    # while r.status_code != 200:
+                    #     r = requests.get(link_novel+str(i))
+
+                    soup = BeautifulSoup(r.content, 'html.parser')
+
+                    title = soup.find_all(
+                        class_=re.compile("chapter-title"))[0]
+
+                    content = soup.find_all(id="chapter-c")
+
+                    content = str(content[0]).replace("<br/>", "\n")
+                    soup = BeautifulSoup(content, 'html.parser')
+                    content_text = soup.text.strip()
+
+                    document.add_heading(title.text.strip(), level=1)
+                    document.add_paragraph(content_text.strip())
+
+                    self.progress.emit((title.text.strip(), int(
+                        count*100/(self.end-self.start+1))))
+
+                self.finished.emit(self.novelName + ' chap' +
+                                   str(self.start)+'_'+str(self.end)+'.docx')
         except Exception as e:
             ic(e)
             document.save(filename+".docx")

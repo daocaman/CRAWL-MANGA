@@ -42,7 +42,7 @@ class DownloadNovelTab(QWidget):
         self.layout.addWidget(self.DV_lb_server, 2, 0)
 
         self.DV_sb_server = QComboBox()
-        self.DV_sb_server.addItems(["metruyencv", "sstruyen"])
+        self.DV_sb_server.addItems(["metruyencv", "sstruyen", "trumtruyen"])
         self.layout.addWidget(self.DV_sb_server, 2, 1, 1, 3)
 
 
@@ -117,8 +117,9 @@ class DownloadNovelTab(QWidget):
 
     def DV_downloadNovel(self):
         self.DV_thread = QThread()
+
         self.worker = DownloadNovel(self.DV_tb_link.text(), self.DV_spb_start_chap.value(
-        ), self.DV_spb_end_chap.value(), self.DV_tb_novel_name.text())
+        ), self.DV_spb_end_chap.value(), self.DV_tb_novel_name.text(), self.DV_sb_server.currentIndex())
 
         self.worker.moveToThread(self.DV_thread)
 

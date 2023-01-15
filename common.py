@@ -38,7 +38,12 @@ btns = {
     "outline-info": "border-color: #17a2b8; border: 1px solid #17a2b8; color: #17a2b8;",
     "outline-danger": "border-color: #dc3545; border: 1px solid #dc3545; color: #dc3545;",
     "outline-warning": "border-color: #ffc107; border: 1px solid #ffc107; color: #ffc107;",
+}
 
+servers_novel = {
+    "metruyencv": 0,
+    "sstruyen": 1,
+    "trumtruyen": 2
 }
 
 msg = {
