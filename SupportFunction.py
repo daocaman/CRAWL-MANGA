@@ -125,6 +125,11 @@ class DownloadNovel(QObject):
                     r = requests.get(self.link+str(i))
 
                     QThread.sleep(1)
+
+                    while r.status_code != 200:
+                        r = requests.get(self.link+str(i))
+                        QThread.sleep(1)
+
                     # ic(r.status_code)
                     # while r.status_code != 200:
                     #     r = requests.get(link_novel+str(i))
