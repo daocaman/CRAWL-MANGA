@@ -44,20 +44,14 @@ try:
             content = soup.find_all(id="article")[0]
 
             content_text = content.decode_contents()
-
-            divs = content.find_all("div")
-            a_s = content.find_all("a")
-
-            divs.sort(key=len, reverse=True)
-            for div in divs:
-                if str(div) in content_text:
-                    content_text = content_text.replace(str(div), "")
-
-            for a in a_s:
-                if str(a) in content_text:
-                    content_text = content_text.replace(str(a), "")
-
             content_text = content_text.replace("<br/>", "\n")
+
+            soup = BeautifulSoup(content_text, 'html.parser')
+            content_text = soup.text
+
+            if "— QUẢNG CÁO —" in content_text:
+                content_text = content_text.replace(
+                    "— QUẢNG CÁO —", "")
 
             p = document.add_heading(title.text.strip(), level=1)
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
