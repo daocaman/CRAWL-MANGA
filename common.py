@@ -43,7 +43,8 @@ btns = {
 servers_novel = {
     "metruyencv": 0,
     "sstruyen": 1,
-    "trumtruyen": 2
+    "trumtruyen": 2,
+    "truyenfull": 3
 }
 
 msg = {
@@ -52,6 +53,8 @@ msg = {
     "suc_gc": {"t": "Success", "m": "Getting link chapter complete!!!"},
 
 }
+
+break_chapter_str = "※----*-------⁛-------*----※"
 
 
 n = ToastNotifier()

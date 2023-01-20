@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from icecream import ic
 import requests
 from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
@@ -47,15 +48,19 @@ class DownloadNovel(QObject):
     finished = pyqtSignal(str)
     progress = pyqtSignal(tuple)
 
-    def __init__(self, link, start, end, novelName, server):
+    def __init__(self, link, start, end, novelName, author, file_name, server):
         QObject.__init__(self)
-        self.link, self.start, self.end, self.novelName, self.server = link, start, end, novelName, server
+        self.link, self.start, self.end, self.novelName, self.author, self.file_name, self.server = link, start, end, novelName, author, file_name, server
 
     def run(self):
         document = Document()
+        print(self.server)
 
-        filename = "resource/"+self.novelName + ' chap' + \
-            str(self.start)+'_'+str(self.end)
+        if self.file_name == "":
+            filename = "resource/"+self.novelName + ' chap' + \
+                str(self.start)+'_'+str(self.end)
+        else:
+            filename = "resource/"+self.file_name.strip()
 
         try:
             if self.server == servers_novel["metruyencv"]:
@@ -70,7 +75,7 @@ class DownloadNovel(QObject):
 
                     ic(title.text.strip())
 
-                    content = soup.find_all(id="js-read__content")[0]
+                    content = soup.find_all(id="article")[0]
 
                     content_text = content.decode_contents()
                     content_text = content_text.replace("<br/>", "\n")
@@ -82,8 +87,12 @@ class DownloadNovel(QObject):
                         content_text = content_text.replace(
                             "— QUẢNG CÁO —", "")
 
-                    document.add_heading(title.text.strip(), level=1)
-                    document.add_paragraph(content_text.strip())
+                    p = document.add_heading(title.text.strip(), level=1)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(break_chapter_str)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(content_text.strip())
+                    document.add_page_break()
 
                     self.progress.emit((title.text.strip(), int(
                         count*100/(self.end-self.start+1))))
@@ -109,8 +118,12 @@ class DownloadNovel(QObject):
                     soup = BeautifulSoup(content, 'html.parser')
                     content_text = soup.text.strip()
 
-                    document.add_heading(title.text.strip(), level=1)
-                    document.add_paragraph(content_text.strip())
+                    p = document.add_heading(title.text.strip(), level=1)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(break_chapter_str)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(content_text.strip())
+                    document.add_page_break()
 
                     self.progress.emit((title.text.strip(), int(
                         count*100/(self.end-self.start+1))))
@@ -145,18 +158,51 @@ class DownloadNovel(QObject):
                     soup = BeautifulSoup(content, 'html.parser')
                     content_text = soup.text.strip()
 
-                    document.add_heading(title.text.strip(), level=1)
-                    document.add_paragraph(content_text.strip())
+                    p = document.add_heading(title.text.strip(), level=1)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(break_chapter_str)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(content_text.strip())
+                    document.add_page_break()
 
                     self.progress.emit((title.text.strip(), int(
                         count*100/(self.end-self.start+1))))
 
                 self.finished.emit(self.novelName + ' chap' +
                                    str(self.start)+'_'+str(self.end)+'.docx')
+            elif self.server == servers_novel["truyenfull"]:
+                for i in range(self.start, self.end+1):
+                    # r = requests.get(link_novel.replace('{0}', str(i)))
+                    r = requests.get(self.link+str(i))
+
+                    soup = BeautifulSoup(r.content, 'html.parser')
+
+                    title = soup.find_all(
+                        class_=re.compile("chapter-title"))[0]
+                    ic(title.text.strip())
+
+                    content = soup.find_all(id="chapter-c")
+
+                    content = str(content[0]).replace("<br/>", "\n")
+                    soup = BeautifulSoup(content, 'html.parser')
+                    content_text = soup.text.strip()
+
+                    p = document.add_heading(title.text.strip(), level=1)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(break_chapter_str)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p = document.add_paragraph(content_text.strip())
+                    document.add_page_break()
         except Exception as e:
             ic(e)
+            core_properties = document.core_properties
+            core_properties.author = self.author
+            core_properties.comments = "Generated by Crawl Manga - An Đào"
             document.save(filename+".docx")
 
+        core_properties = document.core_properties
+        core_properties.author = self.author
+        core_properties.comments = "Generated by Crawl Manga - An Đào"
         document.save(filename+".docx")
 
         # os.system("ebook-convert "+doc_name + " " + azw3_name)
