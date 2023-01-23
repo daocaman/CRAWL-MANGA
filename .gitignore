@@ -2,3 +2,4 @@
 *.log
 *.azw3
 *.docx
+__pycache__
