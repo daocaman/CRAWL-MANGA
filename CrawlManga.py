@@ -20,6 +20,7 @@ from RenameTab import *
 from DownloadNovelTab import *
 from GettingChapterTab import *
 from GetImageLinkTab import *
+from downloadComicURLTab import *
     
 
 myappid = 'crawl_img.v2'  # arbitrary string
@@ -78,11 +79,13 @@ class CrawlManga(QWidget):
         self.tab_dv = DownloadNovelTab()
         self.tab_gc = GettingChapterTab()
         self.tab_gi = GetImageLinkTab()
+        self.tab_dc = DownloadComicURLTab()
 
         self.tabs.addTab(self.tab_rn, tabs["RN"])
         self.tabs.addTab(self.tab_dv, tabs["DV"])
         self.tabs.addTab(self.tab_gc, tabs["GC"])
         self.tabs.addTab(self.tab_gi, tabs["GI"])
+        self.tabs.addTab(self.tab_dc, tabs["DC"])
 
     
 def main():

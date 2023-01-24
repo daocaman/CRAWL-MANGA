@@ -23,7 +23,8 @@ tabs = {
     "RN": "Rename Folder",
     "GC": "Getting Chapter",
     "DV": "Download Novel",
-    "GI": "Getting image url"
+    "GI": "Getting image url",
+    "DC": "Download Comic URL"
 }
 
 btns = {
@@ -47,10 +48,21 @@ servers_novel = {
     "truyenfull": 3
 }
 
+servers_manga = {
+    "nettruyen": 0,
+    "mangasee": 1,
+    "sinhvien": 2
+}
+
 msg = {
     "suc_rn": {"t": "Success", "m": "Rename folder done!!!"},
     "suc_dv": {"t": "Complete", "m": "Download novel done!!!"},
     "suc_gc": {"t": "Success", "m": "Getting link chapter complete!!!"},
+    "err_di_er": {"t": "Error", "m": "Something wrong happen!!!"},
+    "err_di_401": {"t": "Error", "m": "Missing value or file!!!"},
+    "suc_di": {"t": "Success", "m": "Getting image source complete!!!"},
+    "suc_dc": {"t": "Success", "m": "Download image complete!!!"},
+    
 
 }
 

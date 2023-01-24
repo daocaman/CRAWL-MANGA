@@ -12,6 +12,10 @@ import re
 from common import *
 
 
+def generateName(num, l):
+    return "0"*(l - len(num))+num
+
+
 class RenameFolder(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
@@ -257,3 +261,217 @@ class GetChapterLink(QObject):
             self.progress.emit(int((idx+1)*100/len(target)))
         f.close()
         self.finished.emit()
+
+
+class GetImageSrc(QObject):
+    finished = pyqtSignal(int)
+    progress = pyqtSignal(int)
+
+    def __init__(self, server, keyword=""):
+        QObject.__init__(self)
+        self.server, self.keyword = server, keyword
+
+    def run(self):
+        if not os.path.exists('resource/link.txt'):
+            self.finished.emit(-1)
+            return
+
+        if self.server == servers_manga["mangasee"] and self.keyword == "":
+            self.finished.emit(401)
+            return
+
+        options = Options()
+        options.headless = True
+
+        links = []
+        f = open("resource/link.txt", "r")
+
+        for x in f:
+            links.append(x)
+
+        f.close()
+
+        driver = webdriver.Firefox(
+            options=options, executable_path=r'./resource/geckodriver.exe')
+
+        imgChapters = open("./resource/chapters.txt", "w+", encoding="utf8")
+
+        ic(self.server)
+
+        try:
+            count = 0
+            if self.server == servers_manga["nettruyen"]:
+                count += 1
+                for link in links:
+                    driver.get(link)  # load the web page
+
+                    htmlSource = driver.page_source
+                    soup = BeautifulSoup(htmlSource, 'html.parser')
+
+                    title = soup.find('title')
+                    title = title.text.split(" Next Chap ")[0].strip()
+
+                    ic(title)
+
+                    imgChapters.write("Fol: "+title+"\n")
+
+                    imgs = soup.find_all("img", src=re.compile('data=net'))
+
+                    for idxx, img in enumerate(imgs):
+                        imgChapters.write('https:'+img['src']+"\n")
+
+                    self.progress.emit(int(
+                        count*100/(len(links))))
+                imgChapters.close()
+                self.finished.emit(200)
+            elif self.server == servers_manga["mangasee"]:
+                for link in links:
+                    count += 1
+                    driver.get(link)  # load the web page
+
+                    htmlSource = driver.page_source
+                    soup = BeautifulSoup(htmlSource, 'html.parser')
+
+                    modal_page = soup.find(id="PageModal")
+                    cols = modal_page.find_all(class_="col-md-2")
+
+                    gal = soup.find(class_="ImageGallery")
+                    img = gal.find_all(src=re.compile(self.keyword))[0]
+
+                    target = img['src']
+
+                    title = soup.find('title')
+                    title = title.text.replace(" Page 1", "").strip()
+
+                    imgChapters.write("Fol: "+title+"\n")
+
+                    [info_target, page] = target.split(self.keyword+'/')
+                    img_info = page.split(".")
+                    [pg, ext] = [page.replace(
+                        img_info[len(img_info)-1], ""), img_info[len(img_info)-1]]
+                    [chap, p] = pg.split("-")
+
+                    for i in range(1, len(cols)+1):
+                        img_tmp = info_target+self.keyword+'/' + \
+                            chap+"-"+generateName(str(i), 3)+"."+ext
+                        imgChapters.write(img_tmp+'\n')
+
+                    self.progress.emit(int(
+                        count*100/(len(links))))
+                imgChapters.close()
+                self.finished.emit(200)
+            else:
+                for link in links:
+                    count += 1
+                    r = requests.get(link.strip())
+
+                    soup = BeautifulSoup(r.content, 'html.parser')
+
+                    title = soup.find('title')
+                    title = title.text.split(" [Tiếng Việt] ")[0].strip()
+
+                    imgChapters.write("Fol: "+title+"\n")
+
+                    imgs = soup.find_all("img", class_="bbImage")
+
+                    for img in imgs:
+                        imgChapters.write(img["src"]+"\n")
+                    self.progress.emit(int(
+                        count*100/(len(links))))
+                imgChapters.close()
+                self.finished.emit(200)
+
+        except:
+            imgChapters.close()
+            self.finished.emit(-1)
+
+
+class DownloadImage(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(tuple)
+
+    def __init__(self):
+        QObject.__init__(self)
+
+    def run(self):
+
+        l_f = open('link.txt', 'r', encoding="utf8")
+        server = l_f.readline().strip()
+
+        server = server.replace("https://", "")
+        server = "https://"+server.split("/")[0]
+        ic(server)
+
+        f = open("resource/chapters.txt", "r", encoding="utf8")
+
+        links = []
+        for x in f:
+            links.append(x)        
+
+        crrFolder = ""
+
+        count = 0
+        countAll = 0
+
+        errFile = open("error.txt", "w+", encoding="utf8")
+
+        for i, x in enumerate(links):
+            ic(x)
+            countAll += 1
+
+            if "Fol: " in x:
+                folname = x.split("Fol: ")[1].replace("\n", "")
+                crrFolder = folname
+                count = 0
+
+                if not os.path.exists(folname):
+                    os.mkdir(crrFolder)
+                
+                self.progress.emit((folname, int(
+                        countAll*100/(len(links)))))
+
+            else:
+                try:
+                    count += 1
+                    r = requests.get(x.replace("\n", ""), headers={
+                        'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
+                    ic(r)
+
+                    # two digit for one file image (mod=2)
+                    mod = 2
+                    if mod == 2:
+                        if count < 10:
+                            with open(crrFolder+"/"+"0"+str(count)+".jpg", "wb") as fd:
+
+                                if(r.status_code != 200):
+                                    errFile.write(
+                                        crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
+                                else:
+                                    fd.write(r.content)
+                        else:
+                            with open(crrFolder+"/"+str(count)+".jpg", "wb") as fd:
+
+                                if(r.status_code != 200):
+                                    errFile.write(
+                                        crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
+                                else:
+                                    fd.write(r.content)
+                    else:
+
+                        with open(crrFolder+"/"+str(count)+".jpg", "wb") as fd:
+
+                            if(r.status_code != 200):
+                                errFile.write(
+                                    crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
+                            else:
+                                fd.write(r.content)
+                    
+                    self.progress.emit(("", int(
+                        countAll*100/(len(links)))))
+                except Exception as e:
+                    ic(e)
+                    errFile.write(crrFolder+"/"+str(count) +
+                                  ".jpg" + " - "+x+"\n")
+                    continue
+        self.finished.emit()       
+        errFile.close()
