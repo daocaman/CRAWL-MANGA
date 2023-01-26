@@ -76,7 +76,6 @@ class DownloadNovel(QObject):
                     soup = BeautifulSoup(r.content, 'html.parser')
 
                     title = soup.find(class_="nh-read__title")
-
                     ic(title.text.strip())
 
                     content = soup.find_all(id="article")[0]
@@ -86,6 +85,7 @@ class DownloadNovel(QObject):
 
                     soup = BeautifulSoup(content_text, 'html.parser')
                     content_text = soup.text
+
 
                     if "— QUẢNG CÁO —" in content_text:
                         content_text = content_text.replace(
@@ -237,8 +237,9 @@ class GetChapterLink(QObject):
             links = soup.find_all(id="nt_listchapter")
             links = links[0].find_all(href=re.compile(self.keyword))
 
-            for link in links:
+            for idx, link in enumerate(links):
                 target.insert(0, link['href'])
+                self.progress.emit(int((idx+1)*100/len(links)))
 
         else:
             show_ele = driver.find_element(By.CLASS_NAME, "ShowAllChapters")
@@ -265,7 +266,7 @@ class GetChapterLink(QObject):
 
 class GetImageSrc(QObject):
     finished = pyqtSignal(int)
-    progress = pyqtSignal(int)
+    progress = pyqtSignal(tuple)
 
     def __init__(self, server, keyword=""):
         QObject.__init__(self)
@@ -301,8 +302,8 @@ class GetImageSrc(QObject):
         try:
             count = 0
             if self.server == servers_manga["nettruyen"]:
-                count += 1
                 for link in links:
+                    count += 1
                     driver.get(link)  # load the web page
 
                     htmlSource = driver.page_source
@@ -320,8 +321,8 @@ class GetImageSrc(QObject):
                     for idxx, img in enumerate(imgs):
                         imgChapters.write('https:'+img['src']+"\n")
 
-                    self.progress.emit(int(
-                        count*100/(len(links))))
+                    self.progress.emit((title, int(
+                        count*100/(len(links)))))
                 imgChapters.close()
                 self.finished.emit(200)
             elif self.server == servers_manga["mangasee"]:
@@ -356,8 +357,8 @@ class GetImageSrc(QObject):
                             chap+"-"+generateName(str(i), 3)+"."+ext
                         imgChapters.write(img_tmp+'\n')
 
-                    self.progress.emit(int(
-                        count*100/(len(links))))
+                    self.progress.emit((title, int(
+                        count*100/(len(links)))))
                 imgChapters.close()
                 self.finished.emit(200)
             else:
@@ -376,12 +377,13 @@ class GetImageSrc(QObject):
 
                     for img in imgs:
                         imgChapters.write(img["src"]+"\n")
-                    self.progress.emit(int(
-                        count*100/(len(links))))
+                    self.progress.emit((title, int(
+                        count*100/(len(links)))))
                 imgChapters.close()
                 self.finished.emit(200)
 
-        except:
+        except Exception as e:
+            ic(e)
             imgChapters.close()
             self.finished.emit(-1)
 
@@ -395,7 +397,7 @@ class DownloadImage(QObject):
 
     def run(self):
 
-        l_f = open('link.txt', 'r', encoding="utf8")
+        l_f = open('resource/link.txt', 'r', encoding="utf8")
         server = l_f.readline().strip()
 
         server = server.replace("https://", "")
@@ -406,7 +408,7 @@ class DownloadImage(QObject):
 
         links = []
         for x in f:
-            links.append(x)        
+            links.append(x)
 
         crrFolder = ""
 
@@ -426,9 +428,9 @@ class DownloadImage(QObject):
 
                 if not os.path.exists(folname):
                     os.mkdir(crrFolder)
-                
+
                 self.progress.emit((folname, int(
-                        countAll*100/(len(links)))))
+                    countAll*100/(len(links)))))
 
             else:
                 try:
@@ -465,7 +467,7 @@ class DownloadImage(QObject):
                                     crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
                             else:
                                 fd.write(r.content)
-                    
+
                     self.progress.emit(("", int(
                         countAll*100/(len(links)))))
                 except Exception as e:
@@ -473,5 +475,5 @@ class DownloadImage(QObject):
                     errFile.write(crrFolder+"/"+str(count) +
                                   ".jpg" + " - "+x+"\n")
                     continue
-        self.finished.emit()       
+        self.finished.emit()
         errFile.close()

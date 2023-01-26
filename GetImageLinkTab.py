@@ -87,6 +87,11 @@ class GetImageLinkTab(QWidget):
         self.GI_progress_down.setValue(0)
         self.layout.addWidget(self.GI_progress_down, 5, 0, 1, 4)
 
+        self.GI_progress_txt = QLabel()
+        self.GI_progress_txt.setStyleSheet(
+            common_color["warning"]+common_font["bold"])
+        self.layout.addWidget(self.GI_progress_txt, 6, 0, 1, 4)
+
         self.GI_sb_server.currentIndexChanged.connect(self.GI_changeServer)
 
         self.GI_btn_get_link.clicked.connect(self.GI_getImgSrc)
@@ -132,8 +137,9 @@ class GetImageLinkTab(QWidget):
             self.GI_lbl_result_file.setText("chapters.txt")
             self.GI_lbl_result_file.setEnabled(True)
 
-    def GI_updateProgress(self, value):
-        self.GI_progress_down.setValue(value)
+    def GI_updateProgress(self, data):
+        self.GI_progress_txt.setText(data[0])
+        self.GI_progress_down.setValue(data[1])
 
     def GI_refresh(self):
         self.GI_lbl_result_file.setText("")

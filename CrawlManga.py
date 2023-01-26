@@ -4,24 +4,21 @@ import sys
 
 import qtawesome as qta
 from icecream import ic
-from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QButtonGroup, QCheckBox,
                              QDesktopWidget, QFileDialog, QGridLayout,
                              QHeaderView, QLabel, QLineEdit, QMessageBox,
                              QProgressBar, QPushButton, QRadioButton, QSpinBox,
                              QTabWidget, QWidget)
-
-from SupportFunction import *
-
 from win10toast import ToastNotifier
 
-from RenameTab import *
-from DownloadNovelTab import *
-from GettingChapterTab import *
-from GetImageLinkTab import *
 from downloadComicURLTab import *
-    
+from DownloadNovelTab import *
+from GetImageLinkTab import *
+from GettingChapterTab import *
+from RenameTab import *
+from SupportFunction import *
 
 myappid = 'crawl_img.v2'  # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
