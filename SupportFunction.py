@@ -9,6 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 import re
+import docx
 from common import *
 
 
@@ -48,16 +49,31 @@ class RenameFolder(QObject):
         self.finished.emit()
 
 
+def writeChapter(chaps, title, content, targetFile=None, file_type='docx'):
+    if file_type == 'docx' and targetFile and isinstance(targetFile, docx.document.Document):
+        p = targetFile.add_heading(title.text.strip(), level=1)
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p = targetFile.add_paragraph(break_chapter_str)
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p = targetFile.add_paragraph(content.strip())
+        targetFile.add_page_break()
+        return targetFile
+    elif file_type == 'txt':
+        f = open("resource/"+str(chaps)+'.txt', encoding='utf8', mode='w+')
+        f.write(title.text.strip()+"\n")
+        f.write(content.strip()+'\n')
+        f.close()
+
+
 class DownloadNovel(QObject):
     finished = pyqtSignal(str)
     progress = pyqtSignal(tuple)
 
-    def __init__(self, link, start, end, novelName, author, file_name, server):
+    def __init__(self, link, start, end, novelName, author, file_name, server, file_type):
         QObject.__init__(self)
-        self.link, self.start, self.end, self.novelName, self.author, self.file_name, self.server = link, start, end, novelName, author, file_name, server
+        self.link, self.start, self.end, self.novelName, self.author, self.file_name, self.server, self.file_type = link, start, end, novelName, author, file_name, server, file_type
 
     def run(self):
-        document = Document()
         print(self.server)
 
         if self.file_name == "":
@@ -66,6 +82,9 @@ class DownloadNovel(QObject):
         else:
             filename = "resource/"+self.file_name.strip()
 
+        if self.file_type == 0:
+            document = Document()
+        
         try:
             if self.server == servers_novel["metruyencv"]:
                 count = 0
@@ -86,23 +105,19 @@ class DownloadNovel(QObject):
                     soup = BeautifulSoup(content_text, 'html.parser')
                     content_text = soup.text
 
-
                     if "— QUẢNG CÁO —" in content_text:
                         content_text = content_text.replace(
                             "— QUẢNG CÁO —", "")
-
-                    p = document.add_heading(title.text.strip(), level=1)
-                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    p = document.add_paragraph(break_chapter_str)
-                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    p = document.add_paragraph(content_text.strip())
-                    document.add_page_break()
+                    if self.file_type == 0:
+                        document = writeChapter(
+                            i, title, content_text, document)
+                    else:
+                        writeChapter(i, title, content_text, file_type='txt')
 
                     self.progress.emit((title.text.strip(), int(
                         count*100/(self.end-self.start+1))))
 
-                self.finished.emit(self.novelName + ' chap' +
-                                   str(self.start)+'_'+str(self.end)+'.docx')
+                self.finished.emit(filename+'.docx')
             elif self.server == servers_novel["sstruyen"]:
 
                 count = 0
@@ -131,8 +146,7 @@ class DownloadNovel(QObject):
 
                     self.progress.emit((title.text.strip(), int(
                         count*100/(self.end-self.start+1))))
-                self.finished.emit(self.novelName + ' chap' +
-                                   str(self.start)+'_'+str(self.end)+'.docx')
+                self.finished.emit(filename+'.docx')
 
             elif self.server == servers_novel["trumtruyen"]:
 
@@ -172,11 +186,11 @@ class DownloadNovel(QObject):
                     self.progress.emit((title.text.strip(), int(
                         count*100/(self.end-self.start+1))))
 
-                self.finished.emit(self.novelName + ' chap' +
-                                   str(self.start)+'_'+str(self.end)+'.docx')
+                self.finished.emit(filename+'.docx')
             elif self.server == servers_novel["truyenfull"]:
+                count = 0
                 for i in range(self.start, self.end+1):
-                    # r = requests.get(link_novel.replace('{0}', str(i)))
+                    count += 1
                     r = requests.get(self.link+str(i))
 
                     soup = BeautifulSoup(r.content, 'html.parser')
@@ -197,19 +211,23 @@ class DownloadNovel(QObject):
                     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                     p = document.add_paragraph(content_text.strip())
                     document.add_page_break()
+
+                    self.progress.emit((title.text.strip(), int(
+                        count*100/(self.end-self.start+1))))
+                self.finished.emit(filename+'.docx')
         except Exception as e:
             ic(e)
+            if self.file_type == 0:
+                core_properties = document.core_properties
+                core_properties.author = self.author
+                core_properties.comments = "Generated by Crawl Manga - An Đào"
+                document.save(filename+".docx")
+
+        if self.file_type == 0:
             core_properties = document.core_properties
             core_properties.author = self.author
             core_properties.comments = "Generated by Crawl Manga - An Đào"
             document.save(filename+".docx")
-
-        core_properties = document.core_properties
-        core_properties.author = self.author
-        core_properties.comments = "Generated by Crawl Manga - An Đào"
-        document.save(filename+".docx")
-
-        # os.system("ebook-convert "+doc_name + " " + azw3_name)
 
 
 class GetChapterLink(QObject):
@@ -242,10 +260,12 @@ class GetChapterLink(QObject):
                 self.progress.emit(int((idx+1)*100/len(links)))
 
         else:
-            show_ele = driver.find_element(By.CLASS_NAME, "ShowAllChapters")
-
-            if show_ele:
+            try:
+                show_ele = driver.find_element(
+                    By.CLASS_NAME, "ShowAllChapters")
                 show_ele.click()
+            except Exception as e:
+                ic(e)
 
             htmlSource = driver.page_source
 
@@ -425,6 +445,9 @@ class DownloadImage(QObject):
                 folname = x.split("Fol: ")[1].replace("\n", "")
                 crrFolder = folname
                 count = 0
+                if ":" in folname:
+                    folname = folname.replace(":", "")
+                    crrFolder = folname
 
                 if not os.path.exists(folname):
                     os.mkdir(crrFolder)

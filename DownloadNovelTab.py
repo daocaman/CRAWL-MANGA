@@ -23,7 +23,8 @@ class DownloadNovelTab(QWidget):
             "lb_end_chap": "To chap: ",
             "lb_result": "Resut file: ",
             "btn_download": "Download",
-            "lb_server": "Servers: "
+            "lb_server": "Servers: ",
+            "lb_file_type": "Output types"
         }
 
         self.DV_lb_main_title = QLabel(tabs["DV"])
@@ -45,7 +46,8 @@ class DownloadNovelTab(QWidget):
         self.layout.addWidget(self.DV_lb_server, 2, 0)
 
         self.DV_sb_server = QComboBox()
-        self.DV_sb_server.addItems(["metruyencv", "sstruyen", "trumtruyen", "truyenfull"])
+        self.DV_sb_server.addItems(
+            ["metruyencv", "sstruyen", "trumtruyen", "truyenfull"])
         self.layout.addWidget(self.DV_sb_server, 2, 1, 1, 3)
 
         self.DV_lb_novel_name = QLabel(self.DV_common_str["lb_novel_name"])
@@ -94,32 +96,41 @@ class DownloadNovelTab(QWidget):
         self.DV_spb_end_chap.setMaximum(10000)
         self.layout.addWidget(self.DV_spb_end_chap, 6, 3)
 
+        self.DV_lb_file_type = QLabel(self.DV_common_str["lb_file_type"])
+        self.DV_lb_file_type.setStyleSheet(
+            common_font["bold"]+common_color["info"])
+        self.layout.addWidget(self.DV_lb_file_type, 7, 0)
+
+        self.DV_sb_file_types = QComboBox()
+        self.DV_sb_file_types.addItems(["docx", "txt"])
+        self.layout.addWidget(self.DV_sb_file_types, 7, 1, 1, 3)
+
         self.DV_lb_result = QLabel(self.DV_common_str["lb_result"])
         self.DV_lb_result.setStyleSheet(
             common_font["bold"]+common_color["info"])
-        self.layout.addWidget(self.DV_lb_result, 7, 0)
+        self.layout.addWidget(self.DV_lb_result, 8, 0)
 
         self.DV_lb_file_name = QLabelLink("")
         self.DV_lb_file_name.setStyleSheet(
             common_font["underline"]+common_color["primiary"])
         self.DV_lb_file_name.setEnabled(False)
-        self.layout.addWidget(self.DV_lb_file_name, 7, 1, 1, 2)
+        self.layout.addWidget(self.DV_lb_file_name, 8, 1, 1, 2)
 
         self.DV_btn_download = QPushButton(self.DV_common_str["btn_download"])
         self.DV_btn_download.setStyleSheet(btns["default"]+btns["danger"])
         self.DV_btn_download.setEnabled(False)
-        self.layout.addWidget(self.DV_btn_download, 7, 3)
+        self.layout.addWidget(self.DV_btn_download, 8, 3)
 
         self.DV_progress_down = QProgressBar()
         self.DV_progress_down.setValue(0)
-        self.layout.addWidget(self.DV_progress_down, 8, 0, 1, 4)
+        self.layout.addWidget(self.DV_progress_down, 9, 0, 1, 4)
 
         self.DV_lb_progress = QLabel()
         self.DV_lb_progress.setStyleSheet(common_color["warning"])
-        self.layout.addWidget(self.DV_lb_progress, 9, 0, 1, 4)
+        self.layout.addWidget(self.DV_lb_progress, 10, 0, 1, 4)
 
         self.layout.setSpacing(15)
-        self.layout.setRowStretch(10, 1)
+        self.layout.setRowStretch(11, 1)
 
         self.DV_tb_link.textChanged.connect(self.DV_updateState)
         self.DV_tb_novel_name.textChanged.connect(self.DV_updateState)
@@ -132,12 +143,13 @@ class DownloadNovelTab(QWidget):
     def DV_updateState(self, newStr):
         if "http" in self.DV_tb_link.text() and self.DV_tb_novel_name.text() != "":
             self.DV_btn_download.setEnabled(True)
+        
 
     def DV_downloadNovel(self):
         self.DV_thread = QThread()
 
         self.worker = DownloadNovel(self.DV_tb_link.text(), self.DV_spb_start_chap.value(
-        ), self.DV_spb_end_chap.value(), self.DV_tb_novel_name.text(), self.DV_tb_novel_author.text(), self.DV_tb_file_name.text(), self.DV_sb_server.currentIndex())
+        ), self.DV_spb_end_chap.value(), self.DV_tb_novel_name.text(), self.DV_tb_novel_author.text(), self.DV_tb_file_name.text(), self.DV_sb_server.currentIndex(), self.DV_sb_file_types.currentIndex())
 
         self.worker.moveToThread(self.DV_thread)
 
