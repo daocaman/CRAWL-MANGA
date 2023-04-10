@@ -5,17 +5,20 @@ from icecream import ic
 from bs4 import BeautifulSoup
 import requests
 import os
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
+import time
 
 n = ToastNotifier()
 
 options = Options()
-options.headless = True
-
-link = "https://mangadex.org/title/82213ce1-5d4c-4357-98cf-cbd33a148522/juhou-kaikin-hyde-closer?tab=art"
+options.add_argument("--headless")
 
 
-driver = webdriver.Firefox(
-    options=options, executable_path=r'./geckodriver.exe')
+link = "https://mangadex.org/title/202d0eaf-df73-4368-a360-0abb28c07b01/bokutachi-wa-hanshoku-wo-yameta?tab=art"
+
+
+driver = webdriver.Firefox(options = options, service=Service(GeckoDriverManager().install()))
 driver.get(link)
 
 soup = BeautifulSoup(driver.page_source, 'html.parser')
