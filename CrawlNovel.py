@@ -10,14 +10,14 @@ n = ToastNotifier()
 
 document = Document()
 
-start = 336
-end = 405
+start = 1791
+end = 1792
 
 vol = -1
 
-link_novel = 'https://sstruyen.vn/ma-thoi-den/chuong-'
+link_novel = 'https://sstruyen.vn/mao-son-troc-quy-nhan/chuong-'
 
-book_name = "Ma Thổi Đèn"
+book_name = "Mao Sơn Tróc Quỷ Nhân"
 
 author = "Thiên Hạ Bá Xướng"
 
