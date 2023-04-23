@@ -1,57 +1,60 @@
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 from win10toast import ToastNotifier
 from icecream import ic
-from bs4 import BeautifulSoup
 import requests
 import os
-from selenium.webdriver.firefox.service import Service
-from webdriver_manager.firefox import GeckoDriverManager
-import time
 
 n = ToastNotifier()
 
-options = Options()
-options.add_argument("--headless")
+# change this
+link_mangadex = "https://mangadex.org/title/32fdfe9b-6e11-4a13-9e36-dcd8ea77b4e4/kanojo-okarishimasu"
 
+part_link = link_mangadex.split("/")
 
-link = "https://mangadex.org/title/202d0eaf-df73-4368-a360-0abb28c07b01/bokutachi-wa-hanshoku-wo-yameta?tab=art"
+if len(part_link) > 1:
+    manga_idx = part_link[-2]
 
+offset = 0
+link_api = "https://api.mangadex.org/cover?order[volume]=asc&manga[]={manga_idx}&limit=100&offset={offset}"
 
-driver = webdriver.Firefox(options = options, service=Service(GeckoDriverManager().install()))
-driver.get(link)
+link_api = link_api.replace("{manga_idx}", manga_idx)
 
-soup = BeautifulSoup(driver.page_source, 'html.parser')
+r = requests.get(link_api)
 
-imgs = soup.find_all('a',  to=True)
-
-ic(len(imgs))
+data = r.json()
 
 covers = []
-for img in imgs:
-    if img['href'] not in covers:
-        covers.append(img['href'])
-        ic(img['href'])
 
 if not os.path.exists('covers'):
     os.mkdir("covers")
+while True:
+    crr_link = link_api.replace("{offset}", str(offset))
+    r = requests.get(crr_link)
+    result = r.json()
+    data = result["data"]
+    for cover in data:
+        cover_link = "https://mangadex.org/covers/"
+        cover_link = cover_link + \
+            cover["relationships"][0]['id']+'/' + \
+            cover["attributes"]["fileName"]
 
+        tmp_vol = cover["attributes"]["volume"]
+        if len(tmp_vol) == 1:
+            tmp_vol = "0" + tmp_vol
+        filename = tmp_vol + "." + \
+            cover["attributes"]["fileName"].split(".")[-1]
 
-for idx, cover in enumerate(covers):
-    r = requests.get(cover, headers={
+        ic(cover_link)
+        r = requests.get(cover_link, headers={
                                  'User-agent': 'Mozilla/5.0', 'Referer': "https://mangadex.org/"}, timeout=(3, 5))
-    if idx <=8:
-        filename = "0" + str(idx+1)
-    else:
-        filename = str(idx+1)
-    with open("covers"+"/"+filename+".jpg", "wb") as fd:
-        if(r.status_code != 200):
-            ic("error")
-        else:
-            fd.write(r.content)
 
-n.show_toast("Download cover complete","Download success",duration=2)
+        with open("covers"+"/"+filename, "wb") as fd:
+            if(r.status_code != 200):
+                ic("error")
+            else:
+                fd.write(r.content)
+    
+    offset += 100
+    if result['total'] < offset:
+        break 
 
-# from selenium.webdriver.firefox.options import Options
-
-driver.close()
+n.show_toast('Success','Download cover complete!!!')
