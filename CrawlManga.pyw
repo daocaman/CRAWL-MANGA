@@ -1,22 +1,16 @@
 import ctypes
-import os
 import sys
 
-import qtawesome as qta
-from icecream import ic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (QApplication, QButtonGroup, QCheckBox,
-                             QDesktopWidget, QFileDialog, QGridLayout,
-                             QHeaderView, QLabel, QLineEdit, QMessageBox,
-                             QProgressBar, QPushButton, QRadioButton, QSpinBox,
-                             QTabWidget, QWidget)
-from win10toast import ToastNotifier
+from PyQt5.QtWidgets import (QApplication, QDesktopWidget,  QGridLayout,
+                             QLabel, QTabWidget, QWidget)
 
 from downloadComicURLTab import *
 from DownloadNovelTab import *
-from GetImageLinkTab import *
 from GettingChapterTab import *
+from DownloadInfoComicTab import *
+from ArchiveComicTab import *
 from RenameTab import *
 from SupportFunction import *
 
@@ -30,7 +24,7 @@ class CrawlManga(QWidget):
 
         resolution = QDesktopWidget().screenGeometry()
         self.title = 'My manga tool'
-        self.width = 750
+        self.width = 850
         self.height = 450
         self.left = int((resolution.width() / 2) - (self.width / 2))
         self.top = int((resolution.height() / 2) - (self.height / 2))
@@ -46,7 +40,7 @@ class CrawlManga(QWidget):
         self.show()
 
     def initMainLayout(self):
-        self.mainTitle_style = common_color["primiary"] + \
+        self.mainTitle_style = common_color["primary"] + \
             font["main_title"]+common_font["bold"]
 
         self.mainLayout = QGridLayout()
@@ -75,16 +69,18 @@ class CrawlManga(QWidget):
         self.tab_rn = RenameTab()
         self.tab_dv = DownloadNovelTab()
         self.tab_gc = GettingChapterTab()
-        self.tab_gi = GetImageLinkTab()
         self.tab_dc = DownloadComicURLTab()
+        self.tab_gi = DownloadInfoComicTab()
+        self.tab_ac = ArchiveComicTab()
 
-        self.tabs.addTab(self.tab_rn, tabs["RN"])
-        self.tabs.addTab(self.tab_dv, tabs["DV"])
-        self.tabs.addTab(self.tab_gc, tabs["GC"])
-        self.tabs.addTab(self.tab_gi, tabs["GI"])
-        self.tabs.addTab(self.tab_dc, tabs["DC"])
+        self.tabs.addTab(self.tab_rn, tabs["RN"]["s"])
+        self.tabs.addTab(self.tab_dv, tabs["DV"]["s"])
+        self.tabs.addTab(self.tab_gc, tabs["GC"]["s"])
+        self.tabs.addTab(self.tab_dc, tabs["DC"]["s"])
+        self.tabs.addTab(self.tab_gi, tabs["GI"]["s"])
+        self.tabs.addTab(self.tab_ac, tabs["AC"]["s"])
 
-    
+
 def main():
     app = QApplication(sys.argv)
     ex = CrawlManga()

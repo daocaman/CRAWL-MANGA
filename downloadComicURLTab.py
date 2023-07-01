@@ -1,11 +1,14 @@
 import os
 
 from PyQt5.QtCore import Qt, QThread
-from PyQt5.QtWidgets import (QGridLayout, QLabel, QLineEdit, QComboBox,
-                             QProgressBar, QPushButton, QWidget, QSpinBox)
+from PyQt5.QtWidgets import (QGridLayout, QLabel,
+                             QProgressBar, QPushButton, QWidget)
 from QLabelLink import *
 from common import *
 from SupportFunction import *
+
+import subprocess
+
 
 class DownloadComicURLTab(QWidget):
     def __init__(self, *args, **kwargs):
@@ -22,7 +25,7 @@ class DownloadComicURLTab(QWidget):
             "lb_progress": "Progress: "
         }
 
-        self.DC_lb_main_title = QLabel(tabs["DC"])
+        self.DC_lb_main_title = QLabel(tabs["DC"]['l'])
         self.DC_lb_main_title.setStyleSheet(
             common_font["bold"]+common_color["success"]+font["title"])
         self.layout.addWidget(
@@ -41,19 +44,21 @@ class DownloadComicURLTab(QWidget):
             self.DC_lbl_file.setText('...')
             self.DC_lbl_file.setEnabled(False)
 
-        
-        self.DC_lbl_file.clicked.connect(lambda: os.system('code ' + 'resource/chapters.txt'))
+        self.DC_lbl_file.clicked.connect(
+            lambda: subprocess.run([vscode, 'resource/chapters.txt']))
 
         self.DC_lb_progress = QLabel(self.DC_common_str["lb_progress"])
-        self.DC_lb_progress.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.DC_lb_progress.setStyleSheet(
+            common_font["bold"]+common_color["info"])
         self.layout.addWidget(self.DC_lb_progress, 2, 0)
 
         self.DC_progress_down = QProgressBar()
         self.DC_progress_down.setValue(0)
         self.layout.addWidget(self.DC_progress_down, 2, 1, 1, 3)
 
-        self.DC_lb_progress_txt =  QLabel()
-        self.DC_lb_progress_txt.setStyleSheet(common_font["bold"]+common_color["warning"])
+        self.DC_lb_progress_txt = QLabel()
+        self.DC_lb_progress_txt.setStyleSheet(
+            common_font["bold"]+common_color["warning"])
         self.layout.addWidget(self.DC_lb_progress_txt, 3, 0, 1, 3)
 
         self.DC_btn_download = QPushButton(self.DC_common_str["btn_download"])
@@ -91,5 +96,3 @@ class DownloadComicURLTab(QWidget):
     def DC_finish_download(self):
         n.show_toast(msg["suc_dc"]["t"], msg["suc_dc"]
                      ["m"], duration=2, threaded=True)
-    
-

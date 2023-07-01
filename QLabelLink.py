@@ -17,7 +17,7 @@ class QLabelLink(QLabel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.setStyleSheet(common_font["underline"]+common_color["primiary"])
+        self.setStyleSheet(common_font["underline"]+common_color["primary"])
 
     def mousePressEvent(self, event):
         self.clicked.emit()

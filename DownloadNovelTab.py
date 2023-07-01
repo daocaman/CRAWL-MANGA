@@ -1,11 +1,11 @@
-import os
-
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtWidgets import (QGridLayout, QLabel, QLineEdit, QComboBox,
                              QProgressBar, QPushButton, QWidget, QSpinBox)
 from QLabelLink import *
 from common import *
 from SupportFunction import *
+
+import subprocess
 
 
 class DownloadNovelTab(QWidget):
@@ -27,7 +27,7 @@ class DownloadNovelTab(QWidget):
             "lb_file_type": "Output types"
         }
 
-        self.DV_lb_main_title = QLabel(tabs["DV"])
+        self.DV_lb_main_title = QLabel(tabs["DV"]['l'])
         self.DV_lb_main_title.setStyleSheet(
             common_font["bold"]+common_color["success"]+font["title"])
         self.layout.addWidget(
@@ -112,7 +112,7 @@ class DownloadNovelTab(QWidget):
 
         self.DV_lb_file_name = QLabelLink("")
         self.DV_lb_file_name.setStyleSheet(
-            common_font["underline"]+common_color["primiary"])
+            common_font["underline"]+common_color["primary"])
         self.DV_lb_file_name.setEnabled(False)
         self.layout.addWidget(self.DV_lb_file_name, 8, 1, 1, 2)
 
@@ -143,7 +143,6 @@ class DownloadNovelTab(QWidget):
     def DV_updateState(self, newStr):
         if "http" in self.DV_tb_link.text() and self.DV_tb_novel_name.text() != "":
             self.DV_btn_download.setEnabled(True)
-        
 
     def DV_downloadNovel(self):
         self.DV_thread = QThread()
@@ -164,15 +163,24 @@ class DownloadNovelTab(QWidget):
         self.worker.finished.connect(self.DV_finish_download)
 
     def DV_openFolder(self):
-        os.system("start " + "resource")
+        subprocess.Popen(['explorer', 'resource'])
 
     def DV_updateProgress(self, data):
         self.DV_lb_progress.setText(data[0])
         self.DV_progress_down.setValue(data[1])
 
-    def DV_finish_download(self, filename):
-        self.DV_lb_file_name.setEnabled(True)
-        self.DV_lb_file_name.setText(filename)
+    def DV_finish_download(self, info):
 
-        n.show_toast(msg["suc_dv"]["t"], msg["suc_dv"]
-                     ["m"], duration=2, threaded=True)
+        if info[1] == 200:
+            self.DV_lb_file_name.setEnabled(True)
+            self.DV_lb_file_name.setText(info[0])
+            n.show_toast(msg["suc_dv"]["t"], msg["suc_dv"]
+                         ["m"], duration=2, threaded=True)
+        elif info[1] == 400:
+            n.show_toast(msg["err_dv"]["t"], msg["err_dv"]
+                         ["m"], duration=2, threaded=True)
+            self.DV_progress_down.setValue(0)
+            self.DV_lb_progress.setText(info[0])
+
+        else: 
+            n.show_toast(info[0], info[0], duration=2, threaded=True)

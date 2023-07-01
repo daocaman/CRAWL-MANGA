@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import (QFileDialog, QGridLayout, QLabel, QLineEdit,
 from common import *
 from SupportFunction import *
 from QLabelLink import *
+import shutil
+import subprocess
 
 
 class RenameTab(QWidget):
@@ -22,7 +24,7 @@ class RenameTab(QWidget):
             "btn_rename": "Rename"
         }
 
-        self.RN_lb_main_title = QLabel(tabs["RN"])
+        self.RN_lb_main_title = QLabel(tabs["RN"]["l"])
         self.RN_lb_main_title.setStyleSheet(
             common_font["bold"]+common_color["success"]+font["title"])
         self.layout.addWidget(
@@ -70,7 +72,10 @@ class RenameTab(QWidget):
         self.setLayout(self.layout)
 
     def RN_openfile(self):
-        os.system('code ' + 'resource/list_files_new.txt')
+        if shutil.which('code'):
+            subprocess.call(['code', 'resource\\list_files_new.txt'], shell=True )
+        else: 
+            subprocess.call(['start', 'resource\\list_files_new.txt'], shell=True )
 
     def RN_resetState(self):
         self.RN_lb_result_file.setText("")

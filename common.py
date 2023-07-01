@@ -1,7 +1,11 @@
 from win10toast import ToastNotifier
 
+CREATE_NO_WINDOW = 0x08000000
+
+vscode = 'C:\\Users\\AN_DAO\\AppData\\Local\\Programs\\Microsoft VS Code\\code.exe'
+
 common_color = {
-    "primiary": "color: #007bff;",
+    "primary": "color: #007bff;",
     "success": "color: #28a745;",
     "info": "color: #17a2b8;",
     "warning": "color: #ffc107;",
@@ -20,11 +24,35 @@ font = {
 }
 
 tabs = {
-    "RN": "Rename Folder",
-    "GC": "Getting Chapter",
-    "DV": "Download Novel",
-    "GI": "Getting image url",
-    "DC": "Download Comic URL"
+    "RN": {
+        "s": "R. Folder",
+        "l": "Rename Folder"
+    },
+
+    "GC": {
+        "s": "G. Chapter",
+        'l': "Getting Chapter"
+    },
+    "DV": {
+        "s": "D. Novel",
+        "l": "Download Novel"
+    },
+    "GI": {
+        "s": "G.I. URL",
+        "l": "Getting Image URL"
+    },
+    "DC": {
+        "s": "D.C URL",
+        "l": "Download Comic URL"
+    },
+    "GI": {
+        "s": "G.I Comic",
+        "l": "Getting Info Comic"
+    },
+    "AC": {
+        "s": "A. Comic",
+        "l": "Archive Comic"
+    },
 }
 
 btns = {
@@ -57,12 +85,14 @@ servers_manga = {
 msg = {
     "suc_rn": {"t": "Success", "m": "Rename folder done!!!"},
     "suc_dv": {"t": "Complete", "m": "Download novel done!!!"},
+    "err_dv": {"t": "Error", "m": "No internet connection!!!"},
     "suc_gc": {"t": "Success", "m": "Getting link chapter complete!!!"},
     "err_di_er": {"t": "Error", "m": "Something wrong happen!!!"},
     "err_di_401": {"t": "Error", "m": "Missing value or file!!!"},
     "suc_di": {"t": "Success", "m": "Getting image source complete!!!"},
     "suc_dc": {"t": "Success", "m": "Download image complete!!!"},
-    
+    "suc_gi": {"t": "Success", "m": "Download comic info complete!!!"},
+
 
 }
 
