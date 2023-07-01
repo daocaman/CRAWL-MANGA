@@ -10,6 +10,8 @@ import docx
 from common import *
 import json
 from requests.exceptions import *
+from PIL import Image
+from skimage import io
 
 
 def generateName(num, l):
@@ -52,6 +54,38 @@ def generateChapterImg(chapter_str):
 def generatePageImg(page):
     result_page = "000" + str(page)
     return result_page[-3:]
+
+
+def downloadImage(link, server, file, count):
+    if os.path.exists(file):
+        try:
+            img = Image.open(file)  # open the image file
+            img.verify()  # verify that it is, in fact an image
+            img = io.imread(file)
+            return 200
+        except:
+            os.remove(file)
+            if count < 3:
+                return downloadImage(link, server, file,  count+1)
+    else:
+        if count < 3:
+            try:
+                r = requests.get(link.replace("\n", ""), headers={
+                    'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
+
+                flag = False
+                with open(file, "wb") as fd:
+                    if (r.status_code != 200):
+                        flag = True
+                    else:
+                        fd.write(r.content)
+
+                if flag:
+                    return downloadImage(link, server, file, count+1)
+                else:
+                    return downloadImage(link, server, file, count)
+            except:
+                return 400
 
 
 class RenameFolder(QObject):
@@ -288,24 +322,40 @@ class GetChapterLink(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(dict)
 
-    def __init__(self, link, server, keyword=""):
+    def __init__(self, link, server):
         QObject.__init__(self)
-        self.link, self.server, self.keyword = link, server, keyword
-        ic(self.keyword)
+        self.link, self.server = link, server
 
     def run(self):
 
         r = requests.get(self.link.strip(), headers={
                          'User-agent': 'Mozilla/5.0'})
 
-        link_f = open('resource/link.txt', 'w+', encoding='utf-8')
-        chapters_f = open('resource/chapters.txt', 'w+', encoding='utf-8')
-
         links = []
 
         self.progress.emit({"title": "Stage 1", "percent": -1})
 
+        link_s = self.link.split("/")
+
+        ic(link_s)
+
+        l_server = "/".join(link_s[0:3])
+        ic(l_server)
+
+        chapters_obj = {}
+
+        chapters_obj["server"] = l_server
+
+        chapters_obj["chapters"] = {}
+
         if self.server == "nettruyen":
+
+            mang_name_link = link_s[-1]
+            mang_name_link = mang_name_link.split('-')
+            mang_name_link.pop()
+            mang_name_link = "-".join(mang_name_link)
+
+            self.keyword = mang_name_link
 
             htmlSource = r.content
             soup = BeautifulSoup(htmlSource, 'html.parser')
@@ -324,7 +374,6 @@ class GetChapterLink(QObject):
             count = 0
             for link in links:
 
-                link_f.write(link.strip()+'\n')
                 count += 1
 
                 r = requests.get(link.strip(), headers={
@@ -337,19 +386,29 @@ class GetChapterLink(QObject):
                 title = soup.find('title')
                 title = title.text.split(" Next Chap ")[0].strip()
 
+                chap = title.split(" ")[-1]
+                odd = -1
+                if len(chap.split(".")) >= 2:
+                    odd = chap.split(".")[-1]
+                    chap = chap.split(".")[0]
+
+                title = "Chapter " + generateName(chap, 4)
+                if odd != -1:
+                    title = title + "." + odd
+
                 ic(title)
 
-                chapters_f.write("Fol: "+title+"\n")
+                chapters_obj["chapters"][title] = []
 
                 imgs = soup.find_all("img", src=re.compile('data=net'))
 
                 for idxx, img in enumerate(imgs):
-                    chapters_f.write('https:'+img['src']+"\n")
+                    chapters_obj["chapters"][title].append('https:'+img['src'])
                 self.progress.emit(
                     {"title": title, "percent": int((count)*100/len(links))})
 
-            link_f.close()
-            chapters_f.close()
+            with open("resource/chapter.json", "w+") as outfile:
+                outfile.write(json.dumps(chapters_obj, indent=2))
 
         else:
             r = requests.get(self.link.strip())
@@ -384,7 +443,7 @@ class GetChapterLink(QObject):
 
                     link = "https://mangasee123.com/read-online/" + index_name + \
                         generateChapterLink(chap["Chapter"]) + ".html"
-                    link_f.write(link+'\n')
+
                     r = requests.get(link)
                     f_tmp = open('tmp.html', 'w+', encoding='utf-8')
                     f_tmp.write(r.text)
@@ -398,11 +457,12 @@ class GetChapterLink(QObject):
                                 "vm.CurPathName = ", "").strip().replace(";", "").replace('"', "")
                             break
 
-                    chapters_f.write('Fol: Chapter ' +
-                                     generateChapterImg(chap["Chapter"])+'\n')
+                    chap_name = "Chapter " + \
+                        generateChapterImg(chap["Chapter"])
+                    chapters_obj["chapters"][chap_name] = []
 
                     self.progress.emit(
-                        {"title": chap["Chapter"], "percent": int((chap_idx+1)/len(chapters)*100)})
+                        {"title": chap_name, "percent": int((chap_idx+1)/len(chapters)*100)})
 
                     for p_idx in range(1, int(chap["Page"])+1):
                         img_link = "https://{curPathName}/manga/{index_name}/{directory}{img}.png"
@@ -417,16 +477,14 @@ class GetChapterLink(QObject):
                         img_link = img_link.replace("{img}", generateChapterImg(
                             chap["Chapter"])+"-"+generatePageImg(p_idx))
 
-                        chapters_f.write(img_link+'\n')
-
-                link_f.close()
-                chapters_f.close()
-
+                        chapters_obj["chapters"][chap_name].append(img_link)
+                with open("resource/chapter.json", "w+") as outfile:
+                    outfile.write(json.dumps(chapters_obj, indent=2))
         self.finished.emit()
 
 
 class DownloadImage(QObject):
-    finished = pyqtSignal()
+    finished = pyqtSignal(tuple)
     progress = pyqtSignal(tuple)
 
     def __init__(self):
@@ -434,89 +492,54 @@ class DownloadImage(QObject):
 
     def run(self):
 
-        l_f = open('resource/link.txt', 'r', encoding="utf8")
-        server = l_f.readline().strip()
+        chap_f = open('resource/chapter.json', 'r', encoding='utf-8')
 
-        server = server.replace("https://", "")
-        server = "https://"+server.split("/")[0]
-        ic(server)
+        chapter_obj = json.load(chap_f)
 
-        f = open("resource/chapters.txt", "r", encoding="utf8")
+        keys_chap = list(chapter_obj["chapters"])
 
-        links = []
-        for x in f:
-            links.append(x)
+        print(keys_chap)
 
-        crrFolder = ""
+        crr_chap = keys_chap[0]
 
-        count = 0
-        countAll = 0
+        print(crr_chap)
 
-        errFile = open("error.txt", "w+", encoding="utf8")
+        crr_idx = 0
 
-        for i, x in enumerate(links):
-            ic(x)
-            countAll += 1
+        if "prev_down" in chapter_obj.keys():
+            crr_chap = chapter_obj["prev_down"]
+            crr_idx = keys_chap.index(crr_chap)
 
-            if "Fol: " in x:
-                folname = x.split("Fol: ")[1].replace("\n", "")
-                crrFolder = folname
-                count = 0
-                if ":" in folname:
-                    folname = folname.replace(":", "")
-                    crrFolder = folname
+        breakAll = False
+        while crr_idx != len(keys_chap):
 
-                if not os.path.exists(folname):
-                    os.mkdir(crrFolder)
+            crr_chap = keys_chap[crr_idx]
 
-                self.progress.emit((folname, int(
-                    countAll*100/(len(links)))))
+            self.progress.emit(
+                (crr_chap, int((crr_idx+1)*100/(len(keys_chap)))))
 
-            else:
-                try:
-                    count += 1
-                    r = requests.get(x.replace("\n", ""), headers={
-                        'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
-                    ic(r)
 
-                    # two digit for one file image (mod=2)
-                    mod = 2
-                    if mod == 2:
-                        if count < 10:
-                            with open(crrFolder+"/"+"0"+str(count)+".jpg", "wb") as fd:
+            if not os.path.exists(crr_chap):
+                os.mkdir(crr_chap)
 
-                                if (r.status_code != 200):
-                                    errFile.write(
-                                        crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
-                                else:
-                                    fd.write(r.content)
-                        else:
-                            with open(crrFolder+"/"+str(count)+".jpg", "wb") as fd:
+            for idx, link in enumerate(chapter_obj["chapters"][crr_chap]):
+                res = downloadImage(
+                    link, chapter_obj['server'], crr_chap+"/"+generateName(idx+1, 3)+'.jpg', 0)
 
-                                if (r.status_code != 200):
-                                    errFile.write(
-                                        crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
-                                else:
-                                    fd.write(r.content)
-                    else:
-
-                        with open(crrFolder+"/"+str(count)+".jpg", "wb") as fd:
-
-                            if (r.status_code != 200):
-                                errFile.write(
-                                    crrFolder+"/"+str(count)+".jpg" + " - "+x+"\n")
-                            else:
-                                fd.write(r.content)
-
-                    self.progress.emit(("", int(
-                        countAll*100/(len(links)))))
-                except Exception as e:
-                    ic(e)
-                    errFile.write(crrFolder+"/"+str(count) +
-                                  ".jpg" + " - "+x+"\n")
-                    continue
-        self.finished.emit()
-        errFile.close()
+                if res == 200:
+                    self.progress.emit(
+                        (crr_chap + ' - ' + generateName(idx+1, 3)+'.jpg', int((crr_idx+1)*100/(len(keys_chap)))))
+                else:
+                    self.finished.emit(('Error', 400))
+                    chapter_obj["prev_down"] = crr_chap
+                    with open("resource/chapter.json", "w+") as outfile:
+                        outfile.write(json.dumps(chapter_obj, indent=2))
+                    return
+            if breakAll:
+                break
+            crr_idx += 1
+       
+        self.finished.emit(('Success', 200))
 
 
 class DownloadInfoComic(QObject):
@@ -611,7 +634,7 @@ class DownloadInfoComic(QObject):
 
                     ic(cover_link)
 
-                    covers.append({'link':cover_link, 'filename': filename})
+                    covers.append({'link': cover_link, 'filename': filename})
 
                 offset += 100
                 if result['total'] < offset:

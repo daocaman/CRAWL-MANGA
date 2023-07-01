@@ -93,6 +93,10 @@ class DownloadComicURLTab(QWidget):
         if data[0] != "":
             self.DC_lb_progress_txt.setText(data[0])
 
-    def DC_finish_download(self):
-        n.show_toast(msg["suc_dc"]["t"], msg["suc_dc"]
-                     ["m"], duration=2, threaded=True)
+    def DC_finish_download(self, data):
+        if data[1] == 200:
+            n.show_toast(msg["suc_dc"]["t"], msg["suc_dc"]
+                        ["m"], duration=2, threaded=True)
+        else: 
+            self.DC_lb_progress_txt.setText(data[0])
+            n.show_toast('Error', 'Please check all condition!!!', duration=2, threaded=True)

@@ -5,4 +5,5 @@ pip install win10toast
 pip install beautifulsoup4
 pip install requests
 pip install python-docx
-pip install selenium
+pip install Pillow
+pip install scikit-image
