@@ -1,4 +1,6 @@
 from PyQt5.QtCore import Qt, QThread
+
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (QGridLayout, QLabel, QLineEdit,
                              QProgressBar, QPushButton, QWidget, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView)
 from QLabelLink import *
@@ -18,6 +20,7 @@ class DownloadInfoComicTab(QWidget):
         self.GI_common_str = {
             'lb_link': "Link Mangadex: ",
             "chkb_cover": "Download cover",
+            "chkb_vol_chapters": "Download volume chapters",
             'lb_info': "Comic volume info",
             'lb_progress': "Progress: ",
             'lb_cover': 'Cover: ',
@@ -42,6 +45,12 @@ class DownloadInfoComicTab(QWidget):
         self.GI_chk_cover = QCheckBox(self.GI_common_str["chkb_cover"])
         self.GI_chk_cover.setStyleSheet(common_color["info"])
         self.layout.addWidget(self.GI_chk_cover, 2, 0, 1, 1)
+
+        self.GI_chk_vol_chapters = QCheckBox(
+            self.GI_common_str["chkb_vol_chapters"])
+        self.GI_chk_vol_chapters.setStyleSheet(common_color["info"])
+        self.GI_chk_vol_chapters.setChecked(True)
+        self.layout.addWidget(self.GI_chk_vol_chapters, 2, 1, 1, 1)
 
         self.GI_progress_down = QProgressBar()
         self.GI_progress_down.setValue(0)
@@ -71,6 +80,11 @@ class DownloadInfoComicTab(QWidget):
         self.GI_lb_info.setStyleSheet(common_font["bold"]+common_color["info"])
         self.layout.addWidget(self.GI_lb_info, 6, 0, 1, 1)
 
+        self.GI_lbl_vol_chapters = QLabelLink()
+        self.GI_lbl_vol_chapters.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.layout.addWidget(self.GI_lbl_vol_chapters, 6, 1, 1, 1)
+        self.GI_lbl_vol_chapters.setEnabled(False)
+
         self.GI_btn_save = QPushButton(self.GI_common_str['btn_save_info'])
         self.GI_btn_save.setStyleSheet(btns["default"]+btns["info"])
         self.layout.addWidget(self.GI_btn_save, 6, 3, 1, 1)
@@ -83,33 +97,43 @@ class DownloadInfoComicTab(QWidget):
 
         self.GI_btn_download.clicked.connect(self.GI_downloadInfo)
         self.GI_lbl_cov_res.clicked.connect(self.GI_openCover)
+        self.GI_lbl_vol_chapters.clicked.connect(self.GI_openChaptersJSON)
         self.GI_btn_save.clicked.connect(self.GI_saveInfo)
+
+    def GI_openChaptersJSON(self):
+        subprocess.run(['start', 'resource\\vol_chapter.json'], shell=True)
 
     def GI_openCover(self):
         subprocess.Popen(['explorer', 'resource\\covers'])
 
     def GI_saveInfo(self):
 
-        res_obj = []
+        res_obj = {}
 
-        for i in range(0, self.GI_tb_info.rowCount()-1):
-            if i != 0:
+        res_obj["comic"] = self.GI_tb_info.item(0, 1).text()
+        res_obj["author"] = self.GI_tb_info.item(1, 1).text()
+
+        res_obj['vols'] = []
+
+        for i in range(2, self.GI_tb_info.rowCount()-1):
+            if i != 2:
                 if not (int(self.GI_tb_info.item(i, 1).text()) > int(self.GI_tb_info.item(i-1, 2).text())):
                     n.show_toast('Saving error logical', 'Volume ' +
-                                 str(i+1), duration=2, threaded=True)
+                                 str(i-1), duration=2, threaded=True)
                     return
-
-            res_obj.append([
-                int(self.GI_tb_info.item(i, 0).text()),
-                int(self.GI_tb_info.item(i, 1).text()),
-                int(self.GI_tb_info.item(i, 2).text()),
-            ])
+            tmp_vol = {}
+            tmp_vol['Volume'] = int(self.GI_tb_info.item(i, 0).text())
+            tmp_vol['start'] = int(self.GI_tb_info.item(i, 1).text())            
+            tmp_vol['end'] = int(self.GI_tb_info.item(i, 2).text())
+            res_obj['vols'].append(tmp_vol)
 
         with open("resource/vol_chapter.json", "w+") as outfile:
             outfile.write(json.dumps(res_obj, indent=2))
 
-        n.show_toast('Success', 'Saving suceess!!!', duration=2, threaded=True)
+        self.GI_lbl_vol_chapters.setEnabled(True)
+        self.GI_lbl_vol_chapters.setText('vol_chapter.json')
 
+        n.show_toast('Success', 'Saving suceess!!!', duration=2, threaded=True)
 
     def GI_downloadInfo(self):
 
@@ -122,7 +146,7 @@ class DownloadInfoComicTab(QWidget):
         self.GI_thread = QThread()
 
         self.worker = DownloadInfoComic(
-            self.link_mangadex, self.GI_chk_cover.isChecked())
+            self.link_mangadex, self.GI_chk_cover.isChecked(), self.GI_chk_vol_chapters.isChecked())
 
         self.worker.moveToThread(self.GI_thread)
 
@@ -150,15 +174,33 @@ class DownloadInfoComicTab(QWidget):
 
             results_info = info[0]
 
-            self.GI_tb_info.setRowCount(len(results_info))
+            self.GI_tb_info.setRowCount(len(results_info)+1)
             self.GI_tb_info.setColumnCount(3)
             self.GI_tb_info.setHorizontalHeaderLabels(
                 ["Volume", "Start chap", "End chap"])
 
+
+            tmp_font = QFont()
+            tmp_font.setBold(True)
+
+            self.GI_tb_info.setItem(0, 0, QTableWidgetItem('Author'))
+            self.GI_tb_info.item(0,0).setFont(tmp_font)
+            self.GI_tb_info.setItem(0, 1, QTableWidgetItem(results_info[0][0]))
+            self.GI_tb_info.setSpan(0, 1, 1, 2)
+
+            self.GI_tb_info.setItem(1, 0, QTableWidgetItem('Comic'))
+            self.GI_tb_info.item(1,0).setFont(tmp_font)
+            self.GI_tb_info.setItem(1, 1, QTableWidgetItem(results_info[0][1]))
+            self.GI_tb_info.setSpan(1, 1, 1, 2)
+
             for idx, vol in enumerate(results_info):
-                self.GI_tb_info.setItem(idx, 0, QTableWidgetItem(str(vol[0])))
-                self.GI_tb_info.setItem(idx, 1, QTableWidgetItem(str(vol[1])))
-                self.GI_tb_info.setItem(idx, 2, QTableWidgetItem(str(vol[2])))
+                if idx !=0:
+                    self.GI_tb_info.setItem(
+                        idx + 1, 0, QTableWidgetItem(str(vol[0])))
+                    self.GI_tb_info.setItem(
+                        idx + 1, 1, QTableWidgetItem(str(vol[1])))
+                    self.GI_tb_info.setItem(
+                        idx + 1, 2, QTableWidgetItem(str(vol[2])))
 
             self.GI_tb_info.horizontalHeader().setStretchLastSection(True)
             self.GI_tb_info.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

@@ -22,7 +22,8 @@ class ArchiveComicTab(QWidget):
             'lb_source': 'Source folder: ',
             'lb_destination': 'Destination folder: ',
             'btn_src': 'Get source',
-            'btn_dest': 'Get dest'
+            'btn_dest': 'Get dest',
+            'btn_archive': "Archive"
         }
 
         self.AC_lb_main_title = QLabel(tabs["AC"]['l'])
@@ -75,8 +76,21 @@ class ArchiveComicTab(QWidget):
         self.AC_btn_dest.setStyleSheet(btns["default"]+btns["success"])
         self.layout.addWidget(self.AC_btn_dest, 4, 3, 1, 1)
 
+        self.GI_progress_down = QProgressBar()
+        self.GI_progress_down.setValue(0)
+        self.layout.addWidget(self.GI_progress_down, 5, 0, 1, 3)
+
+        self.AC_btn_archive = QPushButton(self.AC_common_str['btn_archive'])
+        self.AC_btn_archive.setStyleSheet(btns["default"]+btns["danger"])
+        self.layout.addWidget(self.AC_btn_archive, 5, 3, 1, 1)
+
+        self.AC_lb_progress_txt = QLabel()
+        self.AC_lb_progress_txt.setStyleSheet(
+            common_font["bold"]+common_color["warning"])
+        self.layout.addWidget(self.AC_lb_progress_txt, 6, 0, 1, 3)
+
         self.layout.setSpacing(15)
-        self.layout.setRowStretch(10, 1)
+        self.layout.setRowStretch(7, 1)
 
         self.AC_lbl_chaps.clicked.connect(self.AC_openChaptersFile)
         self.AC_lbl_covs.clicked.connect(self.AC_openCoverFolder)
@@ -86,23 +100,28 @@ class ArchiveComicTab(QWidget):
     def AC_chooseSrc(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ShowDirsOnly
-        dir = QFileDialog.getExistingDirectory(self, "Choose folder to getting chapter")
+        dir = QFileDialog.getExistingDirectory(self, "Choose folder to getting chapters and info comic")
         if dir:
             self.AC_tb_src_folder.setText(dir)
+            if os.path.exists(dir+'/covers'):
+                self.AC_lbl_covs.setText(dir+'/covers')
+            if os.path.exists(dir+'/vol_chapter.json'):
+                self.AC_lbl_chaps.setText(dir+'/vol_chapter.json')
+            self.AC_tb_dest_folder.setText(dir)
     
     def AC_chooseDest(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ShowDirsOnly
-        dir = QFileDialog.getExistingDirectory(self, "Choose folder to archive comic")
+        dir = QFileDialog.getExistingDirectory(self, "Choose destination to archive comic")
         if dir:
             self.AC_tb_dest_folder.setText(dir)
     
     def AC_openChaptersFile(self):
         if shutil.which('code'):
-            subprocess.call(['code', 'resource\\vol_chapter.json'], shell=True )
+            subprocess.call(['code', self.AC_lbl_chaps.text()], shell=True )
         else: 
-            subprocess.call(['start', 'resource\\vol_chapter.json'], shell=True )
+            subprocess.call(['start', self.AC_lbl_chaps.text()], shell=True )
 
     def AC_openCoverFolder(self):
-        subprocess.Popen(['explorer', 'resource\\covers'])
+        subprocess.Popen(['explorer', self.AC_lbl_covs.text()], shell=True)
 

@@ -319,7 +319,7 @@ class DownloadNovel(QObject):
 
 
 class GetChapterLink(QObject):
-    finished = pyqtSignal()
+    finished = pyqtSignal(tuple)
     progress = pyqtSignal(dict)
 
     def __init__(self, link, server):
@@ -342,145 +342,190 @@ class GetChapterLink(QObject):
         l_server = "/".join(link_s[0:3])
         ic(l_server)
 
-        chapters_obj = {}
+        if os.path.exists('resource/chapter.json'):
+            f_json = open('resource/chapter.json', 'r', encoding='utf8')
+            chapters_obj = json.load(f_json)
+            f_json.close()
+        else:
+            chapters_obj = {}
 
-        chapters_obj["server"] = l_server
+            chapters_obj["server"] = l_server
 
-        chapters_obj["chapters"] = {}
+            chapters_obj["chapters"] = {}
+            chapters_obj["links"] = []
 
-        if self.server == "nettruyen":
+        try: 
+            if self.server == "nettruyen":
 
-            mang_name_link = link_s[-1]
-            mang_name_link = mang_name_link.split('-')
-            mang_name_link.pop()
-            mang_name_link = "-".join(mang_name_link)
+                mang_name_link = link_s[-1]
+                mang_name_link = mang_name_link.split('-')
+                mang_name_link.pop()
+                mang_name_link = "-".join(mang_name_link)
 
-            self.keyword = mang_name_link
-
-            htmlSource = r.content
-            soup = BeautifulSoup(htmlSource, 'html.parser')
-
-            link_chapters = soup.find_all(id="nt_listchapter")
-            link_chapters = link_chapters[0].find_all(
-                href=re.compile(self.keyword))
-
-            for idx, link in enumerate(link_chapters):
-                links.insert(0, link['href'])
-                self.progress.emit(
-                    {"title": link['href'], "percent": int((idx+1)*100/len(link_chapters))})
-
-            self.progress.emit({"title": "Stage 2", "percent": -1})
-
-            count = 0
-            for link in links:
-
-                count += 1
-
-                r = requests.get(link.strip(), headers={
-                    'User-agent': 'Mozilla/5.0'})
+                self.keyword = mang_name_link
 
                 htmlSource = r.content
-
                 soup = BeautifulSoup(htmlSource, 'html.parser')
 
-                title = soup.find('title')
-                title = title.text.split(" Next Chap ")[0].strip()
+                link_chapters = soup.find_all(id="nt_listchapter")
+                link_chapters = link_chapters[0].find_all(
+                    href=re.compile(self.keyword))
 
-                chap = title.split(" ")[-1]
-                odd = -1
-                if len(chap.split(".")) >= 2:
-                    odd = chap.split(".")[-1]
-                    chap = chap.split(".")[0]
-
-                title = "Chapter " + generateName(chap, 4)
-                if odd != -1:
-                    title = title + "." + odd
-
-                ic(title)
-
-                chapters_obj["chapters"][title] = []
-
-                imgs = soup.find_all("img", src=re.compile('data=net'))
-
-                for idxx, img in enumerate(imgs):
-                    chapters_obj["chapters"][title].append('https:'+img['src'])
-                self.progress.emit(
-                    {"title": title, "percent": int((count)*100/len(links))})
-
-            with open("resource/chapter.json", "w+") as outfile:
-                outfile.write(json.dumps(chapters_obj, indent=2))
-
-        else:
-            r = requests.get(self.link.strip())
-
-            f = open('resource/test.html', mode='w+', encoding='utf-8')
-            f.write(r.text)
-            f.close()
-
-            chapters = []
-            index_name = ""
-
-            f = open('resource/test.html', mode='r+', encoding='utf-8')
-
-            self.progress.emit({"title": "Stage 1", "percent": -1})
-            for line in f.readlines():
-                if "vm.CurPathName = " in line:
-                    cur_path_name = line.replace("vm.CurPathName = ", "")
-
-                if "vm.IndexName = " in line:
-                    index_name = line.replace("vm.IndexName = ", "")
-                    index_name = index_name.strip()
-                    index_name = index_name.replace('"', '').replace(";", "")
-
-                if "vm.CHAPTERS =" in line:
-                    chapters = json.loads(line.replace(
-                        'vm.CHAPTERS = ', "").replace(";", ""))
-
-            self.progress.emit({"title": "Stage 2", "percent": -1})
-
-            if len(chapters) != 0:
-                for chap_idx, chap in enumerate(chapters):
-
-                    link = "https://mangasee123.com/read-online/" + index_name + \
-                        generateChapterLink(chap["Chapter"]) + ".html"
-
-                    r = requests.get(link)
-                    f_tmp = open('tmp.html', 'w+', encoding='utf-8')
-                    f_tmp.write(r.text)
-                    f_tmp.close()
-                    f_tmp = open('tmp.html', 'r+', encoding='utf-8')
-
-                    cur_path_name = ""
-                    for line in f_tmp.readlines():
-                        if "vm.CurPathName = " in line:
-                            cur_path_name = line.replace(
-                                "vm.CurPathName = ", "").strip().replace(";", "").replace('"', "")
-                            break
-
-                    chap_name = "Chapter " + \
-                        generateChapterImg(chap["Chapter"])
-                    chapters_obj["chapters"][chap_name] = []
-
+                for idx, link in enumerate(link_chapters):
+                    links.insert(0, link['href'])
                     self.progress.emit(
-                        {"title": chap_name, "percent": int((chap_idx+1)/len(chapters)*100)})
+                        {"title": link['href'], "percent": int((idx+1)*100/len(link_chapters))})
 
-                    for p_idx in range(1, int(chap["Page"])+1):
-                        img_link = "https://{curPathName}/manga/{index_name}/{directory}{img}.png"
-                        img_link = img_link.replace(
-                            "{curPathName}", cur_path_name)
-                        img_link = img_link.replace("{index_name}", index_name)
-                        if chap["Directory"] != "":
-                            img_link = img_link.replace(
-                                "{directory}", chap["Directory"])
-                        else:
-                            img_link = img_link.replace("{directory}", "")
-                        img_link = img_link.replace("{img}", generateChapterImg(
-                            chap["Chapter"])+"-"+generatePageImg(p_idx))
+                self.progress.emit({"title": "Stage 2", "percent": -1})
 
-                        chapters_obj["chapters"][chap_name].append(img_link)
+                count = 0
+                for link in links:
+
+                    count += 1
+
+                    split_link_chap = link.split('/')
+                    id_chap_link = split_link_chap[-2]+'/'+split_link_chap[-1]
+
+                    if id_chap_link in chapters_obj["links"]:
+                        ic(id_chap_link)
+                        self.progress.emit(
+                            {"title": "Skip down", "percent": int((count)*100/len(links))})
+                    else:
+
+                        r = requests.get(link.strip(), headers={
+                            'User-agent': 'Mozilla/5.0'})
+
+                        htmlSource = r.content
+
+                        soup = BeautifulSoup(htmlSource, 'html.parser')
+
+                        title = soup.find('title')
+                        title = title.text.split(" Next Chap ")[0].strip()
+
+                        chap = title.split(" ")[-1]
+                        odd = -1
+                        if len(chap.split(".")) >= 2:
+                            odd = chap.split(".")[-1]
+                            chap = chap.split(".")[0]
+
+                        title = "Chapter " + generateName(chap, 4)
+                        if odd != -1:
+                            title = title + "." + odd
+
+                        ic(title)
+
+                        chapters_obj["chapters"][title] = []
+
+                        divs = soup.find_all("div", id=re.compile('page_'))
+
+                        self.progress.emit(
+                                {"title": title, "percent": int((count)*100/len(links))})
+
+                        for idxx, div in enumerate(divs):
+                            img = div.find('img')
+                            print(img['src'])
+                            chapters_obj["chapters"][title].append(
+                                'https:'+img['src'])
+
+                        if len(chapters_obj["chapters"][title]) > 0:
+                            chapters_obj['links'].append(id_chap_link)
+
                 with open("resource/chapter.json", "w+") as outfile:
                     outfile.write(json.dumps(chapters_obj, indent=2))
-        self.finished.emit()
+
+            else:
+                r = requests.get(self.link.strip())
+
+                f = open('resource/test.html', mode='w+', encoding='utf-8')
+                f.write(r.text)
+                f.close()
+
+                chapters = []
+                index_name = ""
+
+                f = open('resource/test.html', mode='r+', encoding='utf-8')
+
+                self.progress.emit({"title": "Stage 1", "percent": -1})
+                for line in f.readlines():
+                    if "vm.CurPathName = " in line:
+                        cur_path_name = line.replace("vm.CurPathName = ", "")
+
+                    if "vm.IndexName = " in line:
+                        index_name = line.replace("vm.IndexName = ", "")
+                        index_name = index_name.strip()
+                        index_name = index_name.replace('"', '').replace(";", "")
+
+                    if "vm.CHAPTERS =" in line:
+                        chapters = json.loads(line.replace(
+                            'vm.CHAPTERS = ', "").replace(";", ""))
+
+                self.progress.emit({"title": "Stage 2", "percent": -1})
+
+                if len(chapters) != 0:
+                    for chap_idx, chap in enumerate(chapters):
+
+                        id_chap_link = index_name + \
+                            generateChapterLink(chap["Chapter"])
+
+                        if id_chap_link in chapters_obj['links']:
+                            ic(id_chap_link)
+                            self.progress.emit(
+                                {"title": "Skip down", "percent": int((chap_idx+1)/len(chapters)*100)})
+                        else:
+
+                            link = "https://mangasee123.com/read-online/" + id_chap_link + ".html"
+
+                            r = requests.get(link)
+                            f_tmp = open('tmp.html', 'w+', encoding='utf-8')
+                            f_tmp.write(r.text)
+                            f_tmp.close()
+                            f_tmp = open('tmp.html', 'r+', encoding='utf-8')
+
+                            cur_path_name = ""
+                            for line in f_tmp.readlines():
+                                if "vm.CurPathName = " in line:
+                                    cur_path_name = line.replace(
+                                        "vm.CurPathName = ", "").strip().replace(";", "").replace('"', "")
+                                    break
+
+                            chap_name = "Chapter " + \
+                                generateChapterImg(chap["Chapter"])
+                            chapters_obj["chapters"][chap_name] = []
+
+                            self.progress.emit(
+                                {"title": chap_name, "percent": int((chap_idx+1)/len(chapters)*100)})
+
+                            for p_idx in range(1, int(chap["Page"])+1):
+                                img_link = "https://{curPathName}/manga/{index_name}/{directory}{img}.png"
+                                img_link = img_link.replace(
+                                    "{curPathName}", cur_path_name)
+                                img_link = img_link.replace(
+                                    "{index_name}", index_name)
+                                if chap["Directory"] != "":
+                                    img_link = img_link.replace(
+                                        "{directory}", chap["Directory"])
+                                else:
+                                    img_link = img_link.replace("{directory}", "")
+                                img_link = img_link.replace("{img}", generateChapterImg(
+                                    chap["Chapter"])+"-"+generatePageImg(p_idx))
+
+                                chapters_obj["chapters"][chap_name].append(
+                                    img_link)
+
+
+                            if len(chapters_obj["chapters"][chap_name]) > 0:
+                                chapters_obj['links'].append(id_chap_link)
+                            
+                            
+                    with open("resource/chapter.json", "w+") as outfile:
+                        outfile.write(json.dumps(chapters_obj, indent=2))
+        except Exception as e:
+            ic(e)
+            with open("resource/chapter.json", "w+") as outfile:
+                outfile.write(json.dumps(chapters_obj, indent=2))
+            self.finished.emit(("Error!", 400))
+
+        self.finished.emit(("Success!!!", 200))
 
 
 class DownloadImage(QObject):
@@ -518,7 +563,6 @@ class DownloadImage(QObject):
             self.progress.emit(
                 (crr_chap, int((crr_idx+1)*100/(len(keys_chap)))))
 
-
             if not os.path.exists(crr_chap):
                 os.mkdir(crr_chap)
 
@@ -538,7 +582,7 @@ class DownloadImage(QObject):
             if breakAll:
                 break
             crr_idx += 1
-       
+
         self.finished.emit(('Success', 200))
 
 
@@ -546,11 +590,12 @@ class DownloadInfoComic(QObject):
     finished = pyqtSignal(tuple)
     progress = pyqtSignal(tuple)
 
-    def __init__(self, link, isCover):
+    def __init__(self, link, isCover, isVolChapters):
         QObject.__init__(self)
 
         self.link = link
         self.isCover = isCover
+        self.isVolChapters = isVolChapters
 
     def run(self):
 
@@ -559,48 +604,91 @@ class DownloadInfoComic(QObject):
         if len(part_link) > 1:
             manga_idx = part_link[-2]
 
-        self.progress.emit(('Stage 1: Download volume info', 0))
+        self.progress.emit(('Stage 1: Download comic info', 0))
 
-        offset = 0
+        link_cminfo_api = "https://api.mangadex.org/manga/{manga_idx}?includes[]=artist&includes[]=author&includes[]=cover_art"
+        link_cminfo_api = link_cminfo_api.replace("{manga_idx}", manga_idx)
 
-        link_volInfo_api = "https://api.mangadex.org/manga/{manga_idx}/feed?includes[]=scanlation_group&includes[]=user&order[volume]=asc&order[chapter]=asc&offset={offset}"
+        r = requests.get(link_cminfo_api, headers={'User-agent': 'Mozilla/5.0'})
 
-        link_volInfo_api = link_volInfo_api.replace("{manga_idx}", manga_idx)
+        data = r.json()["data"]
 
-        total = 0
+        title = data["attributes"]['title']
+        comic_name = title[list(title)[0]]
+        ic(comic_name)
 
-        vols = dict()
+        author = ""
 
-        while True:
-            tmp = link_volInfo_api.replace("{offset}", str(offset))
-            r = requests.get(tmp)
-            data = r.json()
-            total = data['total']
-            for chap in data["data"]:
-                crr_vol = chap["attributes"]["volume"]
-                if chap["attributes"]["chapter"] is not None:
-                    crr_chap = int(float(chap["attributes"]["chapter"]))
-                else:
-                    continue
-
-                if crr_vol not in vols.keys():
-                    vols[crr_vol] = []
-                if crr_chap not in vols[crr_vol]:
-                    vols[crr_vol].append(crr_chap)
-
-            offset += 100
-            if offset > total:
-                break
+        author_data = data["relationships"]
+        for rel in author_data:
+            if rel['type'] == 'author':
+                author = rel['attributes']['name']
+        
+        self.progress.emit(('Complete stage 1: '+str(comic_name)+' - '+author, 100))
 
         results = []
-        for idx, key in enumerate(vols.keys()):
-            if key is not None:
-                self.progress.emit(('Volume '+str(key), int(
-                    (idx+1)*100/(len(vols.keys())))))
-                if len(vols[key]) > 2:
-                    results.append([int(key), vols[key][0], vols[key][-1]])
 
-        print(results)
+        results.append([comic_name, author])
+
+        if self.isVolChapters:
+            self.progress.emit(('Stage 2: Download volume info', 0))
+
+            offset = 0
+
+            link_volInfo_api = "https://api.mangadex.org/manga/{manga_idx}/feed?includes[]=scanlation_group&includes[]=user&order[volume]=asc&order[chapter]=asc&offset={offset}"
+
+            link_volInfo_api = link_volInfo_api.replace("{manga_idx}", manga_idx)
+
+            total = 0
+
+            vols = dict()
+
+            count_repeat = 0
+
+            while True:
+
+                tmp = link_volInfo_api.replace("{offset}", str(offset))
+
+                try: 
+                    r = requests.get(tmp,  headers={
+                        'User-agent': 'Mozilla/5.0', 'Referer': 'https://mangadex.org/'}, timeout=(3, 5))
+                    ic(tmp)
+                    data = r.json()
+                    count_repeat = 0
+
+
+                    total = data['total']
+                    for chap in data["data"]:
+                        crr_vol = chap["attributes"]["volume"]
+                        if chap["attributes"]["chapter"] is not None:
+                            crr_chap = int(float(chap["attributes"]["chapter"]))
+                        else:
+                            continue
+
+                        if crr_vol not in vols.keys():
+                            vols[crr_vol] = []
+                        if crr_chap not in vols[crr_vol]:
+                            vols[crr_vol].append(crr_chap)
+
+                    offset += 100
+                    if offset > total:
+                        break
+                except json.decoder.JSONDecodeError as errJson:
+                    ic(errJson)
+                    count_repeat = count_repeat+1
+                    if count_repeat == 5:
+                        self.finished.emit(("Something error happen!!!", -1))
+                        return
+                    else:
+                        continue 
+
+            
+            for idx, key in enumerate(vols.keys()):
+                if key is not None:
+                    self.progress.emit(('Volume '+str(key), int(
+                        (idx+1)*100/(len(vols.keys())))))
+                    if len(vols[key]) > 2:
+                        results.append([int(key), vols[key][0], vols[key][-1]])
 
         if self.isCover:
 

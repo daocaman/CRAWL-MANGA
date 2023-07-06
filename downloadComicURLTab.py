@@ -38,14 +38,14 @@ class DownloadComicURLTab(QWidget):
         self.DC_lbl_file = QLabelLink()
         self.layout.addWidget(self.DC_lbl_file, 1, 1, 1, 3)
 
-        if os.path.exists('resource/chapters.txt'):
-            self.DC_lbl_file.setText('chapters.txt')
+        if os.path.exists('resource/chapter.json'):
+            self.DC_lbl_file.setText('chapter.json')
         else:
             self.DC_lbl_file.setText('...')
             self.DC_lbl_file.setEnabled(False)
 
         self.DC_lbl_file.clicked.connect(
-            lambda: subprocess.run([vscode, 'resource/chapters.txt']))
+            lambda: subprocess.run(['start', 'resource/chapter.json'], shell=True))
 
         self.DC_lb_progress = QLabel(self.DC_common_str["lb_progress"])
         self.DC_lb_progress.setStyleSheet(
@@ -96,7 +96,8 @@ class DownloadComicURLTab(QWidget):
     def DC_finish_download(self, data):
         if data[1] == 200:
             n.show_toast(msg["suc_dc"]["t"], msg["suc_dc"]
-                        ["m"], duration=2, threaded=True)
-        else: 
+                         ["m"], duration=2, threaded=True)
+        else:
             self.DC_lb_progress_txt.setText(data[0])
-            n.show_toast('Error', 'Please check all condition!!!', duration=2, threaded=True)
+            n.show_toast('Error', 'Please check all condition!!!',
+                         duration=2, threaded=True)
