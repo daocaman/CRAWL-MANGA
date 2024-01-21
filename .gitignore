@@ -2,5 +2,5 @@
 *.log
 *.azw3
 *.docx
-resource
+resource/covers
 __pycache__
