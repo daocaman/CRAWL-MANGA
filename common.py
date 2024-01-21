@@ -92,6 +92,7 @@ msg = {
     "suc_di": {"t": "Success", "m": "Getting image source complete!!!"},
     "suc_dc": {"t": "Success", "m": "Download image complete!!!"},
     "suc_gi": {"t": "Success", "m": "Download comic info complete!!!"},
+    "suc_ac": {"t": "Success", "m": "Archive comic complete!!!"},
 
 
 }

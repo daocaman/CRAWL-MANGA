@@ -14,7 +14,7 @@ from ArchiveComicTab import *
 from RenameTab import *
 from SupportFunction import *
 
-myappid = 'crawl_img.v2'  # arbitrary string
+myappid = 'an_dao.crawl_img.2'  # arbitrary string
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 

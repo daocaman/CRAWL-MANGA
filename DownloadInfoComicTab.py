@@ -115,7 +115,7 @@ class DownloadInfoComicTab(QWidget):
 
         res_obj['vols'] = []
 
-        for i in range(2, self.GI_tb_info.rowCount()-1):
+        for i in range(2, self.GI_tb_info.rowCount()):
             if i != 2:
                 if not (int(self.GI_tb_info.item(i, 1).text()) > int(self.GI_tb_info.item(i-1, 2).text())):
                     n.show_toast('Saving error logical', 'Volume ' +
@@ -172,6 +172,7 @@ class DownloadInfoComicTab(QWidget):
                 self.GI_lbl_cov_res.setEnabled(True)
                 self.GI_lbl_cov_res.setText('resource/covers')
 
+
             results_info = info[0]
 
             self.GI_tb_info.setRowCount(len(results_info)+1)
@@ -183,12 +184,12 @@ class DownloadInfoComicTab(QWidget):
             tmp_font = QFont()
             tmp_font.setBold(True)
 
-            self.GI_tb_info.setItem(0, 0, QTableWidgetItem('Author'))
+            self.GI_tb_info.setItem(0, 0, QTableWidgetItem('Comic'))
             self.GI_tb_info.item(0,0).setFont(tmp_font)
             self.GI_tb_info.setItem(0, 1, QTableWidgetItem(results_info[0][0]))
             self.GI_tb_info.setSpan(0, 1, 1, 2)
 
-            self.GI_tb_info.setItem(1, 0, QTableWidgetItem('Comic'))
+            self.GI_tb_info.setItem(1, 0, QTableWidgetItem('Author'))
             self.GI_tb_info.item(1,0).setFont(tmp_font)
             self.GI_tb_info.setItem(1, 1, QTableWidgetItem(results_info[0][1]))
             self.GI_tb_info.setSpan(1, 1, 1, 2)

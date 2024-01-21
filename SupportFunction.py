@@ -12,6 +12,7 @@ import json
 from requests.exceptions import *
 from PIL import Image
 from skimage import io
+import shutil
 
 
 def generateName(num, l):
@@ -354,7 +355,7 @@ class GetChapterLink(QObject):
             chapters_obj["chapters"] = {}
             chapters_obj["links"] = []
 
-        try: 
+        try:
             if self.server == "nettruyen":
 
                 mang_name_link = link_s[-1]
@@ -371,10 +372,13 @@ class GetChapterLink(QObject):
                 link_chapters = link_chapters[0].find_all(
                     href=re.compile(self.keyword))
 
+                ic(link_chapters)
+
                 for idx, link in enumerate(link_chapters):
-                    links.insert(0, link['href'])
-                    self.progress.emit(
-                        {"title": link['href'], "percent": int((idx+1)*100/len(link_chapters))})
+                    if link['href'] != "#":
+                        links.insert(0, link['href'])
+                        self.progress.emit(
+                            {"title": link['href'], "percent": int((idx+1)*100/len(link_chapters))})
 
                 self.progress.emit({"title": "Stage 2", "percent": -1})
 
@@ -419,13 +423,13 @@ class GetChapterLink(QObject):
                         divs = soup.find_all("div", id=re.compile('page_'))
 
                         self.progress.emit(
-                                {"title": title, "percent": int((count)*100/len(links))})
+                            {"title": title, "percent": int((count)*100/len(links))})
 
                         for idxx, div in enumerate(divs):
                             img = div.find('img')
-                            print(img['src'])
+                            print(img['data-original'])
                             chapters_obj["chapters"][title].append(
-                                'https:'+img['src'])
+                                'https:'+img['data-original'])
 
                         if len(chapters_obj["chapters"][title]) > 0:
                             chapters_obj['links'].append(id_chap_link)
@@ -453,7 +457,8 @@ class GetChapterLink(QObject):
                     if "vm.IndexName = " in line:
                         index_name = line.replace("vm.IndexName = ", "")
                         index_name = index_name.strip()
-                        index_name = index_name.replace('"', '').replace(";", "")
+                        index_name = index_name.replace(
+                            '"', '').replace(";", "")
 
                     if "vm.CHAPTERS =" in line:
                         chapters = json.loads(line.replace(
@@ -505,18 +510,17 @@ class GetChapterLink(QObject):
                                     img_link = img_link.replace(
                                         "{directory}", chap["Directory"])
                                 else:
-                                    img_link = img_link.replace("{directory}", "")
+                                    img_link = img_link.replace(
+                                        "{directory}", "")
                                 img_link = img_link.replace("{img}", generateChapterImg(
                                     chap["Chapter"])+"-"+generatePageImg(p_idx))
 
                                 chapters_obj["chapters"][chap_name].append(
                                     img_link)
 
-
                             if len(chapters_obj["chapters"][chap_name]) > 0:
                                 chapters_obj['links'].append(id_chap_link)
-                            
-                            
+
                     with open("resource/chapter.json", "w+") as outfile:
                         outfile.write(json.dumps(chapters_obj, indent=2))
         except Exception as e:
@@ -609,7 +613,8 @@ class DownloadInfoComic(QObject):
         link_cminfo_api = "https://api.mangadex.org/manga/{manga_idx}?includes[]=artist&includes[]=author&includes[]=cover_art"
         link_cminfo_api = link_cminfo_api.replace("{manga_idx}", manga_idx)
 
-        r = requests.get(link_cminfo_api, headers={'User-agent': 'Mozilla/5.0'})
+        r = requests.get(link_cminfo_api, headers={
+                         'User-agent': 'Mozilla/5.0'})
 
         data = r.json()["data"]
 
@@ -623,8 +628,9 @@ class DownloadInfoComic(QObject):
         for rel in author_data:
             if rel['type'] == 'author':
                 author = rel['attributes']['name']
-        
-        self.progress.emit(('Complete stage 1: '+str(comic_name)+' - '+author, 100))
+
+        self.progress.emit(
+            ('Complete stage 1: '+str(comic_name)+' - '+author, 100))
 
         results = []
 
@@ -637,7 +643,8 @@ class DownloadInfoComic(QObject):
 
             link_volInfo_api = "https://api.mangadex.org/manga/{manga_idx}/feed?includes[]=scanlation_group&includes[]=user&order[volume]=asc&order[chapter]=asc&offset={offset}"
 
-            link_volInfo_api = link_volInfo_api.replace("{manga_idx}", manga_idx)
+            link_volInfo_api = link_volInfo_api.replace(
+                "{manga_idx}", manga_idx)
 
             total = 0
 
@@ -649,19 +656,19 @@ class DownloadInfoComic(QObject):
 
                 tmp = link_volInfo_api.replace("{offset}", str(offset))
 
-                try: 
+                try:
                     r = requests.get(tmp,  headers={
                         'User-agent': 'Mozilla/5.0', 'Referer': 'https://mangadex.org/'}, timeout=(3, 5))
                     ic(tmp)
                     data = r.json()
                     count_repeat = 0
 
-
                     total = data['total']
                     for chap in data["data"]:
                         crr_vol = chap["attributes"]["volume"]
                         if chap["attributes"]["chapter"] is not None:
-                            crr_chap = int(float(chap["attributes"]["chapter"]))
+                            crr_chap = int(
+                                float(chap["attributes"]["chapter"]))
                         else:
                             continue
 
@@ -680,14 +687,13 @@ class DownloadInfoComic(QObject):
                         self.finished.emit(("Something error happen!!!", -1))
                         return
                     else:
-                        continue 
+                        continue
 
-            
             for idx, key in enumerate(vols.keys()):
                 if key is not None:
                     self.progress.emit(('Volume '+str(key), int(
                         (idx+1)*100/(len(vols.keys())))))
-                    if len(vols[key]) > 2:
+                    if len(vols[key]) >= 2:
                         results.append([int(key), vols[key][0], vols[key][-1]])
 
         if self.isCover:
@@ -715,9 +721,13 @@ class DownloadInfoComic(QObject):
                         cover["attributes"]["fileName"]
 
                     tmp_vol = cover["attributes"]["volume"]
-                    if len(tmp_vol) == 1:
-                        tmp_vol = "0" + tmp_vol
-                    filename = tmp_vol + "." + \
+
+                    size_img = 3
+
+                    if tmp_vol and "." in tmp_vol:
+                        size_img = 4
+
+                    filename = generateName(tmp_vol, size_img) + "." + \
                         cover["attributes"]["fileName"].split(".")[-1]
 
                     ic(cover_link)
@@ -745,3 +755,131 @@ class DownloadInfoComic(QObject):
                                 (idx+1)*100/(len(covers)))))
 
         self.finished.emit((results, 200))
+
+
+def createNameFolder(link, comic, vol, type_c):
+    if type_c == 'folder':
+        return link + '/' + comic + ' - Vol' + str(vol)
+    elif type_c == 'info':
+        return link + '/' + comic + ' - Vol' + str(vol) + '/ComicInfo.xml'
+    elif type_c == 'progress':
+        return comic + ' - Vol' + str(vol)
+    elif type_c == 'fol_cov':
+        return (link + '/' + comic + ' - Vol' + str(vol) + '/00_Cover', link + '/' + comic + ' - Vol' + str(vol) + '/00_Cover/0000.jpg')
+    else:
+        return link + '/' + comic + ' - Vol' + str(vol)+'/' + '0000.jpg'
+
+
+class ArchiveComic(QObject):
+    finished = pyqtSignal(tuple)
+    progress = pyqtSignal(tuple)
+
+    def __init__(self, src, des, vol_chap, cover="", isMakeFolder=False):
+        QObject.__init__(self)
+
+        self.src, self.des, self.vol_chap, self.cover, self.isMakeFolder = src, des, vol_chap, cover, isMakeFolder
+
+    def run(self):
+
+        xmlContaint = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +\
+            "<ComicInfo xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +\
+            "{content}" +\
+            "</ComicInfo>"
+
+        if self.src == "" or self.des == "" or self.vol_chap == "":
+            self.finished.emit(('Please fill the information'))
+
+        f = open(self.vol_chap, 'r', encoding='utf8')
+        vol_chaps = json.load(f)
+        f.close()
+
+        self.progress.emit(('Stage 1: Create cover', 0))
+
+        tmp_fol_name = vol_chaps['comic']
+        if 'comic_s' in vol_chaps.keys():
+            tmp_fol_name = vol_chaps['comic_s']
+
+        count_vol = 0
+        total_vol = vol_chaps['end_vol'] - vol_chaps['start_vol'] + 1
+        for i in range(vol_chaps['start_vol'], vol_chaps['end_vol'] + 1):
+            count_vol = count_vol + 1
+
+            self.progress.emit((createNameFolder(self.des, tmp_fol_name, i, 'progress'), int(
+                count_vol*100/(total_vol))))
+            crr_fol = createNameFolder(
+                self.des, tmp_fol_name, i, 'folder')
+            if not os.path.exists(crr_fol):
+                os.mkdir(crr_fol)
+
+        self.progress.emit(('Stage 2: Comic info', 0))
+
+        count_vol = 0
+        for i in range(vol_chaps['start_vol'], vol_chaps['end_vol'] + 1):
+            count_vol = count_vol + 1
+            series = "<Series>"+vol_chaps['comic']+"</Series>\n"
+            volume = "<Volume>"+str(i)+"</Volume>\n"
+            writer = "<Writer>"+vol_chaps['author']+"</Writer>\n"
+            final = xmlContaint
+            final = final.replace("{content}", series+volume+writer)
+            f_comic_info = open(createNameFolder(
+                self.des, tmp_fol_name, i, 'info'), 'w+', encoding='utf8')
+            f_comic_info.write(final)
+            f_comic_info.close()
+            self.progress.emit((createNameFolder(self.des, tmp_fol_name, i, 'progress'), int(
+                count_vol*100/(total_vol))))
+
+        self.progress.emit(('Stage 3: Move chapters - volume', 0))
+
+        chapter_link_fol = os.listdir(self.src)
+
+        count_vol = 0
+        for i in range(vol_chaps['start_vol']-1, vol_chaps['end_vol']):
+            count_vol = count_vol+1
+            tmp_link_fol = createNameFolder(
+                self.des, tmp_fol_name, i+1, 'folder')
+            chapter_link_vol = []
+            for chap_idx in range(vol_chaps['vols'][i]['start'], vol_chaps['vols'][i]['end']+1):
+                tmp = [x for x in chapter_link_fol if "Chapter " +
+                       generateName(str(chap_idx), 4) in x]
+                chapter_link_vol.extend(tmp)
+            self.progress.emit((createNameFolder(self.des, tmp_fol_name, i+1, 'progress'), int(
+                count_vol*100/(total_vol))))
+            for chap in chapter_link_vol:
+                shutil.copytree(self.src+'/' + chap, tmp_link_fol + '/' + chap)
+
+        if self.cover != "":
+            self.progress.emit(('Move cover', 0))
+
+            list_cov_files = os.listdir(self.cover)
+            count_vol = 0
+            for i in range(vol_chaps['start_vol'], vol_chaps['end_vol']+1):
+                count_vol = count_vol+1
+                target_cov = [
+                    x for x in list_cov_files if generateName(i, 3) in x][0]
+                ic(target_cov)
+
+                tmp_link_fol, img = createNameFolder(
+                    self.des, tmp_fol_name, i, 'fol_cov')
+
+                if self.isMakeFolder:
+                    if not os.path.exists(tmp_link_fol):
+                        os.mkdir(tmp_link_fol)
+                    shutil.copyfile(self.cover+'/' + target_cov, img)
+                else:
+                    img = createNameFolder(self.des, tmp_fol_name, i, "")
+                    shutil.copyfile(self.cover+'/' + target_cov, img)
+
+                self.progress.emit((createNameFolder(self.des, tmp_fol_name, i, 'progress'), int(
+                    count_vol*100/(total_vol))))
+
+        count_vol = 0
+        self.progress.emit(('Stage 4: Archive comic', 0))
+        for i in range(vol_chaps['start_vol'], vol_chaps['end_vol']+1):
+            count_vol = count_vol + 1
+            tmp_link_fol = createNameFolder(
+                self.des, tmp_fol_name, i, 'folder')
+            shutil.make_archive(tmp_link_fol, "zip", root_dir=tmp_link_fol)
+            self.progress.emit((createNameFolder(self.des, tmp_fol_name, i, 'progress'), int(
+                count_vol*100/(total_vol))))
+
+        self.finished.emit(('Success', 200))
