@@ -2,8 +2,6 @@ from win10toast import ToastNotifier
 
 CREATE_NO_WINDOW = 0x08000000
 
-vscode = 'C:\\Users\\AN_DAO\\AppData\\Local\\Programs\\Microsoft VS Code\\code.exe'
-
 common_color = {
     "primary": "color: #007bff;",
     "success": "color: #28a745;",
