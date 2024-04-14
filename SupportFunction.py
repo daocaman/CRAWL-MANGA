@@ -75,17 +75,23 @@ def downloadImage(link, server, file, count):
                     'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
 
                 flag = False
+                down_code = 200
                 with open(file, "wb") as fd:
-                    if (r.status_code != 200):
+                    down_code = r.status_code
+                    if (down_code != 200):
                         flag = True
                     else:
                         fd.write(r.content)
 
                 if flag:
+                    if down_code == 404:
+                        os.remove(file)
+                        return 404
                     return downloadImage(link, server, file, count+1)
                 else:
                     return downloadImage(link, server, file, count)
-            except:
+            except Exception as e:
+                print(e)
                 return 400
 
 
@@ -574,9 +580,12 @@ class DownloadImage(QObject):
                 res = downloadImage(
                     link, chapter_obj['server'], crr_chap+"/"+generateName(idx+1, 3)+'.jpg', 0)
 
+                print(res)
                 if res == 200:
                     self.progress.emit(
                         (crr_chap + ' - ' + generateName(idx+1, 3)+'.jpg', int((crr_idx+1)*100/(len(keys_chap)))))
+                elif res == 404:
+                    continue
                 else:
                     self.finished.emit(('Error', 400))
                     chapter_obj["prev_down"] = crr_chap

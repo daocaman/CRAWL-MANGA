@@ -3,3 +3,7 @@
 *.azw3
 *.docx
 __pycache__
+chapter*
+resource/*.json
+resource/*.html
+*.html
