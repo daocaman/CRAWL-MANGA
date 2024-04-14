@@ -91,7 +91,6 @@ def downloadImage(link, server, file, count):
                 else:
                     return downloadImage(link, server, file, count)
             except Exception as e:
-                print(e)
                 return 400
 
 
@@ -433,7 +432,6 @@ class GetChapterLink(QObject):
 
                         for idxx, div in enumerate(divs):
                             img = div.find('img')
-                            print(img['data-original'])
                             chapters_obj["chapters"][title].append(
                                 'https:'+img['data-original'])
 
@@ -553,11 +551,7 @@ class DownloadImage(QObject):
 
         keys_chap = list(chapter_obj["chapters"])
 
-        print(keys_chap)
-
         crr_chap = keys_chap[0]
-
-        print(crr_chap)
 
         crr_idx = 0
 
@@ -580,7 +574,6 @@ class DownloadImage(QObject):
                 res = downloadImage(
                     link, chapter_obj['server'], crr_chap+"/"+generateName(idx+1, 3)+'.jpg', 0)
 
-                print(res)
                 if res == 200:
                     self.progress.emit(
                         (crr_chap + ' - ' + generateName(idx+1, 3)+'.jpg', int((crr_idx+1)*100/(len(keys_chap)))))
