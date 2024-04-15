@@ -14,14 +14,21 @@ from PIL import Image
 from skimage import io
 import shutil
 
+# Global variable
+DEBUG_VAR = False
+f_config = open("config.json", "r", encoding="utf-8")
+CONFIG_JSON = json.load(f_config)
+f_config.close()
 
-def generateName(num, l):
+
+def generateName(num: int | any, l: int) -> str:
+    """Generate name from the number with length"""
     result_str = "0"*l + str(num)
     return result_str[-1*l:]
 
 
-def generateChapterLink(chapter_str):
-
+def generateChapterLink(chapter_str: str) -> str:
+    """Generate chapter link from server mangasee123.com"""
     index = ""
 
     idexStr = int(chapter_str[0])
@@ -41,7 +48,8 @@ def generateChapterLink(chapter_str):
     return "-chapter-" + str(chapter) + odd + index
 
 
-def generateChapterImg(chapter_str):
+def generateChapterImg(chapter_str: str) -> str:
+    """Generate chapter image file name server mangasee123.com"""
     chapter_str = str(chapter_str)
     chapter = chapter_str[1:-1]
     odd = chapter_str[-1]
@@ -52,29 +60,37 @@ def generateChapterImg(chapter_str):
         return chapter + "." + odd
 
 
-def generatePageImg(page):
+def generatePageImg(page: int) -> str:
+    """Generate page image file name"""
     result_page = "000" + str(page)
     return result_page[-3:]
 
 
-def downloadImage(link, server, file, count):
+def downloadImage(link: str, server: str, file: str, count: int) -> int | any:
+    """Download image from link"""
+
     if os.path.exists(file):
+
+        # Check file exist and is a valid image
+        # if image valid return 200
+        # else remove file and download again until count = 3
         try:
-            img = Image.open(file)  # open the image file
-            img.verify()  # verify that it is, in fact an image
+            img = Image.open(file)
+            img.verify()
             img = io.imread(file)
             return 200
         except:
             os.remove(file)
             if count < 3:
                 return downloadImage(link, server, file,  count+1)
+
     else:
         if count < 3:
             try:
                 r = requests.get(link.replace("\n", ""), headers={
                     'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
 
-                flag = False
+                flag = False  # Check download success or not
                 down_code = 200
                 with open(file, "wb") as fd:
                     down_code = r.status_code
@@ -84,6 +100,9 @@ def downloadImage(link, server, file, count):
                         fd.write(r.content)
 
                 if flag:
+                    # If download fail and status code is not 404
+                    # true: remove file and download again until count = 3
+                    # false: return 404
                     if down_code == 404:
                         os.remove(file)
                         return 404
@@ -91,6 +110,7 @@ def downloadImage(link, server, file, count):
                 else:
                     return downloadImage(link, server, file, count)
             except Exception as e:
+                DEBUG_VAR and print("Error: ", e)
                 return 400
 
 
@@ -270,7 +290,6 @@ class DownloadNovel(QObject):
 
                     title = soup.find_all(
                         class_=re.compile("chapter-title"))[0]
-                    ic(title.text.strip())
 
                     content = soup.find_all(id="chapter-c")
 
@@ -310,7 +329,7 @@ class DownloadNovel(QObject):
 
         except Exception as e:
             self.finished.emit(('Error!!!', -1))
-            ic(e)
+            DEBUG_VAR and print("error: ", e)
             if self.file_type == 0:
                 core_properties = document.core_properties
                 core_properties.author = self.author
@@ -427,13 +446,27 @@ class GetChapterLink(QObject):
 
                         divs = soup.find_all("div", id=re.compile('page_'))
 
+                        if len(divs) == 0:
+                            divs = soup.find_all(
+                                "div", class_=re.compile('page-'))
+
                         self.progress.emit(
                             {"title": title, "percent": int((count)*100/len(links))})
 
+                        # target field get img url
+                        target_field = "data-src"
+
                         for idxx, div in enumerate(divs):
                             img = div.find('img')
-                            chapters_obj["chapters"][title].append(
-                                'https:'+img['data-original'])
+                            if img[target_field] is None or img[target_field] == "":
+                                raise Exception("Field wrong !!!")
+                            else:
+                                if "https:" not in img[target_field]:
+                                    chapters_obj["chapters"][title].append(
+                                        'https:'+img[target_field])
+                                else:
+                                    chapters_obj["chapters"][title].append(
+                                        img[target_field])
 
                         if len(chapters_obj["chapters"][title]) > 0:
                             chapters_obj['links'].append(id_chap_link)
@@ -567,7 +600,7 @@ class DownloadImage(QObject):
             self.progress.emit(
                 (crr_chap, int((crr_idx+1)*100/(len(keys_chap)))))
 
-            if not os.path.exists(crr_chap):
+            if not os.path.exists(crr_chap) and len(chapter_obj["chapters"][crr_chap]) != 0:
                 os.mkdir(crr_chap)
 
             for idx, link in enumerate(chapter_obj["chapters"][crr_chap]):
