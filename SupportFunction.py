@@ -15,13 +15,13 @@ from skimage import io
 import shutil
 
 # Global variable
-DEBUG_VAR = False
-f_config = open("config.json", "r", encoding="utf-8")
-CONFIG_JSON = json.load(f_config)
-f_config.close()
+DEBUG_VAR = True
+# f_config = open("config.json", "r", encoding="utf-8")
+# CONFIG_JSON = json.load(f_config)
+# f_config.close()
 
 
-def generateName(num: int | any, l: int) -> str:
+def generateName(num: int, l: int) -> str:
     """Generate name from the number with length"""
     result_str = "0"*l + str(num)
     return result_str[-1*l:]
@@ -66,7 +66,7 @@ def generatePageImg(page: int) -> str:
     return result_page[-3:]
 
 
-def downloadImage(link: str, server: str, file: str, count: int) -> int | any:
+def downloadImage(link: str, server: str, file: str, count: int):
     """Download image from link"""
 
     if os.path.exists(file):
@@ -181,6 +181,8 @@ class DownloadNovel(QObject):
         if self.file_type == 0:
             document = Document()
 
+        print(self.server)
+
         try:
             if self.server == servers_novel["metruyencv"]:
                 count = 0
@@ -190,10 +192,13 @@ class DownloadNovel(QObject):
 
                     soup = BeautifulSoup(r.content, 'html.parser')
 
-                    title = soup.find(class_="nh-read__title")
+                    title = soup.find(
+                        "h2", class_=re.compile("text-balance"))
+
+                    ic(title)
                     ic(title.text.strip())
 
-                    content = soup.find_all(id="article")[0]
+                    content = soup.find_all(_class="break-words")[0]
 
                     content_text = content.decode_contents()
                     content_text = content_text.replace("<br/>", "\n")
@@ -354,7 +359,7 @@ class GetChapterLink(QObject):
     def run(self):
 
         r = requests.get(self.link.strip(), headers={
-                         'User-agent': 'Mozilla/5.0'})
+            'User-agent': 'Mozilla/5.0'})
 
         links = []
 
@@ -649,7 +654,7 @@ class DownloadInfoComic(QObject):
         link_cminfo_api = link_cminfo_api.replace("{manga_idx}", manga_idx)
 
         r = requests.get(link_cminfo_api, headers={
-                         'User-agent': 'Mozilla/5.0'})
+            'User-agent': 'Mozilla/5.0'})
 
         data = r.json()["data"]
 
