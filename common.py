@@ -35,10 +35,6 @@ tabs = {
         "s": "D. Novel",
         "l": "Download Novel"
     },
-    "GI": {
-        "s": "G.I. URL",
-        "l": "Getting Image URL"
-    },
     "DC": {
         "s": "D.C URL",
         "l": "Download Comic URL"
@@ -91,8 +87,6 @@ msg = {
     "suc_dc": {"t": "Success", "m": "Download image complete!!!"},
     "suc_gi": {"t": "Success", "m": "Download comic info complete!!!"},
     "suc_ac": {"t": "Success", "m": "Archive comic complete!!!"},
-
-
 }
 
 break_chapter_str = "※----*-------⁛-------*----※"
