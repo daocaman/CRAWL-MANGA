@@ -40,8 +40,8 @@ class CrawlManga(QWidget):
         self.show()
 
     def initMainLayout(self):
-        self.mainTitle_style = common_color["primary"] + \
-            font["main_title"]+common_font["bold"]
+        self.mainTitle_style = generateStyle({**text_primary, **font_main_title, **font_bold})  
+        ic(self.mainTitle_style)
 
         self.mainLayout = QGridLayout()
 
@@ -58,7 +58,7 @@ class CrawlManga(QWidget):
 
         app_title = QLabel("Crawl manga")
 
-        app_title.setStyleSheet(generateStyle(font_main_title))
+        app_title.setStyleSheet(self.mainTitle_style)
 
         self.title_layout.addWidget(app_title, 0, 1, alignment=Qt.AlignCenter)
         self.title_layout.setSpacing(10)

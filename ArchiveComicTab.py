@@ -37,7 +37,7 @@ class ArchiveComicTab(QWidget):
         self.layout.addWidget(self.AC_lbl_chaps, 1, 1, 1, 3)
 
         self.AC_lb_cover = QLabel(self.AC_common_str['lb_cover'])
-        self.AC_lb_cover.setStyleSheet({**font_bold, **text_info})
+        self.AC_lb_cover.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_cover, 2, 0, 1, 1)
 
         self.AC_lbl_covs = QLabelLink()
@@ -121,7 +121,7 @@ class ArchiveComicTab(QWidget):
         self.layout.addWidget(self.AC_btn_archive, 8, 3, 1, 1)
 
         self.AC_lb_progress_txt = QLabel()
-        self.AC_lb_progress_txt.setStyleSheet({**font_bold, **text_warning})
+        self.AC_lb_progress_txt.setStyleSheet(generateStyle({**font_bold, **text_warning}))
         self.layout.addWidget(self.AC_lb_progress_txt, 9, 0, 1, 3)
 
         self.layout.setSpacing(15)
