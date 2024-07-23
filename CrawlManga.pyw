@@ -58,7 +58,7 @@ class CrawlManga(QWidget):
 
         app_title = QLabel("Crawl manga")
 
-        app_title.setStyleSheet(self.mainTitle_style)
+        app_title.setStyleSheet(generateStyle(font_main_title))
 
         self.title_layout.addWidget(app_title, 0, 1, alignment=Qt.AlignCenter)
         self.title_layout.setSpacing(10)

@@ -20,6 +20,23 @@ DEBUG_VAR = True
 # CONFIG_JSON = json.load(f_config)
 # f_config.close()
 
+def generateStyle(style: dict) -> str:
+    """Generate style from dict
+    
+    Args:
+        style (dict): A dictionary containing the style attributes and their values.
+        
+    Returns:
+        str: A string representing the generated style.
+    """
+    
+    style_attrs = []
+    
+    for key in style:
+        style_attrs.append(key + ":" + style[key])
+        
+    return ";".join(style_attrs) + ";"
+
 
 def generateName(num: int, l: int) -> str:
     """Generate name from the number with length"""

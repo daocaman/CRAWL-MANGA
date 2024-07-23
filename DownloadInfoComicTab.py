@@ -30,25 +30,24 @@ class DownloadInfoComicTab(QWidget):
         }
 
         self.GI_lb_main_title = QLabel(tabs["GI"]['l'])
-        self.GI_lb_main_title.setStyleSheet(
-            common_font["bold"]+common_color["success"]+font["title"])
+        self.GI_lb_main_title.setStyleSheet(generateStyle({**font_bold, **text_success, **font_title}))
         self.layout.addWidget(
             self.GI_lb_main_title, 0, 0, 1, 4, alignment=Qt.AlignCenter)
 
         self.GI_lb_link = QLabel(self.GI_common_str['lb_link'])
-        self.GI_lb_link.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.GI_lb_link.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GI_lb_link, 1, 0, 1, 1)
 
         self.GI_tb_link = QLineEdit()
         self.layout.addWidget(self.GI_tb_link, 1, 1, 1, 3)
 
         self.GI_chk_cover = QCheckBox(self.GI_common_str["chkb_cover"])
-        self.GI_chk_cover.setStyleSheet(common_color["info"])
+        self.GI_chk_cover.setStyleSheet(generateStyle(text_info))
         self.layout.addWidget(self.GI_chk_cover, 2, 0, 1, 1)
 
         self.GI_chk_vol_chapters = QCheckBox(
             self.GI_common_str["chkb_vol_chapters"])
-        self.GI_chk_vol_chapters.setStyleSheet(common_color["info"])
+        self.GI_chk_vol_chapters.setStyleSheet(generateStyle(text_info))
         self.GI_chk_vol_chapters.setChecked(True)
         self.layout.addWidget(self.GI_chk_vol_chapters, 2, 1, 1, 1)
 
@@ -57,36 +56,34 @@ class DownloadInfoComicTab(QWidget):
         self.layout.addWidget(self.GI_progress_down, 3, 0, 1, 3)
 
         self.GI_btn_download = QPushButton(self.GI_common_str["btn_download"])
-        self.GI_btn_download.setStyleSheet(btns["default"]+btns["primary"])
+        self.GI_btn_download.setStyleSheet(generateStyle(btn_primary))
         self.layout.addWidget(self.GI_btn_download, 3, 3, 1, 1)
 
         self.GI_lb_msg = QLabel("")
-        self.GI_lb_msg.setStyleSheet(
-            common_font["bold"]+common_color["warning"])
+        self.GI_lb_msg.setStyleSheet(generateStyle({**font_bold, **text_warning}))
         self.layout.addWidget(self.GI_lb_msg, 4, 0, 1,
                               4, alignment=Qt.AlignCenter)
 
         self.GI_lb_cov = QLabel(self.GI_common_str['lb_cover'])
-        self.GI_lb_cov.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.GI_lb_cov.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GI_lb_cov, 5, 0, 1, 1)
 
         self.GI_lbl_cov_res = QLabelLink()
-        self.GI_lbl_cov_res.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+        self.GI_lbl_cov_res.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GI_lbl_cov_res, 5, 1, 1, 3)
         self.GI_lbl_cov_res.setEnabled(False)
 
         self.GI_lb_info = QLabel(self.GI_common_str['lb_chap_info'])
-        self.GI_lb_info.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.GI_lb_info.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GI_lb_info, 6, 0, 1, 1)
 
         self.GI_lbl_vol_chapters = QLabelLink()
-        self.GI_lbl_vol_chapters.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.GI_lbl_vol_chapters.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GI_lbl_vol_chapters, 6, 1, 1, 1)
         self.GI_lbl_vol_chapters.setEnabled(False)
 
         self.GI_btn_save = QPushButton(self.GI_common_str['btn_save_info'])
-        self.GI_btn_save.setStyleSheet(btns["default"]+btns["info"])
+        self.GI_btn_save.setStyleSheet(generateStyle(btn_info))
         self.layout.addWidget(self.GI_btn_save, 6, 3, 1, 1)
 
         self.GI_tb_info = QTableWidget()

@@ -9,7 +9,6 @@ from common import *
 from SupportFunction import *
 
 
-
 class QLabelLink(QLabel):
 
     clicked = pyqtSignal()
@@ -17,7 +16,7 @@ class QLabelLink(QLabel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.setStyleSheet(common_font["underline"]+common_color["primary"])
+        self.setStyleSheet(generateStyle({**font_underline, **text_primary}))
 
     def mousePressEvent(self, event):
         self.clicked.emit()

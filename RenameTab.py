@@ -25,33 +25,30 @@ class RenameTab(QWidget):
         }
 
         self.RN_lb_main_title = QLabel(tabs["RN"]["l"])
-        self.RN_lb_main_title.setStyleSheet(
-            common_font["bold"]+common_color["success"]+font["title"])
+        self.RN_lb_main_title.setStyleSheet(generateStyle({**font_bold, **text_success, **font_title}))
         self.layout.addWidget(
             self.RN_lb_main_title, 0, 1, alignment=Qt.AlignCenter)
 
         self.RN_lb_src_folder = QLabel(self.RN_common_str["lb_src_folder"])
-        self.RN_lb_src_folder.setStyleSheet(
-            common_font["bold"]+common_color["info"]+font["mini_title"])
+        self.RN_lb_src_folder.setStyleSheet(generateStyle({**font_bold, **text_info, **font_mini_title}))
         self.layout.addWidget(self.RN_lb_src_folder, 1, 0)
 
         self.RN_tb_src_folder = QLineEdit()
         self.layout.addWidget(self.RN_tb_src_folder, 1, 1)
 
         self.RN_btn_get_list = QPushButton(self.RN_common_str["btn_get_list"])
-        self.RN_btn_get_list.setStyleSheet(btns["default"]+btns["primary"])
+        self.RN_btn_get_list.setStyleSheet(generateStyle(btn_primary))
         self.layout.addWidget(self.RN_btn_get_list, 1, 2)
 
         self.RN_lb_result = QLabel(self.RN_common_str["lb_result"])
-        self.RN_lb_result.setStyleSheet(
-            common_font["bold"]+common_color["info"]+font["mini_title"])
+        self.RN_lb_result.setStyleSheet(generateStyle({**font_bold, **text_info, **font_mini_title}))
         self.layout.addWidget(self.RN_lb_result, 2, 0)
 
         self.RN_lb_result_file = QLabelLink()
         self.layout.addWidget(self.RN_lb_result_file, 2, 1)
 
         self.RN_btn_rename = QPushButton(self.RN_common_str["btn_rename"])
-        self.RN_btn_rename.setStyleSheet(btns["default"] + btns["success"])
+        self.RN_btn_rename.setStyleSheet(generateStyle(btn_success))
         self.layout.addWidget(self.RN_btn_rename, 2, 2)
 
         self.RN_progress_rename = QProgressBar()

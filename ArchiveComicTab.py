@@ -7,6 +7,7 @@ from SupportFunction import *
 import subprocess
 import os
 import shutil
+from assets.Labels import archive_comic_tab
 
 
 class ArchiveComicTab(QWidget):
@@ -17,30 +18,17 @@ class ArchiveComicTab(QWidget):
 
         self.setLayout(self.layout)
 
-        self.AC_common_str = {
-            'lb_chapter': "Chapters info: ",
-            'lb_cover': "Covers folder: ",
-            'lb_source': 'Source folder: ',
-            'lb_destination': 'Destination folder: ',
-            'lb_comic_name': 'Comic name: ',
-            'lb_comic_author': 'Author: ',
-            'lb_comic_start_vol': 'Start: ',
-            'lb_comic_end_vol': 'End: ',
-            'btn_src': 'Get source',
-            'btn_dest': 'Get dest',
-            'btn_archive': "Archive",
-            'chk_makeFolderCover': 'Make folder cover'
-        }
+        self.AC_common_str = archive_comic_tab
 
         self.AC_lb_main_title = QLabel(tabs["AC"]['l'])
-        self.AC_lb_main_title.setStyleSheet(
-            common_font["bold"]+common_color["success"]+font["title"])
+        self.AC_lb_main_title.setStyleSheet(generateStyle(
+            {**font_bold, **text_success, **font_title}))
         self.layout.addWidget(
             self.AC_lb_main_title, 0, 0, 1, 4, alignment=Qt.AlignCenter)
 
         self.AC_lb_chapter = QLabel(self.AC_common_str['lb_chapter'])
         self.AC_lb_chapter.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_chapter, 1, 0, 1, 1)
 
         self.AC_lbl_chaps = QLabelLink()
@@ -49,8 +37,7 @@ class ArchiveComicTab(QWidget):
         self.layout.addWidget(self.AC_lbl_chaps, 1, 1, 1, 3)
 
         self.AC_lb_cover = QLabel(self.AC_common_str['lb_cover'])
-        self.AC_lb_cover.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+        self.AC_lb_cover.setStyleSheet({**font_bold, **text_info})
         self.layout.addWidget(self.AC_lb_cover, 2, 0, 1, 1)
 
         self.AC_lbl_covs = QLabelLink()
@@ -60,36 +47,36 @@ class ArchiveComicTab(QWidget):
 
         self.AC_chk_FCover = QCheckBox(
             self.AC_common_str['chk_makeFolderCover'])
-        self.AC_chk_FCover.setStyleSheet(common_color["info"])
+        self.AC_chk_FCover.setStyleSheet(generateStyle(text_info))
         self.layout.addWidget(self.AC_chk_FCover, 2, 3, 1, 1)
 
         self.AC_lb_source = QLabel(self.AC_common_str['lb_source'])
         self.AC_lb_source.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_source, 3, 0, 1, 1)
 
         self.AC_tb_src_folder = QLineEdit()
         self.layout.addWidget(self.AC_tb_src_folder, 3, 1, 1, 2)
 
         self.AC_btn_src = QPushButton(self.AC_common_str['btn_src'])
-        self.AC_btn_src.setStyleSheet(btns["default"]+btns["primary"])
+        self.AC_btn_src.setStyleSheet(generateStyle(btn_primary))
         self.layout.addWidget(self.AC_btn_src, 3, 3, 1, 1)
 
         self.AC_lb_destination = QLabel(self.AC_common_str['lb_destination'])
         self.AC_lb_destination.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_destination, 4, 0, 1, 1)
 
         self.AC_tb_dest_folder = QLineEdit()
         self.layout.addWidget(self.AC_tb_dest_folder, 4, 1, 1, 2)
 
         self.AC_btn_dest = QPushButton(self.AC_common_str['btn_dest'])
-        self.AC_btn_dest.setStyleSheet(btns["default"]+btns["success"])
+        self.AC_btn_dest.setStyleSheet(generateStyle(btn_success))
         self.layout.addWidget(self.AC_btn_dest, 4, 3, 1, 1)
 
         self.AC_lb_ComicName = QLabel(self.AC_common_str['lb_comic_name'])
         self.AC_lb_ComicName.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_ComicName, 5, 0, 1, 1)
 
         self.AC_tb_comic_name = QLineEdit()
@@ -97,7 +84,7 @@ class ArchiveComicTab(QWidget):
 
         self.AC_lb_ComicAuthor = QLabel(self.AC_common_str['lb_comic_author'])
         self.AC_lb_ComicAuthor.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_ComicAuthor, 6, 0, 1, 1)
 
         self.AC_tb_comic_author = QLineEdit()
@@ -105,7 +92,7 @@ class ArchiveComicTab(QWidget):
 
         self.AC_lb_start_vol = QLabel(self.AC_common_str['lb_comic_start_vol'])
         self.AC_lb_start_vol.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_start_vol, 7, 0, 1, 1)
 
         self.AC_sp_start_vol = QSpinBox()
@@ -116,7 +103,7 @@ class ArchiveComicTab(QWidget):
 
         self.AC_lb_end_vol = QLabel(self.AC_common_str['lb_comic_end_vol'])
         self.AC_lb_end_vol.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.AC_lb_end_vol, 7, 2, 1, 1)
 
         self.AC_sp_end_vol = QSpinBox()
@@ -130,12 +117,11 @@ class ArchiveComicTab(QWidget):
         self.layout.addWidget(self.AC_progress_down, 8, 0, 1, 3)
 
         self.AC_btn_archive = QPushButton(self.AC_common_str['btn_archive'])
-        self.AC_btn_archive.setStyleSheet(btns["default"]+btns["danger"])
+        self.AC_btn_archive.setStyleSheet(generateStyle(btn_danger))
         self.layout.addWidget(self.AC_btn_archive, 8, 3, 1, 1)
 
         self.AC_lb_progress_txt = QLabel()
-        self.AC_lb_progress_txt.setStyleSheet(
-            common_font["bold"]+common_color["warning"])
+        self.AC_lb_progress_txt.setStyleSheet({**font_bold, **text_warning})
         self.layout.addWidget(self.AC_lb_progress_txt, 9, 0, 1, 3)
 
         self.layout.setSpacing(15)

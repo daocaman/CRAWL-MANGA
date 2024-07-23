@@ -33,14 +33,13 @@ class GettingChapterTab(QWidget):
         }
 
         self.GC_lb_main_title = QLabel(tabs["GC"]["l"])
-        self.GC_lb_main_title.setStyleSheet(
-            common_font["bold"]+common_color["success"]+font["title"])
+        self.GC_lb_main_title.setStyleSheet(generateStyle({**font_bold, **text_success, **font_title}))
         self.layout.addWidget(
             self.GC_lb_main_title, 0, 0, 1, 4, alignment=Qt.AlignCenter)
 
         self.GC_lb_link = QLabel(self.GC_common_str["lb_link"])
         self.GC_lb_link.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GC_lb_link, 1, 0)
 
         self.GC_tb_link = QLineEdit()
@@ -59,7 +58,7 @@ class GettingChapterTab(QWidget):
 
         self.GC_lb_server = QLabel(self.GC_common_str["lb_server"])
         self.GC_lb_server.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GC_lb_server, 2, 0)
 
         self.layout.addWidget(self.GC_rb_nettruyen, 2, 1)
@@ -69,7 +68,7 @@ class GettingChapterTab(QWidget):
         self.GC_lb_previous = QLabel(
             self.GC_common_str['lb_previous_chapters'])
         self.GC_lb_previous.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+            generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GC_lb_previous, 3, 0)
 
         self.GC_tb_file_chapters = QLineEdit()
@@ -78,12 +77,11 @@ class GettingChapterTab(QWidget):
         self.GC_tb_file_chapters.setReadOnly(True)
 
         self.GC_btn_find = QPushButton(self.GC_common_str['btn_get_prev'])
-        self.GC_btn_find.setStyleSheet(btns["default"]+btns["success"])
+        self.GC_btn_find.setStyleSheet(generateStyle(btn_success))
         self.layout.addWidget(self.GC_btn_find, 3, 3, 1, 1)
 
         self.GC_lb_result = QLabel(self.GC_common_str["lb_result"])
-        self.GC_lb_result.setStyleSheet(
-            common_color["info"]+common_font["bold"])
+        self.GC_lb_result.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GC_lb_result, 4, 0)
 
         self.GC_lb_result_file = QLabelLink()
@@ -92,12 +90,11 @@ class GettingChapterTab(QWidget):
 
         self.GC_btn_get_chapter = QPushButton(
             self.GC_common_str["btn_get_chapter"])
-        self.GC_btn_get_chapter.setStyleSheet(btns["default"]+btns["primary"])
+        self.GC_btn_get_chapter.setStyleSheet(generateStyle(btn_primary))
         self.layout.addWidget(self.GC_btn_get_chapter, 4, 3)
 
         self.GC_lb_progress = QLabel(self.GC_common_str["lb_progress"])
-        self.GC_lb_progress.setStyleSheet(
-            common_color["info"]+common_font["bold"])
+        self.GC_lb_progress.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.GC_lb_progress, 5, 0)
 
         self.GC_progress_getting = QProgressBar()
@@ -105,8 +102,7 @@ class GettingChapterTab(QWidget):
         self.layout.addWidget(self.GC_progress_getting, 5, 1, 1, 3)
 
         self.GC_lb_progress_msg = QLabel()
-        self.GC_lb_progress_msg.setStyleSheet(
-            common_color["warning"]+common_font["bold"])
+        self.GC_lb_progress_msg.setStyleSheet(generateStyle({**font_bold, **text_warning}))
         self.layout.addWidget(self.GC_lb_progress_msg, 6, 0, 1, 4)
 
         self.layout.setSpacing(15)

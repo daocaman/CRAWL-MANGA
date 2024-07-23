@@ -3,22 +3,72 @@ from win10toast import ToastNotifier
 CREATE_NO_WINDOW = 0x08000000
 
 common_color = {
-    "primary": "color: #007bff;",
-    "success": "color: #28a745;",
-    "info": "color: #17a2b8;",
-    "warning": "color: #ffc107;",
-    "danger": "color: #dc3545;"
+    "primary": "#007bff",
+    "success": "#28a745",
+    "info": "#17a2b8",
+    "warning": "#ffc107",
+    "danger": "#dc3545"
 }
 
-common_font = {
-    "bold": "font-weight: bold;",
-    "underline": "text-decoration: underline;"
+bg_primary = {
+    "background-color": common_color["primary"]
 }
 
-font = {
-    "title": "font-size: 10pt;",
-    "mini_title": "font-size: 8pt;",
-    "main_title": "font-size: 16pt;"
+bg_success = {
+    "background-color": common_color["success"]
+}
+
+bg_info = {
+    "background-color": common_color["info"]
+}
+
+bg_danger = {
+    "background-color": common_color["danger"]
+}
+
+bg_warning = {
+    "background-color": common_color["danger"]
+}
+
+
+text_primary = {
+    "color": common_color["primary"]
+}
+
+text_success = {
+    "color": common_color["success"]
+}
+
+text_info = {
+    "color": common_color["info"]
+}
+
+text_danger = {
+    "color": common_color["danger"]
+}
+
+text_warning = {
+    "color": common_color["warning"]
+}
+
+font_bold = {
+    "font-weight": "bold"
+}
+
+font_underline = {
+    "text-decoration": "underline"
+}
+
+font_main_title = {
+    "font-size": "16pt"
+}
+
+font_mini_title = {
+    "font-size": "8pt"
+}
+
+font_title = {
+    "font-size": "10pt"
 }
 
 tabs = {
@@ -49,18 +99,82 @@ tabs = {
     },
 }
 
-btns = {
-    "default": "border-radius: 6px; min-width: 80px; min-height: 35px; border-color: #007bff; border: 1px solid #007bff;",
-    "primary": "color: #fff;background-color: #007bff;border-color: #007bff;",
-    "success": "color: #fff;background-color: #28a745;border-color: #28a745;",
-    "info": "color: #fff;background-color: #17a2b8;border-color: #17a2b8;",
-    "danger": "color: #fff;background-color: #dc3545;border-color: #dc3545;",
-    "warning": "color: #fff;background-color: #ffc107;border-color: #ffc107;",
-    "outline-primary": "border-color: #007bff; border: 1px solid #007bff; color: #007bff;",
-    "outline-success": "border-color: #28a745; border: 1px solid #28a745; color: #28a745;",
-    "outline-info": "border-color: #17a2b8; border: 1px solid #17a2b8; color: #17a2b8;",
-    "outline-danger": "border-color: #dc3545; border: 1px solid #dc3545; color: #dc3545;",
-    "outline-warning": "border-color: #ffc107; border: 1px solid #ffc107; color: #ffc107;",
+
+btn_default = {
+    "border-radius": "6px",
+    "min-width": "80px",
+    "min-height": "24px",
+    "color": "#fff"
+}
+
+btn_primary = {
+    **btn_default,
+    "background-color": "#007bff",
+    "border-color": "#007bff",
+    "border": "1px solid #007bff",
+}
+
+btn_success = {
+    **btn_default,
+    "background-color": "#28a745",
+    "border-color": "#28a745",
+    "border": "1px solid #28a745",
+}
+
+btn_info = {
+    **btn_default,
+    "background-color": "#17a2b8",
+    "border-color": "#17a2b8",
+    "border": "1px solid #17a2b8",
+}
+
+btn_danger = {
+    **btn_default,
+    "background-color": "#dc3545",
+    "border-color": "#dc3545",
+    "border": "1px solid #dc3545",
+}
+
+btn_warning = {
+    **btn_default,
+    "background-color": "#ffc107",
+    "border-color": "#ffc107",
+    "border": "1px solid #ffc107",
+}
+
+btn_outline_primary = {
+    **btn_default,
+    "border-color": "#007bff",
+    "border": "1px solid #007bff",
+    "color": "#007bff",
+}
+
+btn_outline_success = {
+    **btn_default,
+    "border-color": "#28a745",
+    "border": "1px solid #28a745",
+    "color": "#28a745",
+}
+
+btn_outline_info = {
+    **btn_default,
+    "border-color": "#17a2b8",
+    "border": "1px solid #17a2b8",
+    "color": "#17a2b8",
+}
+
+btn_outline_danger = {
+    **btn_default,
+    "border-color": "#dc3545",
+    "border": "1px solid #dc3545",
+    "color": "#dc3545",
+}
+
+btn_outline_warning = {
+    **btn_default,
+    "border-color": "#ffc107",
+    "border": "1px solid #ffc107",
+    "color": "#ffc107",
 }
 
 servers_novel = {

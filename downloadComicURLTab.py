@@ -26,13 +26,12 @@ class DownloadComicURLTab(QWidget):
         }
 
         self.DC_lb_main_title = QLabel(tabs["DC"]['l'])
-        self.DC_lb_main_title.setStyleSheet(
-            common_font["bold"]+common_color["success"]+font["title"])
+        self.DC_lb_main_title.setStyleSheet(generateStyle({**font_bold, **text_success, **font_title}))
         self.layout.addWidget(
             self.DC_lb_main_title, 0, 0, 1, 4, alignment=Qt.AlignCenter)
 
         self.DC_lb_file = QLabel(self.DC_common_str["lb_file"])
-        self.DC_lb_file.setStyleSheet(common_font["bold"]+common_color["info"])
+        self.DC_lb_file.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.DC_lb_file, 1, 0)
 
         self.DC_lbl_file = QLabelLink()
@@ -48,8 +47,7 @@ class DownloadComicURLTab(QWidget):
             lambda: subprocess.run(['start', 'resource/chapter.json'], shell=True))
 
         self.DC_lb_progress = QLabel(self.DC_common_str["lb_progress"])
-        self.DC_lb_progress.setStyleSheet(
-            common_font["bold"]+common_color["info"])
+        self.DC_lb_progress.setStyleSheet(generateStyle({**font_bold, **text_info}))
         self.layout.addWidget(self.DC_lb_progress, 2, 0)
 
         self.DC_progress_down = QProgressBar()
@@ -57,13 +55,11 @@ class DownloadComicURLTab(QWidget):
         self.layout.addWidget(self.DC_progress_down, 2, 1, 1, 3)
 
         self.DC_lb_progress_txt = QLabel()
-        self.DC_lb_progress_txt.setStyleSheet(
-            common_font["bold"]+common_color["warning"])
+        self.DC_lb_progress_txt.setStyleSheet(generateStyle({**font_bold, **text_warning}))
         self.layout.addWidget(self.DC_lb_progress_txt, 3, 0, 1, 3)
 
         self.DC_btn_download = QPushButton(self.DC_common_str["btn_download"])
-        self.DC_btn_download.setStyleSheet(
-            btns["default"]+btns["danger"])
+        self.DC_btn_download.setStyleSheet(generateStyle(btn_danger))
         self.layout.addWidget(self.DC_btn_download, 3, 3)
 
         self.layout.setSpacing(15)
