@@ -1,4 +1,5 @@
-*.txt
-*.log
-*.docx
-covers
+*/__pycache__
+*/.pytest_cache
+*.zip
+*/**-vol
+venv
