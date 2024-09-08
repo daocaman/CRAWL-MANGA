@@ -11,6 +11,9 @@ server_mangasee = "https://mangasee123.com"
 server_nettruyen = "https://nettruyenviet.com"
 server_mangadex = "https://mangadex.org"
 
+api_cover = "https://api.mangadex.org/cover?order[volume]=asc&manga[]={0}&limit=100&offset={1}"
+link_cover ="https://uploads.mangadex.org/covers/{0}/{1}"
+
 # example file content
 comic_xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +\
     "\n<ComicInfo xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +\
@@ -30,6 +33,7 @@ file_bookmarks = "Bookmarks.json"
 file_comic_json = "ComicInfo.json"
 file_comic_xml = "ComicInfo.xml"
 file_chapters = "Chapters.json"
+cover_folder = "Covers"
 
 # example objects
 bookmark_obj = {

@@ -2,6 +2,7 @@ import re
 import os
 import shutil
 import json
+import requests
 from icecream import ic
 from PIL import Image
 from skimage import io
@@ -133,8 +134,6 @@ def resize_image(folder='', is_horizontal=False):
     COMMON_DEBUG and ic(f"Resize images in {folder}")
 
     image_files = [f for f in os.listdir(folder) if is_image_file(f)]
-
-   
     
     for  f in image_files:
 
@@ -157,6 +156,7 @@ def reformat_folder(folder='', is_delete=False):
     :param is_delete: delete chapter folders
     :return: None
     """
+
     COMMON_DEBUG and ic(f"Reformat {folder}")
     count = 0
     folders = os.listdir(folder)
@@ -199,4 +199,58 @@ def check_image_error(filename=''):
         img = io.imread(filename)
     except Exception as e:
         COMMON_DEBUG and ic(e)
+        return False
+    
+    return True
         
+def download_image(link: str, server: str, file: str, count: int):
+    """
+    Download image from link
+    :param link: link to download
+    :param server: server to download
+    :param file: file to save
+    :param count: count to download
+    :return: return status code
+    """
+
+    if os.path.exists(file):
+
+        # Check file exist and is a valid image
+        # if image valid return 200
+        # else remove file and download again until count = 3
+
+        if not check_image_error(file):
+            os.remove(file)
+            if count < 3:
+                return download_image(link, server, file, count+1)
+        else:
+            return 200
+
+    else:
+        if count < 3:
+            try:
+                r = requests.get(link.replace("\n", ""), headers={
+                    'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
+
+                down_faied = False  # Check download success or not
+                down_code = 200
+                with open(file, "wb") as fd:
+                    down_code = r.status_code
+                    if (down_code != 200):
+                        down_faied = True
+                    else:
+                        fd.write(r.content)
+
+                if down_faied:
+                    # If download fail and status code is not 404
+                    # true: remove file and download again until count = 3
+                    # false: return 404
+                    if down_code == 404:
+                        os.remove(file)
+                        return 404
+                    return download_image(link, server, file, count+1)
+                else:
+                    return download_image(link, server, file, count)
+            except Exception as e:
+                COMMON_DEBUG and print("Error: ", e)
+                return 400

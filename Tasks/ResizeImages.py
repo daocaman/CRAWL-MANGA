@@ -11,7 +11,7 @@ from Commons import resize_image, extract_number
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Archive folders')
+        description='Resize images')
     parser.add_argument('-o', type=str, required=True, help='target folder')
     parser.add_argument('-m', action='store_true', help='multiple folders')
     parser.add_argument('-hr', default=False, action='store_true', help='Resize to horizontal')
