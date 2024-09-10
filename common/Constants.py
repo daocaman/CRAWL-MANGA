@@ -10,6 +10,7 @@ file_prefix = "pages_"
 server_mangasee = "https://mangasee123.com"
 server_nettruyen = "https://nettruyenviet.com"
 server_mangadex = "https://mangadex.org"
+chapter_folder_prefix = "Chapter"
 
 api_cover = "https://api.mangadex.org/cover?order[volume]=asc&manga[]={0}&limit=100&offset={1}"
 link_cover ="https://uploads.mangadex.org/covers/{0}/{1}"
