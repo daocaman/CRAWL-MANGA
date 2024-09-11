@@ -1,8 +1,9 @@
-*.log
-*.azw3
-*.docx
-__pycache__
-chapter*
-resource/*.html
-*.html
-venv/
+*/__pycache__
+*/.pytest_cache
+*.zip
+*/**-vol
+venv
+DDYT/
+Chapter */
+Covers/
+Comicinfo.json
