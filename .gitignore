@@ -3,7 +3,9 @@
 *.zip
 */**-vol
 venv
-DDYT/
 Chapter */
 Covers/
 Comicinfo.json
+*.mobi
+*.zip
+NLY/

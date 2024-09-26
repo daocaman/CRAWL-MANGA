@@ -7,6 +7,7 @@ from icecream import ic
 from PIL import Image
 from skimage import io
 from bs4 import BeautifulSoup
+from lxml import html
 
 from Constants import COMMON_DEBUG
 
@@ -355,7 +356,7 @@ def get_list_image_nettruyen(link=''):
         return (title, list_images)
     
 
-def generate_chapter_link(chapter_str: str) -> str:
+def generate_chapter_link_mangasee(chapter_str: str) -> str:
     """Generate chapter link from server mangasee123.com"""
     index = ""
 
@@ -442,7 +443,7 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
     :param link: link to get list of images
     :param chapter: chapter to get list of images
     """ 
-    id_chap_link = index_name + generate_chapter_link(chapter["Chapter"])
+    id_chap_link = index_name + generate_chapter_link_mangasee(chapter["Chapter"])
 
     link = "https://mangasee123.com/read-online/" + id_chap_link + ".html"
 
@@ -486,4 +487,20 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
     return (chap_name, list_images)
     
     
+# def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
+#     r = requests.get(link)
+#     tree = html.fromstring(r.content)
 
+#     if not is_list:
+#         return tree.xpath(xpath)
+#     else:
+#         soup = BeautifulSoup(tree.xpath(xpath), 'html.parser')
+#         chapters = soup.find_all(list_item_ele)
+
+#         list_chapters = []
+
+#         for chap in chapters:
+#             list_chapters.append({
+#                 "title": chap.text,
+#                 "page": chap['href']
+#             })

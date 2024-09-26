@@ -59,9 +59,9 @@ def main():
         generate_metadata(
             series=comic_info["series"],
             writer=comic_info["writer"],
-            vol=comic_info["vol"],
+            vol= comic_info["vol"] if "vol" in comic_info else -1,
             table_content=bookmark,
-            summary=comic_info["summary"],
+            summary=comic_info["summary"] if "vol" in comic_info else "",
             target_folder=args.o
         )
 

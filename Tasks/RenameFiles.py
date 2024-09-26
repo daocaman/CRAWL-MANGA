@@ -14,6 +14,7 @@ def main():
         description='Rename files')
     parser.add_argument('-o', type=str, required=True, help='target folder')
     parser.add_argument('-s', type=int, default=0, help='Sort file')
+    parser.add_argument('-s_i', type=int, default=0, help='Start index')
 
     args = parser.parse_args()
 
@@ -27,7 +28,7 @@ def main():
         files = sorted(files, key=lambda x: extract_number(x, True))
 
     for i, f in enumerate(files):
-        new_name = generate_filename(file_prefix, i, ".jpg")
+        new_name = generate_filename(file_prefix, args.s_i + i, ".jpg")
         os.rename(os.path.join(args.o, f), os.path.join(args.o, new_name))
         
 if __name__ == "__main__":
