@@ -24,7 +24,7 @@ from Constants import file_comic_xml, file_chapters
 from Constants import comic_xml, comic_series, comic_writer, comic_volume, comic_summary, comic_page, comic_pages_op, comic_pages_cl
 
 # constants objects
-from Constants import horizontal_size, verticle_size, bookmark_obj
+from Constants import horizontal_size, verticle_size, bookmark_obj, header_obj
 
 def is_image_file(file_name=''):
     """
@@ -487,20 +487,23 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
     return (chap_name, list_images)
     
     
-# def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
-#     r = requests.get(link)
-#     tree = html.fromstring(r.content)
+def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
+    r = requests.get(link, headers=header_obj, timeout=(3, 5))
+    tree = html.fromstring(r.content)
 
-#     if not is_list:
-#         return tree.xpath(xpath)
-#     else:
-#         soup = BeautifulSoup(tree.xpath(xpath), 'html.parser')
-#         chapters = soup.find_all(list_item_ele)
+    ic(tree.xpath(xpath))
 
-#         list_chapters = []
+    if not is_list:
+        ic(tree.xpath(xpath+"/text()"))
+        return tree.xpath(xpath+"/text()")
+    else:
+        chapters = tree.xpath(xpath + f"//{list_item_ele}")
 
-#         for chap in chapters:
-#             list_chapters.append({
-#                 "title": chap.text,
-#                 "page": chap['href']
-#             })
+        # get text from each element in the list
+        for chap in chapters:
+            tmp_text = chap.xpath(".//text()")
+            tmp_text = "".join(tmp_text)
+            if tmp_text != "":
+                ic(tmp_text)
+
+        
