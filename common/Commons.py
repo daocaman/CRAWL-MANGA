@@ -59,11 +59,16 @@ def extract_number(s='', last=False):
     :return: a number extracted from the string
     """
     if last:
-        match = re.findall(r'\d+', s)
-        return int(match[-1]) if match else 0
+        if '.' in s:
+            match = re.findall(r'\d+\.\d+', s)
+        else:
+            match = re.findall(r'\d+', s)
+        return float(match[-1]) if match else 0
     
+    # extract the first number in the string can contain float number
     match = re.search(r'\d+', s)
-    return int(match.group()) if match else 0
+
+    return float(match.group()) if match else 0.0
 
 
 def generate_metadata(series, writer, vol=-1, table_content=[], summary="", target_folder=""):
@@ -260,7 +265,7 @@ def download_image(link: str, server: str, file: str, count: int):
                 return 400
 
 
-def get_link_chapter_nettruyen(link= '', num_chap = -1):
+def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
     """
     Get list of chapters from nettruyen
     :param link: link to get list of chapters
@@ -285,12 +290,13 @@ def get_link_chapter_nettruyen(link= '', num_chap = -1):
         ul_ele = container_chapters_ele.find(id=ul_id)
         a_eles = ul_ele.find_all('a')
 
-        if num_chap == -1:
-            list_chapters = [a['href'] for a in a_eles]
-        else:
-            list_chapters = [a['href'] for a in a_eles[:num_chap]]
-        
-        return (server, list_chapters[::-1])
+        list_chapters = [a['href'] for a in a_eles]
+        list_chapters = list_chapters[::-1]
+
+        if start_idx != -1:
+            return (server, list_chapters[start_idx:start_idx+num_chap])
+        else:        
+            return (server, list_chapters[-num_chap:])
         
     except Exception as e:
         COMMON_DEBUG and ic(e)
@@ -389,11 +395,12 @@ def generate_chapter_img(chapter_str: str) -> str:
         return chapter + "." + odd
     
 
-def get_link_chapter_mangasee(link: str, num_chap: int):
+def get_link_chapter_mangasee(link: str, num_chap: int, start_idx: int):
     """
     Get list of chapters from mangasee123
     :param link: link to get list of chapters
     :param num_chap: number of chapters to get
+    :param start_idx: start index of the chapter
     :return: list of chapters
     """
     list_chapters = []
@@ -430,7 +437,10 @@ def get_link_chapter_mangasee(link: str, num_chap: int):
         f.close()
         os.remove('test.html')
 
-        return (server, chapters[-num_chap:], cur_path_name, index_name)
+        if start_idx != -1:
+            return (server, chapters[start_idx:start_idx+num_chap])
+        else:        
+            return (server, chapters[-num_chap:], cur_path_name, index_name)
         
     except Exception as e:
         COMMON_DEBUG and ic(e)
