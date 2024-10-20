@@ -16,13 +16,14 @@ def main():
     parser.add_argument('-l', type=str, required=True, help='Link to the manga page')
     parser.add_argument('-n', type=int, default=-1, required=True, help='Number of chapters to download')
     parser.add_argument('-s', type=int, default=1, required=True, help='Server to download from')
+    parser.add_argument('-s_i', type=int, default=1, required=False, help='Start index')
 
     args = parser.parse_args()
 
     if args.s == 1:
-        (server, list_chapters) = get_link_chapter_nettruyen(args.l, args.n)
+        (server, list_chapters) = get_link_chapter_nettruyen(args.l, args.n, args.s_i)
     else:
-        (server, list_chapters, cur_path_name, index_name) = get_link_chapter_mangasee(args.l, args.n)
+        (server, list_chapters, cur_path_name, index_name) = get_link_chapter_mangasee(args.l, args.n, args.s_i)
 
     for chapter in list_chapters:
         if args.s == 1:
