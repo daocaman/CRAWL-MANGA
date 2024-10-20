@@ -8,4 +8,4 @@ Covers/
 Comicinfo.json
 *.mobi
 *.zip
-NLY/
+*/*.jpg
