@@ -68,3 +68,6 @@ def reformat_folder(folder='', is_delete=False):
     # Debug print final
     REFORMAT_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
+
+def reformat_folders_process(reformat_obj):
+    reformat_folder(reformat_obj.folder, reformat_obj.is_delete)

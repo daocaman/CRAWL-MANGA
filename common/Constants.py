@@ -8,6 +8,7 @@ REFORMAT_DEBUG = True
 RESIZE_DEBUG = False
 DOWNLOAD_COVERS_DEBUG = True
 DOWNLOAD_MANGA_DEBUG = True
+RENAME_DEBUG = True
 
 # Constants number
 max_length_idx = 4
