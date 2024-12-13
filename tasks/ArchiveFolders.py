@@ -29,6 +29,8 @@ def main():
             folders = os.listdir()
             folders = [f for f in folders if os.path.isdir(f) and args.o in f]
             folders = sorted(folders, key=lambda x: extract_number(x, True))
+            if len(folders) == 0:
+                raise Exception('No folders found')
 
             resize_obj_list = []
             for fol in folders:
@@ -55,9 +57,14 @@ def main():
                 ARCHIVE_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{os.cpu_count()}')
                 with multiprocessing.Pool(os.cpu_count() // 2) as pool:  
                     pool.map(archive_folder_process, folders_process)
-            else:
-                for fol in folders_process:
-                    archive_folder_process(fol, args.d)
+        else:
+            if not os.path.isdir(args.o):
+                raise Exception('Target folder not found')
+
+            archive_folder_process({
+                "folder": args.o,
+                "is_delete": args.d
+            })
 
     except Exception as e:
         ARCHIVE_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
