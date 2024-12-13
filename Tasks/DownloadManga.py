@@ -4,11 +4,9 @@ from icecream import ic
 
 import sys
 
-# add the path to the common folder
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..\\common')))
-from Commons import get_link_chapter_nettruyen, get_list_image_nettruyen, download_image, generate_filename
-from Commons import get_link_chapter_mangasee, get_list_image_mangasee
+from controllers.MangaMangaseeController import get_link_chapter_mangasee, get_list_image_mangasee
+from controllers.MangaNettruyenController import get_link_chapter_nettruyen, get_list_image_nettruyen
+from common.Commons import generate_filename, download_image
 
 def main():
     parser = argparse.ArgumentParser(
@@ -17,6 +15,10 @@ def main():
     parser.add_argument('-n', type=int, default=-1, required=True, help='Number of chapters to download')
     parser.add_argument('-s', type=int, default=1, required=True, help='Server to download from')
     parser.add_argument('-s_i', type=int, default=1, required=False, help='Start index')
+    
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
 
     args = parser.parse_args()
 

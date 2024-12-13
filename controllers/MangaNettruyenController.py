@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from colorama import Fore, Style
+from pprint import pprint
 
 from common.Constants import NETTRUYEN_DEBUG, chapter_folder_prefix
 from common.Commons import generate_filename
@@ -19,9 +21,11 @@ def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
     """
     
     # Debug print initial
-    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print("="*50)
-    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print('Common: get_link_chapter_nettruyen')
-    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(f"Link: {link}\nNum chap: {num_chap}\nStart idx: {start_idx}")
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.YELLOW + 'MangaNettruyenController: get_link_chapter_nettruyen'.center(70) + Style.RESET_ALL)
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.BLUE + f'{"Num chap:":<20}' + Style.RESET_ALL + f'{num_chap: >49}')
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.BLUE + f'{"Start idx:":<20}' + Style.RESET_ALL + f'{start_idx: >49}')
 
     list_chapters = []
     link_splits = link.split('/')
@@ -55,15 +59,17 @@ def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
             list_chapters = list_chapters[::-1]
             
         # Debug print list_chapters
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(f"List chapters: \n{'\n'.join(list_chapters)}")
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and pprint(list_chapters)
 
         # Debug print final
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print("="*50)
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
         return (server, list_chapters)
         
     except Exception as e:
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(f"Error: {e}")
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
         return (server, list_chapters)
     
 
@@ -74,9 +80,9 @@ def get_list_image_nettruyen(link=''):
     """
     
     # Debug print initial
-    NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print("="*50)
-    NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print('Common: get_list_image_nettruyen')
-    NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(f"Link: {link}")
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.YELLOW + 'MangaNettruyenController: get_list_image_nettruyen'.center(70) + Style.RESET_ALL)
+    NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
 
     list_images = []
     
@@ -123,14 +129,16 @@ def get_list_image_nettruyen(link=''):
         list_images = [f if 'https' in f else "https://" + f  for f in list_images ]
 
         # Debug print list_images
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(f"List images: \n{'\n'.join(list_images)}")
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.CYAN + f'{"List images:":<20}' + Style.RESET_ALL)
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and pprint(list_images)
 
         # Debug print final
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print("="*50)
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
         return (title, list_images)
         
     except Exception as e:
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(f"Error: {e}")
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
         return (title, list_images)
     

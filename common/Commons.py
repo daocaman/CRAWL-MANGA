@@ -4,6 +4,7 @@ import requests
 from PIL import Image
 from skimage import io
 from lxml import html
+from colorama import Fore, Style
 
 from common.Constants import COMMON_DEBUG
 
@@ -15,12 +16,12 @@ from common.Constants import header_obj
 
 
 DEBUG_OBJ = {
-    "is_image_file": False,
-    "generate_filename": False,
-    "extract_number": False,
-    "resize_image": False,
-    "check_image_error": False,
-    "download_image": False,
+    "is_image_file": True,
+    "generate_filename": True,
+    "extract_number": True,
+    "resize_image": True,
+    "check_image_error": True,
+    "download_image": True,
 }
 
 def is_image_file(file_name=''):
@@ -56,9 +57,12 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     """
 
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print("="*50)
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print('Common: generate_filename')
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(f"Prefix: {prefix}\nIndex: {idx}\nExt: {ext}\nStr len: {str_len}")
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.YELLOW + 'Common: generate_filename'.center(70) + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.BLUE + f'{"Prefix:":<20}' + Style.RESET_ALL + f'{prefix: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.BLUE + f'{"Index:":<20}' + Style.RESET_ALL + f'{idx: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.BLUE + f'{"Ext:":<20}' + Style.RESET_ALL + f'{ext: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.BLUE + f'{"Str len:":<20}' + Style.RESET_ALL + f'{str_len: >49}')
     
     # Generate filename
     result_str = "0"*str_len + str(idx)
@@ -66,8 +70,9 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     result_str = f"{prefix}{result_str}{ext}"
     
     # Debug print result
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(f"Result str: {result_str}")
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.CYAN + f'{"Result str:":<20}' + Style.RESET_ALL + f'{result_str: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    
     return result_str
 
 
@@ -124,16 +129,16 @@ def check_image_error(filename=''):
     """
     
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print("="*50)
-    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print('Common: check_image_error')
-    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(f"Filename: {filename}")
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.YELLOW + 'Common: check_image_error'.center(70) + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.BLUE + f'{"Filename:":<20}' + Style.RESET_ALL + f'{filename: >49}')
 
     try:
         img = Image.open(filename)  # open the image file
         img.verify()  # verify that it is, in fact an image
         img = io.imread(filename)
     except Exception as e:
-        COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(f"Error: {e}")
+        COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
         return False
     
     return True
@@ -149,9 +154,12 @@ def download_image(link: str, server: str, file: str, count: int):
     """
     
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print("="*50)
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print('Common: download_image')
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(f"Link: {link}\nServer: {server}\nFile: {file}\nCount: {count}")
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.YELLOW + 'Common: download_image'.center(70) + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"Server:":<20}' + Style.RESET_ALL + f'{server: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"File:":<20}' + Style.RESET_ALL + f'{file: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"Count:":<20}' + Style.RESET_ALL + f'{count: >49}')
 
     if os.path.exists(file):
 
@@ -196,7 +204,7 @@ def download_image(link: str, server: str, file: str, count: int):
                 return 400
 
     # Debug print final
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
 def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
     """

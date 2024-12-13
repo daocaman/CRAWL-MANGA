@@ -1,7 +1,8 @@
 import os
 import requests
 import json
-
+from colorama import Fore, Style
+from pprint import pprint
 from common.Constants import MANGASEE_DEBUG
 from common.Commons import generate_filename
 
@@ -19,10 +20,10 @@ def generate_chapter_link_mangasee(chapter_str: str) -> str:
     :return: chapter link
     """
     
-    # Debug print initial
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print("="*50)
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print('Common: generate_chapter_link_mangasee')
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(f"Chapter str: {chapter_str}")
+    # Debug print initial   
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(Fore.YELLOW + 'MangaMangaseeController: generate_chapter_link_mangasee'.center(70) + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(Fore.BLUE + f'{"Chapter str:":<20}' + Style.RESET_ALL + f'{chapter_str: >49}')
 
     index = ""
 
@@ -43,10 +44,10 @@ def generate_chapter_link_mangasee(chapter_str: str) -> str:
     result = "-chapter-" + str(chapter) + odd + index
 
     # Debug print result
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(f"Result: {result}")
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
 
     # Debug print final
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print("="*50)
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
     return result
 
@@ -59,9 +60,9 @@ def generate_chapter_img(chapter_str: str) -> str:
     """
     
     # Debug print initial
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print("="*50)
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print('Common: generate_chapter_img')
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(f"Chapter str: {chapter_str}")
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(Fore.YELLOW + 'MangaMangaseeController: generate_chapter_img'.center(70) + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(Fore.BLUE + f'{"Chapter str:":<20}' + Style.RESET_ALL + f'{chapter_str: >49}')
 
     chapter_str = str(chapter_str)
     chapter = chapter_str[1:-1]
@@ -70,10 +71,10 @@ def generate_chapter_img(chapter_str: str) -> str:
     result = chapter if odd == "0" else chapter + "." + odd
 
     # Debug print result
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(f"Result: {result}")
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
 
     # Debug print final
-    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print("="*50)
+    MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
     return result
     
@@ -88,9 +89,11 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
     """
     
     # Debug print initial
-    MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print("="*50)
-    MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print('Common: get_link_chapter_mangasee')
-    MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(f"Link: {link}\nNum chap: {num_chap}\nStart idx: {start_idx}")
+    MANGASEE_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    MANGASEE_DEBUG and print(Fore.YELLOW + 'MangaMangaseeController: get_link_chapter_mangasee'.center(70) + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
+    MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.BLUE + f'{"Num chap:":<20}' + Style.RESET_ALL + f'{num_chap: >49}')
+    MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.BLUE + f'{"Start idx:":<20}' + Style.RESET_ALL + f'{start_idx: >49}')
 
     list_chapters = []
     link_splits = link.split('/')
@@ -138,15 +141,17 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
             list_chapters = list_chapters[::-1]
         
         # Debug print list_chapters
-        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(f"List chapters: \n{'\n'.join(list_chapters)}")
+        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
+        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and pprint(list_chapters)
 
         # Debug print final
-        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print("="*50)
+        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
         return (server, list_chapters)
         
     except Exception as e:
-        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(f"Error: {e}")
+        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
+        MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
         return (server, list_chapters)
     
 
@@ -158,9 +163,10 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
     """ 
     
     # Debug print initial
-    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print("="*50)
-    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print('Common: get_list_image_mangasee')
-    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(f"Index name: {index_name}\nChapter: {chapter}")
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)    
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(Fore.YELLOW + 'MangaMangaseeController: get_list_image_mangasee'.center(70) + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(Fore.BLUE + f'{"Index name:":<20}' + Style.RESET_ALL + f'{index_name: >49}')
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(Fore.BLUE + f'{"Chapter:":<20}' + Style.RESET_ALL + f'{chapter: >49}')
 
     id_chap_link = index_name + generate_chapter_link_mangasee(chapter["Chapter"])
 
@@ -204,10 +210,11 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
         list_images.append(img_link)
         
     # Debug print list_images
-    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(f"List images: \n{'\n'.join(list_images)}")
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(Fore.CYAN + f'{"List images:":<20}' + Style.RESET_ALL)
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and pprint(list_images)
 
     # Debug print final
-    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print("="*50)
+    MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
     return (chap_name, list_images)
     
