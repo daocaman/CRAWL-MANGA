@@ -3,6 +3,7 @@ import os
 import sys
 from colorama import Fore, Style
 import multiprocessing
+import concurrent.futures
 
 from common.Commons import extract_number
 from controllers.ArchiveController import archive_folder_process, ARCHIVE_DEBUG
@@ -40,8 +41,10 @@ def main():
                 })
 
             if os.cpu_count() > 1:
-                with multiprocessing.Pool(os.cpu_count() // 2) as pool:  
-                    pool.map(resize_image_process, resize_obj_list)
+                current_cpu = os.cpu_count() // 2
+                ARCHIVE_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{current_cpu}')
+                with concurrent.futures.ThreadPoolExecutor(max_workers=current_cpu) as executor:
+                    executor.map(resize_image_process, resize_obj_list)
             else:
                 for resize_obj in resize_obj_list:
                     resize_image_process(resize_obj)
@@ -54,9 +57,13 @@ def main():
                 })
 
             if os.cpu_count() > 1:
-                ARCHIVE_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{os.cpu_count()}')
-                with multiprocessing.Pool(os.cpu_count() // 2) as pool:  
-                    pool.map(archive_folder_process, folders_process)
+                current_cpu = os.cpu_count() // 2
+                ARCHIVE_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{current_cpu}')
+                with concurrent.futures.ThreadPoolExecutor(max_workers=current_cpu) as executor:
+                    executor.map(archive_folder_process, folders_process)
+            else:
+                for folder_process in folders_process:
+                    archive_folder_process(folder_process)
         else:
             if not os.path.isdir(args.o):
                 raise Exception('Target folder not found')
