@@ -1,5 +1,4 @@
 import argparse
-from icecream import ic
 import os
 
 import sys
@@ -12,10 +11,10 @@ from Commons import get_info_chapter
 def main():
     parser = argparse.ArgumentParser(
         description='Getting chapter information')
-    parser.add_argument('-l', type=str, required=True, help='link web')
-    parser.add_argument('-x_p', type=str, required=True, help='target element')
-    parser.add_argument('-m', default=False, action='store_true', help='multiple chapters')
-    parser.add_argument('-c_e', type=str, default="", help='child elements')
+    parser.add_argument('-l', type=str, required=True, help='Link web')
+    parser.add_argument('-x_p', type=str, required=True, help='Target element')
+    parser.add_argument('-m', default=False, action='store_true', help='Is multiple chapters')
+    parser.add_argument('-c_e', type=str, default="", help='Child elements')
 
     args = parser.parse_args()
 

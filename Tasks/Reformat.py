@@ -1,5 +1,4 @@
 import argparse
-from icecream import ic
 import os
 
 import sys
@@ -12,9 +11,9 @@ from Commons import reformat_folder, extract_number
 def main():
     parser = argparse.ArgumentParser(
         description='Reformat old folder')
-    parser.add_argument('-o', type=str, required=True, help='target folder')
-    parser.add_argument('-m', action='store_true', help='multiple folders')
-    parser.add_argument('-d', default=False, action='store_true', help='delete chapter folders')
+    parser.add_argument('-o', type=str, required=True, help='Target folder')
+    parser.add_argument('-m', default=False, action='store_true', help='Is multiple folders')
+    parser.add_argument('-d', default=False, action='store_true', help='Is delete child folders after reformat')
 
     args = parser.parse_args()
 

@@ -1,20 +1,22 @@
 import argparse
 import os
 from icecream import ic
-
 import sys
 
-# add the path to the common folder
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..\\common')))
-from Commons import archive_folder, extract_number
+from common.Commons import extract_number
+from controllers.ArchiveController import archive_folder
+
 
 def main():
     parser = argparse.ArgumentParser(
         description='Archive folders')
-    parser.add_argument('-o', type=str, required=True, help='target folder')
-    parser.add_argument('-m', action='store_true', help='multiple folders')
-    parser.add_argument('-d', default=False, action='store_true', help='delete folders after archiving')
+    parser.add_argument('-o', type=str, required=True, help='Target folder')
+    parser.add_argument('-m', action='store_true', help='Is multiple folders')
+    parser.add_argument('-d', default=False, action='store_true', help='Is delete folders after archiving')
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
 
     args = parser.parse_args()
 

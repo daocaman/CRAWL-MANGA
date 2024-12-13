@@ -2,23 +2,23 @@ import json
 from icecream import ic
 import os
 import argparse
-
 import sys
 
-# add the path to the common folder
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..\\common')))
-from Commons import generate_metadata, extract_number
-from Constants import file_chapters
-
+from controllers.MetadataController import generate_metadata
+from common.Commons import extract_number
+from common.Constants import file_chapters
 
 def main():
     parser = argparse.ArgumentParser(
         description='Create metadata for comic files')
     parser.add_argument('-b', type=str, help='bookmark file')
-    parser.add_argument('-c', type=str, help='comic info file')
-    parser.add_argument('-o', type=str, help='target folder')
+    parser.add_argument('-c', type=str, required=True, help='comic info file')
+    parser.add_argument('-o', type=str, required=True, help='target folder')
     parser.add_argument('-m', action='store_true', help='multiple folders')
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
 
     args = parser.parse_args()
 
@@ -41,9 +41,9 @@ def main():
     if args.m:
         folders = os.listdir()
         folders = [f for f in folders if os.path.isdir(f) and args.o in f]
-        folders = sorted(folders, key=lambda x: extract_number(x, True))
+        folders = sorted(folders, key=lambda x: extract_number(x, True, False))
         for fol in folders:
-            crr_vol = extract_number(fol, True) or -1
+            crr_vol = extract_number(fol, True, False) or -1
             crr_bookmark = []
             if os.path.exists(os.path.join(fol, file_chapters)):
                 with open(os.path.join(fol, file_chapters), 'r', encoding='utf8') as f:

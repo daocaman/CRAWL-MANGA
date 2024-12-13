@@ -5,16 +5,17 @@ from icecream import ic
 
 import sys
 
-# add the path to the common folder
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..\\common')))
-from Commons import download_image,  generate_filename
-from Constants import api_cover, link_cover, server_mangadex, cover_folder
+from common.Commons import download_image,  generate_filename
+from common.Constants import api_cover, link_cover, server_mangadex, cover_folder
 
 def main():
     parser = argparse.ArgumentParser(
         description='Download covers for a manga')
     parser.add_argument('-l', type=str, required=True, help='Link to the mangadex')
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
 
     args = parser.parse_args()
 

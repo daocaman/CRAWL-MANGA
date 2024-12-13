@@ -1,6 +1,11 @@
 # Debug variables
 COMMON_DEBUG = True
-
+ARCHIVE_DEBUG = True
+METADATA_DEBUG = True
+NETTRUYEN_DEBUG = True
+MANGASEE_DEBUG = True   
+REFORMAT_DEBUG = True  
+RESIZE_DEBUG = True
 
 # Constants number
 max_length_idx = 4

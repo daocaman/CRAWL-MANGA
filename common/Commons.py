@@ -1,30 +1,27 @@
 import re
 import os
-import shutil
-import json
 import requests
-from icecream import ic
 from PIL import Image
 from skimage import io
-from bs4 import BeautifulSoup
 from lxml import html
 
-from Constants import COMMON_DEBUG
+from common.Constants import COMMON_DEBUG
 
 # constants number
-from Constants import max_length_idx
-
-# constants string
-from Constants import file_prefix, chapter_folder_prefix
-
-# constants files
-from Constants import file_comic_xml, file_chapters
-
-# content of the file
-from Constants import comic_xml, comic_series, comic_writer, comic_volume, comic_summary, comic_page, comic_pages_op, comic_pages_cl
+from common.Constants import max_length_idx
 
 # constants objects
-from Constants import horizontal_size, verticle_size, bookmark_obj, header_obj
+from common.Constants import header_obj
+
+
+DEBUG_OBJ = {
+    "is_image_file": False,
+    "generate_filename": False,
+    "extract_number": False,
+    "resize_image": False,
+    "check_image_error": False,
+    "download_image": False,
+}
 
 def is_image_file(file_name=''):
     """
@@ -32,10 +29,21 @@ def is_image_file(file_name=''):
     :param file_name: file name to check
     :return: True if the file is an image file, False otherwise
     """
+    
+    # Debug print initial
+    COMMON_DEBUG and DEBUG_OBJ["is_image_file"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["is_image_file"] and print('Common: is_image_file')
+    COMMON_DEBUG and DEBUG_OBJ["is_image_file"] and print(f"File name: {file_name}")
+    
     ext = file_name.split('.')[-1]
+    
+    result = ext in ['jpg', 'png', 'jpeg']
+    
+    # Debug print result
+    COMMON_DEBUG and DEBUG_OBJ["is_image_file"] and print(f"Result: {result}")
+    COMMON_DEBUG and DEBUG_OBJ["is_image_file"] and print("="*50)
 
-    return ext in ['jpg', 'png', 'jpeg']
-
+    return result
 
 def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     """
@@ -46,153 +54,67 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     :param str_len: length of the index
     :return: a filename with the format: prefix + index + ext
     """
+
+    # Debug print initial
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print('Common: generate_filename')
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(f"Prefix: {prefix}\nIndex: {idx}\nExt: {ext}\nStr len: {str_len}")
+    
+    # Generate filename
     result_str = "0"*str_len + str(idx)
     result_str = result_str[-1*str_len:]
-    COMMON_DEBUG and ic(result_str)
-    return f'{prefix}{result_str}{ext}'
+    result_str = f"{prefix}{result_str}{ext}"
+    
+    # Debug print result
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(f"Result str: {result_str}")
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print("="*50)
+    return result_str
 
 
-def extract_number(s='', last=False):
+def extract_number(s='', last=False, is_float=False):
     """
     Extract number from a string
     :param s: input string
+    :param last: extract the last number
+    :param is_float: extract the float number
     :return: a number extracted from the string
     """
+    
+    # Debug print initial
+    COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print('Common: extract_number')
+    COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print(f"String: {s}\nLast: {last}\nIs float: {is_float}")
+    
+    # Extract the last number in the string
     if last:
         if '.' in s:
             match = re.findall(r'\d+\.\d+', s)
         else:
             match = re.findall(r'\d+', s)
-        return float(match[-1]) if match else 0
+            
+        result = match[-1]
+        
+        result = (float(result) if is_float else int(result)) if match else 0
+        
+        # Debug print result
+        COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print(f"Result: {result}")
+        COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print("="*50)
+        
+        return result
+        
     
-    # extract the first number in the string can contain float number
+    # Extract the first number in the string
     match = re.search(r'\d+', s)
 
-    return float(match.group()) if match else 0.0
-
-
-def generate_metadata(series, writer, vol=-1, table_content=[], summary="", target_folder=""):
-    """
-    Generate metadata for a comic
-    :param series: series of the comic
-    :param writer: writer of the comic
-    :param vol: volume of the comic
-    :param table_content: tablecontent of the comic
-    :param summary: summary of the comic
-    :param target_folder: target folder to save the metadata file
-    :return: None
-    """
-
-    COMMON_DEBUG and ic(f"Generate metadata for {target_folder}")
-
-    xml_containt = comic_xml
-
-    metas = []
-    metas.append(comic_series.format(series))
-    metas.append(comic_writer.format(writer))
-
-    # add volume information
-    if vol != -1:
-        metas.append(comic_volume.format(vol))
-
-    # add summary information
-    if summary != "":
-        metas.append(comic_summary.format(summary))
-
-    # add bookmark information
-    if len(table_content) > 0:
-        metas.append(comic_pages_op)
-        for content in table_content:
-            metas.append(comic_page.format(
-                content['page'], content['title']))
-        metas.append(comic_pages_cl)
-
-    final = xml_containt.format(content="\n".join(metas))
-
-    f = open(os.path.join(target_folder, file_comic_xml),
-             "w+", encoding="utf8")
-    f.write(final)
-    f.close()
-
-
-def archive_folder(folder='', is_delete=False):
-    """
-    Archive a folder
-    :param folder: folder to archive
-    :param is_delete: delete the folder after archiving
-    :return: None
-    """
-    COMMON_DEBUG and ic(f"Archive {folder}.zip")
-    if os.path.exists(f'{folder}/{file_chapters}'):
-        os.remove(f'{folder}/{file_chapters}')
-
-    shutil.make_archive(folder, "zip", base_dir=folder)
-    if is_delete:
-        shutil.rmtree(folder)
-
-
-def resize_image(folder='', is_horizontal=False):
-    """
-    Resize images in a folder
-    :param folder: folder to resize images
-    :param is_horizontal: resize images horizontally
-    :return: None
-    """
-
-    COMMON_DEBUG and ic(f"Resize images in {folder}")
-
-    image_files = [f for f in os.listdir(folder) if is_image_file(f)]
+    result = (float(match.group()) if is_float else int(match.group())) if match else 0
     
-    for  f in image_files:
+    result = float(result) if is_float else int(result)
 
-        new_size = verticle_size
-        
-        image = Image.open(os.path.join(folder, f))
+    # Debug print result
+    COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print(f"Result: {result}")
+    COMMON_DEBUG and DEBUG_OBJ["extract_number"] and print("="*50)
 
-        width, height = image.size
-        if width > height or is_horizontal:
-            new_size = horizontal_size
-
-        resized_image = image.resize(new_size)
-        resized_image.save(os.path.join(folder, f))
-
-
-def reformat_folder(folder='', is_delete=False):
-    """
-    Reformat a folder
-    :param folder: folder to reformat
-    :param is_delete: delete chapter folders
-    :return: None
-    """
-
-    COMMON_DEBUG and ic(f"Reformat {folder}")
-    count = 0
-    folders = os.listdir(folder)
-    folders = [f for f in folders if os.path.isdir(os.path.join(folder,f))]
-    folders = sorted(folders, key=lambda x: extract_number(x, True))
-    list_chapters = []
-    for fol in folders:
-        list_chapters.append({
-            "title": fol,
-            "page": count
-        })
-        images = os.listdir(os.path.join(folder, fol))
-        images = [f for f in images if is_image_file(f)]
-        images = sorted(images, key=lambda x: extract_number(x))
-
-        for img in images:
-            new_name = generate_filename(file_prefix, count, ".jpg")
-            shutil.copy(os.path.join(folder, fol, img),
-                        os.path.join(folder, new_name))
-            count += 1
-        
-        if is_delete:
-            shutil.rmtree(os.path.join(folder, fol))
-
-    with open(os.path.join(folder, file_chapters), 'w+', encoding="utf-8") as json_file:
-        # Write the list to the file
-        json.dump(list_chapters, json_file, ensure_ascii=False, indent=4)
-
+    return result
 
 def check_image_error(filename=''):
     """
@@ -200,18 +122,22 @@ def check_image_error(filename=''):
     :param filename: filename to check
     :return: None
     """
-    COMMON_DEBUG and ic(f"Check image error in {filename}")
+    
+    # Debug print initial
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print('Common: check_image_error')
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(f"Filename: {filename}")
+
     try:
         img = Image.open(filename)  # open the image file
         img.verify()  # verify that it is, in fact an image
         img = io.imread(filename)
     except Exception as e:
-        COMMON_DEBUG and ic(e)
+        COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(f"Error: {e}")
         return False
     
     return True
         
-
 def download_image(link: str, server: str, file: str, count: int):
     """
     Download image from link
@@ -221,6 +147,11 @@ def download_image(link: str, server: str, file: str, count: int):
     :param count: count to download
     :return: return status code
     """
+    
+    # Debug print initial
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print('Common: download_image')
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(f"Link: {link}\nServer: {server}\nFile: {file}\nCount: {count}")
 
     if os.path.exists(file):
 
@@ -264,247 +195,31 @@ def download_image(link: str, server: str, file: str, count: int):
                 COMMON_DEBUG and print("Error: ", e)
                 return 400
 
+    # Debug print final
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print("="*50)
 
-def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
-    """
-    Get list of chapters from nettruyen
-    :param link: link to get list of chapters
-    :param num_chap: number of chapters to get
-    :return: list of chapters
-    """
-    list_chapters = []
-    link_splits = link.split('/')
-    server = '/'.join(link_splits[:3])
-
-    container_chapters = "nt_listchapter"
-    ul_id = "desc"
-
-    try:
-        r = requests.get(link, headers={
-            'User-agent': 'Mozilla/5.0'}, timeout=(3, 5))
-        
-        htmlSource = r.content
-        soup = BeautifulSoup(htmlSource, 'html.parser')
-
-        container_chapters_ele = soup.find(id=container_chapters)
-        ul_ele = container_chapters_ele.find(id=ul_id)
-        a_eles = ul_ele.find_all('a')
-
-        list_chapters = [a['href'] for a in a_eles]
-        list_chapters = list_chapters[::-1]
-
-        if start_idx != -1:
-            return (server, list_chapters[start_idx:start_idx+num_chap])
-        else:        
-            return (server, list_chapters[-num_chap:])
-        
-    except Exception as e:
-        COMMON_DEBUG and ic(e)
-        return (server, list_chapters)
-    
-
-def get_list_image_nettruyen(link=''):
-    """
-    Get list of images from nettruyen
-    :param link: link to get list of images
-    """
-
-    list_images = []
-    
-    title = "Not found"
-    
-    image_src_atrs = ["data-src", "data-sv1", "data-sv2"]
-
-    div_images = ["page-chapter"]
-
-
-    try:
-        r = requests.get(link, headers={
-            'User-agent': 'Mozilla/5.0'}, timeout=(3, 5))
-        
-        htmlSource = r.content
-        soup = BeautifulSoup(htmlSource, 'html.parser')
-
-        title = soup.find('title')
-        title = title.text.split(" Next Chap ")[0].strip()
-
-        chap = title.split(" ")[-1]
-        odd = -1
-        if len(chap.split(".")) >= 2:
-            odd = chap.split(".")[-1]
-            chap = chap.split(".")[0]
-
-        title = f"{chapter_folder_prefix} {generate_filename(idx=int(chap))}"
-
-        if odd != -1:
-            title = f"{title}.{odd}"
-
-
-        div_images_ele = []
-        for div_image in div_images:
-            div_images_ele = soup.find_all('div', class_=div_image)
-            if len(div_images_ele) > 0:
-                break
-        
-        for div_image_ele in div_images_ele:
-            img_ele = div_image_ele.find('img')
-            for atr in image_src_atrs:
-                if atr in img_ele.attrs:
-                    list_images.append(img_ele[atr])
-                    break
-
-        list_images = [f if 'https' in f else "https://" + f  for f in list_images ]
-
-        return (title, list_images)
-        
-    except Exception as e:
-        COMMON_DEBUG and ic(e)
-        return (title, list_images)
-    
-
-def generate_chapter_link_mangasee(chapter_str: str) -> str:
-    """Generate chapter link from server mangasee123.com"""
-    index = ""
-
-    idexStr = int(chapter_str[0])
-
-    if (idexStr != 1):
-        index = '-index-' + idexStr
-
-    chapter = int(chapter_str[1:-1])
-
-    odd = ""
-
-    odd_str = int(chapter_str[-1])
-
-    if odd_str != 0:
-        odd = "." + str(odd_str)
-
-    return "-chapter-" + str(chapter) + odd + index
-
-
-def generate_chapter_img(chapter_str: str) -> str:
-    """Generate chapter image file name server mangasee123.com"""
-    chapter_str = str(chapter_str)
-    chapter = chapter_str[1:-1]
-    odd = chapter_str[-1]
-
-    if odd == "0":
-        return chapter
-    else:
-        return chapter + "." + odd
-    
-
-def get_link_chapter_mangasee(link: str, num_chap: int, start_idx: int):
-    """
-    Get list of chapters from mangasee123
-    :param link: link to get list of chapters
-    :param num_chap: number of chapters to get
-    :param start_idx: start index of the chapter
-    :return: list of chapters
-    """
-    list_chapters = []
-    link_splits = link.split('/')
-    server = '/'.join(link_splits[:3])
-
-    try:
-      
-        r = requests.get(link)
-
-        f = open('test.html', mode='w+', encoding='utf-8')
-        f.write(r.text)
-        f.close()
-
-        chapters = []
-        index_name = ""
-
-        f = open('test.html', mode='r+', encoding='utf-8')
-
-        for line in f.readlines():
-            if "vm.CurPathName = " in line:
-                cur_path_name = line.replace("vm.CurPathName = ", "")
-
-            if "vm.IndexName = " in line:
-                index_name = line.replace("vm.IndexName = ", "")
-                index_name = index_name.strip()
-                index_name = index_name.replace(
-                    '"', '').replace(";", "")
-
-            if "vm.CHAPTERS =" in line:
-                chapters = json.loads(line.replace(
-                    'vm.CHAPTERS = ', "").replace(";", ""))
-        
-        f.close()
-        os.remove('test.html')
-
-        if start_idx != -1:
-            return (server, chapters[start_idx:start_idx+num_chap])
-        else:        
-            return (server, chapters[-num_chap:], cur_path_name, index_name)
-        
-    except Exception as e:
-        COMMON_DEBUG and ic(e)
-        return (server, list_chapters)
-    
-
-def get_list_image_mangasee(index_name: str, chapter: dict):
-    """
-    Get list of images from mangasee123
-    :param link: link to get list of images
-    :param chapter: chapter to get list of images
-    """ 
-    id_chap_link = index_name + generate_chapter_link_mangasee(chapter["Chapter"])
-
-    link = "https://mangasee123.com/read-online/" + id_chap_link + ".html"
-
-    list_images = []
-
-    r = requests.get(link)
-    f_tmp = open('test.html', 'w+', encoding='utf-8')
-    f_tmp.write(r.text)
-    f_tmp.close()
-    f_tmp = open('test.html', 'r+', encoding='utf-8')
-
-    cur_path_name = ""
-    for line in f_tmp.readlines():
-        if "vm.CurPathName = " in line:
-            cur_path_name = line.replace(
-                "vm.CurPathName = ", "").strip().replace(";", "").replace('"', "")
-            break
-    
-    f_tmp.close()
-    os.remove('test.html')
-
-    chap_name = "Chapter " + generate_chapter_img(chapter["Chapter"])
-
-    for p_idx in range(1, int(chapter["Page"])+1):
-        img_link = "https://{curPathName}/manga/{index_name}/{directory}{img}.png"
-        img_link = img_link.replace(
-            "{curPathName}", cur_path_name)
-        img_link = img_link.replace(
-            "{index_name}", index_name)
-        if chapter["Directory"] != "":
-            img_link = img_link.replace(
-                "{directory}", chapter["Directory"])
-        else:
-            img_link = img_link.replace(
-                "{directory}", "")
-        img_link = img_link.replace("{img}", generate_chapter_img(
-            chapter["Chapter"])+"-"+ generate_filename(idx=p_idx, str_len=3))
-        
-        list_images.append(img_link)
-    
-    return (chap_name, list_images)
-    
-    
 def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
+    """
+    Get information from chapter
+    :param link: link to get information
+    :param xpath: xpath to get information
+    :param is_list: is list of information
+    :param list_item_ele: list item element
+    :return: information
+    """
+    
+    # Debug print initial
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print('Common: get_info_chapter')
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(f"Link: {link}\nXpath: {xpath}\nIs list: {is_list}\nList item ele: {list_item_ele}")
+
     r = requests.get(link, headers=header_obj, timeout=(3, 5))
     tree = html.fromstring(r.content)
 
-    ic(tree.xpath(xpath))
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(f"Tree: {tree.xpath(xpath)}")
 
     if not is_list:
-        ic(tree.xpath(xpath+"/text()"))
+        COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(f"Tree: {tree.xpath(xpath+'/text()')}")
         return tree.xpath(xpath+"/text()")
     else:
         chapters = tree.xpath(xpath + f"//{list_item_ele}")
@@ -514,6 +229,9 @@ def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
             tmp_text = chap.xpath(".//text()")
             tmp_text = "".join(tmp_text)
             if tmp_text != "":
-                ic(tmp_text)
+                COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(f"Tmp text: {tmp_text}")
 
-        
+    # Debug print final
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print("="*50)
+
+    return chapters
