@@ -1,13 +1,10 @@
 import argparse
 import os
-
 import sys
+from colorama import Fore, Style
 
-# add the path to the common folder
-sys.path.append(os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..\\common')))
 from Commons import extract_number, generate_filename, is_image_file
-from Constants import file_prefix
+from Constants import file_prefix, RENAME_DEBUG
 
 def main():
     parser = argparse.ArgumentParser(
@@ -18,18 +15,32 @@ def main():
 
     args = parser.parse_args()
 
-    files = os.listdir(args.o)
-    files = [f for f in files if is_image_file(f)]
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
 
-    if args.s == 1:
-        files = sorted(files, key=lambda x: extract_number(x))
+    RENAME_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+    RENAME_DEBUG and print(Fore.YELLOW + 'Tasks: RenameFiles'.center(70) + Style.RESET_ALL)
     
-    if args.s == 2:
-        files = sorted(files, key=lambda x: extract_number(x, True))
+    try:
+        files = os.listdir(args.o)
+        files = [f for f in files if is_image_file(f)]
 
-    for i, f in enumerate(files):
-        new_name = generate_filename(file_prefix, args.s_i + i, ".jpg")
-        os.rename(os.path.join(args.o, f), os.path.join(args.o, new_name))
+        if args.s == 1:
+            files = sorted(files, key=lambda x: extract_number(x))
+        
+        if args.s == 2:
+            files = sorted(files, key=lambda x: extract_number(x, True))
+
+        for i, f in enumerate(files):
+            new_name = generate_filename(file_prefix, args.s_i + i, ".jpg")
+            os.rename(os.path.join(args.o, f), os.path.join(args.o, new_name))
+
+        RENAME_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+
+    except Exception as e:
+        RENAME_DEBUG and print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
+        RENAME_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
         
 if __name__ == "__main__":
     main()

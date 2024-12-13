@@ -111,3 +111,8 @@ python -m tasks.DownloadCovers -l https://mangadex.org/title/32fdfe9b-6e11-4a13-
 ```
 python -m tasks.ResizeImages
 ```
+| Option | Argument | Description          |
+| ------ | -------- | -------------------- |
+| -o     | O        | Target folder        |
+| -m     | -        | Multiple folders     |
+| -hr    | -        | Resize to horizontal |
