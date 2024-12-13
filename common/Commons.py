@@ -9,18 +9,18 @@ from colorama import Fore, Style
 from common.Constants import COMMON_DEBUG
 
 # constants number
-from common.Constants import max_length_idx
+from common.Constants import max_length_idx, max_download_trial
 
 # constants objects
 from common.Constants import header_obj
 
 
 DEBUG_OBJ = {
-    "is_image_file": True,
-    "generate_filename": True,
-    "extract_number": True,
+    "is_image_file": False,
+    "generate_filename": False,
+    "extract_number": False,
     "resize_image": True,
-    "check_image_error": True,
+    "check_image_error": False,
     "download_image": True,
 }
 
@@ -57,7 +57,7 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     """
 
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
     COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.YELLOW + 'Common: generate_filename'.center(70) + Style.RESET_ALL)
     COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.BLUE + f'{"Prefix:":<20}' + Style.RESET_ALL + f'{prefix: >49}')
     COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.BLUE + f'{"Index:":<20}' + Style.RESET_ALL + f'{idx: >49}')
@@ -71,7 +71,7 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     
     # Debug print result
     COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.CYAN + f'{"Result str:":<20}' + Style.RESET_ALL + f'{result_str: >49}')
-    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["generate_filename"] and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
     
     return result_str
 
@@ -121,7 +121,7 @@ def extract_number(s='', last=False, is_float=False):
 
     return result
 
-def check_image_error(filename=''):
+def is_image_error(filename=''):
     """
     Check image error
     :param filename: filename to check
@@ -129,82 +129,73 @@ def check_image_error(filename=''):
     """
     
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
     COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.YELLOW + 'Common: check_image_error'.center(70) + Style.RESET_ALL)
     COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.BLUE + f'{"Filename:":<20}' + Style.RESET_ALL + f'{filename: >49}')
 
+    is_error = False
     try:
         img = Image.open(filename)  # open the image file
         img.verify()  # verify that it is, in fact an image
         img = io.imread(filename)
     except Exception as e:
         COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-        return True
+        is_error = True
     
-    return False
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.CYAN + f'{"Result is_error:":<20}' + Style.RESET_ALL + f'{str(is_error): >49}')
+    
+    COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+    return is_error
         
-def download_image(link: str, server: str, file: str, count: int):
+def download_image(link: str, server: str, file: str):
     """
     Download image from link
     :param link: link to download
     :param server: server to download
     :param file: file to save
-    :param count: count to download
     :return: return status code
     """
     
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
     COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.YELLOW + 'Common: download_image'.center(70) + Style.RESET_ALL)
     COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
     COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"Server:":<20}' + Style.RESET_ALL + f'{server: >49}')
     COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"File:":<20}' + Style.RESET_ALL + f'{file: >49}')
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.BLUE + f'{"Count:":<20}' + Style.RESET_ALL + f'{count: >49}')
 
-    if os.path.exists(file):
+    if os.path.exists(file) and not is_image_error(file):
+        return 200
 
-        # Check file exist and is a valid image
-        # if image valid return 200
-        # else remove file and download again until count = 3
-
-        if check_image_error(file):
-            os.remove(file)
-            if count < 3:
-                return download_image(link, server, file, count+1)
-        else:
-            return 200
-
-    else:
-        if count < 3:
-            try:
-                r = requests.get(link.replace("\n", ""), headers={
-                    'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
-
-                down_faied = False  # Check download success or not
-                down_code = 200
-                with open(file, "wb") as fd:
-                    down_code = r.status_code
-                    if (down_code != 200):
-                        down_faied = True
-                    else:
-                        fd.write(r.content)
-
-                if down_faied:
-                    # If download fail and status code is not 404
-                    # true: remove file and download again until count = 3
-                    # false: return 404
-                    if down_code == 404:
-                        os.remove(file)
-                        return 404
-                    return download_image(link, server, file, count+1)
+    download_success = False
+    for i in range(max_download_trial):
+        try:
+            r = requests.get(link, headers={
+                'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
+            
+            with open(file, "wb") as fd:
+                down_code = r.status_code
+                COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.CYAN + f'{"Down code:":<20}' + Style.RESET_ALL + f'{down_code: >49}')
+                if down_code != 200:
+                    raise Exception(f"Error download image {link}")
                 else:
-                    return 200
-            except Exception as e:
-                COMMON_DEBUG and print("Error: ", e)
-                return 400
+                    fd.write(r.content)
+            
+            if not is_image_error(file):
+                download_success = True
+                break
+            
+            return 200
+            
+        except Exception as e:
+            COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.RED + f'{"Error at trial:":<20}' + Style.RESET_ALL + f'{i: >49}')
+            continue
 
-    # Debug print final
-    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    result = 200 if download_success else 400
+
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+
+    return result
 
 def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
     """
@@ -217,9 +208,12 @@ def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
     """
     
     # Debug print initial
-    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print("="*50)
-    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print('Common: get_info_chapter')
-    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(f"Link: {link}\nXpath: {xpath}\nIs list: {is_list}\nList item ele: {list_item_ele}")
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.YELLOW + 'Common: get_info_chapter'.center(70) + Style.RESET_ALL)
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.BLUE + f'{"Xpath:":<20}' + Style.RESET_ALL + f'{xpath: >49}')
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.BLUE + f'{"Is list:":<20}' + Style.RESET_ALL + f'{str(is_list): >49}')
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.BLUE + f'{"List item ele:":<20}' + Style.RESET_ALL + f'{list_item_ele: >49}')
 
     r = requests.get(link, headers=header_obj, timeout=(3, 5))
     tree = html.fromstring(r.content)
@@ -240,6 +234,6 @@ def get_info_chapter(link: str, xpath: str, is_list = True, list_item_ele = ''):
                 COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(f"Tmp text: {tmp_text}")
 
     # Debug print final
-    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print("="*50)
+    COMMON_DEBUG and DEBUG_OBJ["get_info_chapter"] and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
     return chapters

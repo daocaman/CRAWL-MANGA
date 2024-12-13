@@ -45,7 +45,7 @@ python -m tasks.DownloadManga -l https://mangasee123.com/read-online/Kanojo-Okar
 Example 2: Download from nettruyen
 
 ```
-python -m tasks.DownloadManga -l https://nettruyen.com/truyen/one-piece -n -1 -s 1 -s_i 0
+python -m tasks.DownloadManga -l https://nettruyenviet.com/truyen-tranh/van-co-chi-ton -n -1 -s 1 -s_i 0
 ```
 
 2. Create metadata manga

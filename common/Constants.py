@@ -7,9 +7,11 @@ MANGASEE_DEBUG = True
 REFORMAT_DEBUG = True  
 RESIZE_DEBUG = True
 DOWNLOAD_COVERS_DEBUG = True
+DOWNLOAD_MANGA_DEBUG = True
 
 # Constants number
 max_length_idx = 4
+max_download_trial = 3
 
 # Constants string
 file_prefix = "pages_"

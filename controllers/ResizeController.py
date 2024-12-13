@@ -45,3 +45,6 @@ def resize_image(folder='', is_horizontal=False):
 
     # Debug print final
     RESIZE_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+
+def resize_image_process(resize_obj):
+    resize_image(resize_obj["folder"], resize_obj["is_horizontal"])

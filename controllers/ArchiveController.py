@@ -32,4 +32,5 @@ def archive_folder(folder='', is_delete=False):
     # Debug print final
     ARCHIVE_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
 
-
+def archive_folder_process(process_obj):
+    archive_folder(process_obj["folder"], process_obj["is_delete"])
