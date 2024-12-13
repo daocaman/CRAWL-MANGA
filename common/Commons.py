@@ -139,9 +139,9 @@ def check_image_error(filename=''):
         img = io.imread(filename)
     except Exception as e:
         COMMON_DEBUG and DEBUG_OBJ["check_image_error"] and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-        return False
+        return True
     
-    return True
+    return False
         
 def download_image(link: str, server: str, file: str, count: int):
     """
@@ -167,7 +167,7 @@ def download_image(link: str, server: str, file: str, count: int):
         # if image valid return 200
         # else remove file and download again until count = 3
 
-        if not check_image_error(file):
+        if check_image_error(file):
             os.remove(file)
             if count < 3:
                 return download_image(link, server, file, count+1)
@@ -198,7 +198,7 @@ def download_image(link: str, server: str, file: str, count: int):
                         return 404
                     return download_image(link, server, file, count+1)
                 else:
-                    return download_image(link, server, file, count)
+                    return 200
             except Exception as e:
                 COMMON_DEBUG and print("Error: ", e)
                 return 400

@@ -45,7 +45,8 @@ def main():
                 tmp_vol = cover["attributes"]["volume"]
                 list_covers.append({
                     "vol": tmp_vol,
-                    "link": cover_link
+                    "link": cover_link,
+                    "filename": generate_filename(idx=tmp_vol, ext=".jpg")
                 })
 
             offset += 100
@@ -57,7 +58,7 @@ def main():
                 count=0, 
                 link=cover["link"], 
                 server=server_mangadex, 
-                file=os.path.join(cover_folder, generate_filename(idx=cover["vol"], ext=".jpg" ))
+                file=os.path.join(cover_folder, cover["filename"])
             )
             if code_result != 200:
                 DOWNLOAD_COVERS_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'Download this cover {cover["link"]} failed')
