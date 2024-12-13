@@ -18,6 +18,7 @@ def generate_metadata(series, writer, vol=-1, table_content=[], summary="", targ
 
     # Debug print initial
     METADATA_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+    METADATA_DEBUG and print(Fore.YELLOW + 'MetadataController: generate_metadata'.center(70) + Style.RESET_ALL)
     METADATA_DEBUG and print(Fore.GREEN + f'{"Generate metadata":<20}' + Style.RESET_ALL + f'{str(series): >49}')
     METADATA_DEBUG and print(Fore.BLUE + f'{"Series:":<20}' + Style.RESET_ALL + f'{str(series): >49}')
     METADATA_DEBUG and print(Fore.BLUE + f'{"Writer:":<20}' + Style.RESET_ALL + f'{str(writer): >49}')
@@ -60,4 +61,4 @@ def generate_metadata(series, writer, vol=-1, table_content=[], summary="", targ
     f.close()
     
     # Debug print final
-    METADATA_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+    METADATA_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)

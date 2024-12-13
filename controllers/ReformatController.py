@@ -3,6 +3,7 @@ import shutil
 import json
 from colorama import Fore, Style
 from pprint import pprint
+
 from common.Constants import REFORMAT_DEBUG, file_prefix, file_chapters
 from common.Commons import generate_filename, extract_number, is_image_file
 

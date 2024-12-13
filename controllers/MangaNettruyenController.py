@@ -7,8 +7,8 @@ from common.Constants import NETTRUYEN_DEBUG, chapter_folder_prefix
 from common.Commons import generate_filename
 
 DEBUG_OBJ = {
-    "get_link_chapter_nettruyen": True,
-    "get_list_image_nettruyen": True,
+    "get_link_chapter_nettruyen": False,
+    "get_list_image_nettruyen": False,
 }
 
 def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
