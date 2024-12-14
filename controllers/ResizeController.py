@@ -14,10 +14,11 @@ def resize_image(folder='', is_horizontal=False):
     """
 
     # Debug print initial
-    RESIZE_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-    RESIZE_DEBUG and print(Fore.YELLOW + 'ResizeController: resize_image'.center(70) + Style.RESET_ALL)
-    RESIZE_DEBUG and print(Fore.BLUE + f'{"Folder:":<20}' + Style.RESET_ALL + f'{folder: >49}')
-    RESIZE_DEBUG and print(Fore.BLUE + f'{"Is horizontal:":<20}' + Style.RESET_ALL + f'{str(is_horizontal): >49}')
+    if RESIZE_DEBUG:
+        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'ResizeController: resize_image'.center(70) + Style.RESET_ALL)
+        print(Fore.BLUE + f'{"Folder:":<20}' + Style.RESET_ALL + f'{folder: >49}')
+        print(Fore.BLUE + f'{"Is horizontal:":<20}' + Style.RESET_ALL + f'{str(is_horizontal): >49}')
 
 
     image_files = [f for f in os.listdir(folder) if is_image_file(f)]

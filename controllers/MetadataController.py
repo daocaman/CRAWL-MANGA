@@ -17,16 +17,18 @@ def generate_metadata(series, writer, vol=-1, table_content=[], summary="", targ
     """
 
     # Debug print initial
-    METADATA_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-    METADATA_DEBUG and print(Fore.YELLOW + 'MetadataController: generate_metadata'.center(70) + Style.RESET_ALL)
-    METADATA_DEBUG and print(Fore.GREEN + f'{"Generate metadata":<20}' + Style.RESET_ALL + f'{str(series): >49}')
-    METADATA_DEBUG and print(Fore.BLUE + f'{"Series:":<20}' + Style.RESET_ALL + f'{str(series): >49}')
-    METADATA_DEBUG and print(Fore.BLUE + f'{"Writer:":<20}' + Style.RESET_ALL + f'{str(writer): >49}')
-    METADATA_DEBUG and print(Fore.BLUE + f'{"Vol:":<20}' + Style.RESET_ALL + f'{str(vol): >49}')
-    METADATA_DEBUG and print(Fore.BLUE + f'{"Summary:":<20}' + Style.RESET_ALL + f'{str(summary): >49}')
-    METADATA_DEBUG and print(Fore.BLUE + f'{"Target folder:":<20}' + Style.RESET_ALL + f'{str(target_folder): >49}')
-    METADATA_DEBUG and print(Fore.BLUE + f'{"Table content:":<20}' + Style.RESET_ALL )
-    METADATA_DEBUG and pprint(table_content, indent=2)
+    if METADATA_DEBUG:
+        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'MetadataController: generate_metadata'.center(70) + Style.RESET_ALL)
+        print(Fore.GREEN + f'{"Generate metadata":<20}' + Style.RESET_ALL + f'{str(series): >49}')
+        print(Fore.BLUE + f'{"Series:":<20}' + Style.RESET_ALL + f'{str(series): >49}')
+        print(Fore.BLUE + f'{"Writer:":<20}' + Style.RESET_ALL + f'{str(writer): >49}')
+        print(Fore.BLUE + f'{"Vol:":<20}' + Style.RESET_ALL + f'{str(vol): >49}')
+        print(Fore.BLUE + f'{"Summary:":<20}' + Style.RESET_ALL + f'{str(summary): >49}')
+        print(Fore.BLUE + f'{"Target folder:":<20}' + Style.RESET_ALL + f'{str(target_folder): >49}')
+        print(Fore.BLUE + f'{"Table content:":<20}' + Style.RESET_ALL )
+        pprint(table_content, indent=2)
+    
     xml_containt = comic_xml
 
     metas = []
@@ -50,8 +52,9 @@ def generate_metadata(series, writer, vol=-1, table_content=[], summary="", targ
         metas.append(comic_pages_cl)
 
     # Debug print metas
-    METADATA_DEBUG and print(Fore.CYAN + f'{"Metas:":<20}' + Style.RESET_ALL)
-    METADATA_DEBUG and pprint(metas, indent=2)
+    if METADATA_DEBUG:
+        print(Fore.CYAN + f'{"Metas:":<20}' + Style.RESET_ALL)
+        pprint(metas, indent=2)
 
     final = xml_containt.format(content="\n".join(metas))
 

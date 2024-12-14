@@ -16,10 +16,11 @@ def reformat_folder(folder='', is_delete=False):
     """
 
     # Debug print initial
-    REFORMAT_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-    REFORMAT_DEBUG and print(Fore.YELLOW + 'ReformatController: reformat_folder'.center(70) + Style.RESET_ALL)
-    REFORMAT_DEBUG and print(Fore.BLUE + f'{"Folder:":<20}' + Style.RESET_ALL + f'{folder: >49}')
-    REFORMAT_DEBUG and print(Fore.BLUE + f'{"Is delete:":<20}' + Style.RESET_ALL + f'{str(is_delete): >49}')
+    if REFORMAT_DEBUG:
+        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'ReformatController: reformat_folder'.center(70) + Style.RESET_ALL)
+        print(Fore.BLUE + f'{"Folder:":<20}' + Style.RESET_ALL + f'{folder: >49}')
+        print(Fore.BLUE + f'{"Is delete:":<20}' + Style.RESET_ALL + f'{str(is_delete): >49}')
 
     count = 0 # Image count
     
@@ -29,8 +30,9 @@ def reformat_folder(folder='', is_delete=False):
     folders = sorted(folders, key=lambda x: extract_number(x, True, is_float=True))
     
     # Debug print folders
-    REFORMAT_DEBUG and print(Fore.CYAN + f'{"Folders:":<20}' + Style.RESET_ALL)
-    REFORMAT_DEBUG and pprint(folders)
+    if REFORMAT_DEBUG:
+        print(Fore.CYAN + f'{"Folders:":<20}' + Style.RESET_ALL)
+        pprint(folders)
     
     # List chapters
     list_chapters = []
@@ -57,8 +59,9 @@ def reformat_folder(folder='', is_delete=False):
             shutil.rmtree(os.path.join(folder, fol))
     
     # Debug print list_chapters
-    REFORMAT_DEBUG and print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
-    REFORMAT_DEBUG and pprint([f'{chap["title"]}: {chap["page"]}' for chap in list_chapters])
+    if REFORMAT_DEBUG:
+        print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
+        pprint([f'{chap["title"]}: {chap["page"]}' for chap in list_chapters])
 
     # Write the list of chapters to the file
     with open(os.path.join(folder, file_chapters), 'w+', encoding="utf-8") as json_file:
