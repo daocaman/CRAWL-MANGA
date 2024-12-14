@@ -3,7 +3,6 @@ import os
 import requests
 from colorama import Fore, Style
 import sys
-from pprint import pprint
 import multiprocessing
 
 from common.Commons import download_image,  generate_filename
@@ -21,9 +20,10 @@ def main():
         sys.exit(1)
 
     args = parser.parse_args()
-    
-    DOWNLOAD_COVERS_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
-    DOWNLOAD_COVERS_DEBUG and print(Fore.YELLOW + 'Tasks: DownloadCovers'.center(70) + Style.RESET_ALL)
+
+    if DOWNLOAD_COVERS_DEBUG:
+        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'Tasks: DownloadCovers'.center(70) + Style.RESET_ALL)
     
     try:
 
@@ -41,8 +41,7 @@ def main():
 
             r = requests.get(current_covers_api)
             result = r.json()
-            DOWNLOAD_COVERS_DEBUG and print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL )
-            DOWNLOAD_COVERS_DEBUG and pprint(result)
+
             data = result["data"]
             for cover in data:
                 cover_link = link_cover.format(
@@ -87,8 +86,10 @@ def main():
                     DOWNLOAD_COVERS_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'Download this cover {cover["link"]} failed')
       
     except Exception as e:
-        DOWNLOAD_COVERS_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
-        DOWNLOAD_COVERS_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+
+        if DOWNLOAD_COVERS_DEBUG:
+            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
+            print(Fore.GREEN + '<' +'='*68 + '<' + Style.RESET_ALL)
 
 if __name__ == "__main__":  
     main()

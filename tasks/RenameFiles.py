@@ -19,8 +19,9 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    RENAME_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-    RENAME_DEBUG and print(Fore.YELLOW + 'Tasks: RenameFiles'.center(70) + Style.RESET_ALL)
+    if RENAME_DEBUG:
+        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'Tasks: RenameFiles'.center(70) + Style.RESET_ALL)
     
     try:
         files = os.listdir(args.o)
@@ -39,8 +40,9 @@ def main():
         RENAME_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
     except Exception as e:
-        RENAME_DEBUG and print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-        RENAME_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        if RENAME_DEBUG:
+            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
+            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
         
 if __name__ == "__main__":
     main()

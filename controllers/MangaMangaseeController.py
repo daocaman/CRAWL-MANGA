@@ -46,7 +46,7 @@ def generate_chapter_link_mangasee(chapter_str: str) -> str:
 
     if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"]:
         print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-        print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
     return result
 
@@ -60,7 +60,7 @@ def generate_chapter_img(chapter_str: str) -> str:
     
     # Debug print initial
     if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"]:
-        print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
         print(Fore.YELLOW + 'MangaMangaseeController: generate_chapter_img'.center(70) + Style.RESET_ALL)
         print(Fore.BLUE + f'{"Chapter str:":<20}' + Style.RESET_ALL + f'{chapter_str: >49}')
 
@@ -73,7 +73,7 @@ def generate_chapter_img(chapter_str: str) -> str:
     # Debug print result
     if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"]:
         print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-        print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
     return result
     
@@ -147,14 +147,14 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
         if MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"]:
             print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
             pprint(list_chapters)
-            print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
         return (server, list_chapters, cur_path_name, index_name)
         
     except Exception as e:
         if MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"]:
             print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-            print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
         return (server, list_chapters, cur_path_name, index_name)
     
 
@@ -218,7 +218,7 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
     if MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"]:
         print(Fore.CYAN + f'{"List images:":<20}' + Style.RESET_ALL)
         pprint(list_images)
-        print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
     return (chap_name, list_images)
     

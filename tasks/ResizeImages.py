@@ -19,8 +19,9 @@ def main():
 
     args = parser.parse_args()
     
-    RESIZE_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-    RESIZE_DEBUG and print(Fore.YELLOW + 'Task: ResizeImages'.center(70) + Style.RESET_ALL)
+    if RESIZE_DEBUG:
+        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'Task: ResizeImages'.center(70) + Style.RESET_ALL)
     
     try:
         if args.m:
@@ -46,8 +47,9 @@ def main():
 
         RESIZE_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
     except Exception as e:
-        RESIZE_DEBUG and print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-        RESIZE_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        if RESIZE_DEBUG:
+            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
+            print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
 
 if __name__ == "__main__":
     main()

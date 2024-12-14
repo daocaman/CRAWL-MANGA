@@ -22,10 +22,12 @@ def main():
 
     args = parser.parse_args()
     
-    try:
-        METADATA_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
-        METADATA_DEBUG and print(Fore.YELLOW + 'Tasks: CreateMetadata'.center(70) + Style.RESET_ALL)
+    if METADATA_DEBUG:
+        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'Tasks: CreateMetadata'.center(70) + Style.RESET_ALL)
 
+
+    try:
         with open(args.c, 'r', encoding='utf8') as f:
             comic_info = json.load(f)
 
@@ -65,8 +67,9 @@ def main():
                 target_folder=args.o
             )
     except Exception as e:
-        METADATA_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
-        METADATA_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+        if METADATA_DEBUG:
+            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
+            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
 if __name__ == "__main__":
     main()

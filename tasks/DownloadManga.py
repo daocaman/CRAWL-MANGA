@@ -25,8 +25,9 @@ def main():
 
     args = parser.parse_args()
 
-    DOWNLOAD_MANGA_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-    DOWNLOAD_MANGA_DEBUG and print(Fore.YELLOW + 'DownloadManga: main'.center(70) + Style.RESET_ALL)
+    if DOWNLOAD_MANGA_DEBUG:
+        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'DownloadManga: main'.center(70) + Style.RESET_ALL)
 
     try:
 
@@ -35,8 +36,9 @@ def main():
         else:
             (server, list_chapters, cur_path_name, index_name) = get_link_chapter_mangasee(args.l, args.n, args.s_i)
 
-        DOWNLOAD_MANGA_DEBUG and print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
-        DOWNLOAD_MANGA_DEBUG and pprint(list_chapters, indent=2)
+        if DOWNLOAD_MANGA_DEBUG:
+            print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
+            pprint(list_chapters, indent=2)
 
 
         for chapter in list_chapters:
@@ -67,10 +69,11 @@ def main():
                     if code_result != 200:
                         DOWNLOAD_MANGA_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'Download this image {img["link"]} failed')
 
-        DOWNLOAD_MANGA_DEBUG and print(Fore.GREEN + '='*70 + Style.RESET_ALL)
+        DOWNLOAD_MANGA_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
     except Exception as e:
-        DOWNLOAD_MANGA_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
-        DOWNLOAD_MANGA_DEBUG and print(Fore.GREEN + '<' +'='*68 + '<' + Style.RESET_ALL)
+        if DOWNLOAD_MANGA_DEBUG:
+            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
+            print(Fore.GREEN + '<' +'='*68 + '<' + Style.RESET_ALL)
 
 if __name__ == "__main__":  
     main()

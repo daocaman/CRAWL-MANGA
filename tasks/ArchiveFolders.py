@@ -22,8 +22,9 @@ def main():
 
     args = parser.parse_args()
 
-    ARCHIVE_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-    ARCHIVE_DEBUG and print(Fore.YELLOW + 'Tasks: ArchiveFolders'.center(70) + Style.RESET_ALL)
+    if ARCHIVE_DEBUG:
+        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'Tasks: ArchiveFolders'.center(70) + Style.RESET_ALL)
 
     try:
         if args.m:
@@ -74,8 +75,9 @@ def main():
             })
 
     except Exception as e:
-        ARCHIVE_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
-        ARCHIVE_DEBUG and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        if ARCHIVE_DEBUG:
+            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
+            print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
 
 if __name__ == "__main__":
     main()
