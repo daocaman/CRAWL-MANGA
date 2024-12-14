@@ -9,6 +9,7 @@ RESIZE_DEBUG = False
 DOWNLOAD_COVERS_DEBUG = True
 DOWNLOAD_MANGA_DEBUG = True
 RENAME_DEBUG = True
+DOWNLOAD_YOUTUBE_DEBUG = True
 
 # Constants number
 max_length_idx = 4
@@ -58,3 +59,28 @@ header_obj = {
 
 horizontal_size = (1448, 1072)
 verticle_size = (1072, 1448)
+
+ydl_opts_video = {
+    'format': 'bestvideo[height<=720]+bestaudio/best',  # Download the best quality video and audio with resolution 1080 or less
+    'outtmpl': '%(title)s.%(ext)s',  # Output filename format (video and audio will have the same title)
+}
+
+ydl_opts_audio = {
+    'format': 'bestaudio/best',  # Download the best quality audio
+    'postprocessors': [
+        {
+            'key': 'FFmpegExtractAudio',  # Correct key for extracting audio
+            'preferredcodec': 'mp3',  # Convert audio to mp3 format
+            'preferredquality': '192',  # Set the preferred quality to 192 kbps
+        },
+    ],
+    'outtmpl': '%(title)s.%(ext)s',  # Output filename format
+}   
+
+ydl_opts_playlist = {
+    'extract_flat': True,  # Do not download the videos, only extract information
+    'skip_download': True,
+}
+
+save_yt_audio = "yt_audio/%(title)s.%(ext)s"
+save_yt_video = "yt_video/%(title)s.%(ext)s"

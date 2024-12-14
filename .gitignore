@@ -10,3 +10,5 @@ Comicinfo.json
 *.zip
 */*.jpg
 comicInfo/
+yt_video/
+yt_audio/

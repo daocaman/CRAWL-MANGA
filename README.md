@@ -79,11 +79,11 @@ python -m tasks.CreateMetadata -b ./resource/bookmarks.json -c ./resource/comicI
 python -m tasks.ArchiveFolders
 ```
 
-| Option | Argument | Description                           |
-| ------ | -------- | ------------------------------------- |
-| -o     | O        | Target folder                         |
-| -m     | -        | Multiple folders                      |
-| -d     | -        | Delete folders after archiving        |
+| Option | Argument | Description                    |
+| ------ | -------- | ------------------------------ |
+| -o     | O        | Target folder                  |
+| -m     | -        | Multiple folders               |
+| -d     | -        | Delete folders after archiving |
 
 Example:
 
@@ -96,6 +96,7 @@ python -m tasks.ArchiveFolders -o 'Rent a Girlfriend' -m -d
 ```
 python -m tasks.DownloadCovers
 ```
+
 | Option | Argument | Description      |
 | ------ | -------- | ---------------- |
 | -l     | L        | Link to mangadex |
@@ -111,8 +112,29 @@ python -m tasks.DownloadCovers -l https://mangadex.org/title/32fdfe9b-6e11-4a13-
 ```
 python -m tasks.ResizeImages
 ```
+
 | Option | Argument | Description          |
 | ------ | -------- | -------------------- |
 | -o     | O        | Target folder        |
 | -m     | -        | Multiple folders     |
 | -hr    | -        | Resize to horizontal |
+
+5. Download the youtube
+
+```
+python -m tasks.DownloadYT
+```
+
+| Option | Argument | Description                               |
+| ------ | -------- | ----------------------------------------- |
+| -l     | L        | Link to the youtube video or playlist     |
+| -t     | T        | Type of download ('audio', 'video')        |
+| -l_t   | L_T      | Youtube link type (1: video, 2: playlist) |
+| -n     | N        | Number of videos to download              |
+| -s_i   | S_I      | Start index                               |
+
+Example download playlist
+
+```
+python -m tasks.DownloadYT -l https://www.youtube.com/playlist?list=PLERnQ6RdlqxBVs4j2EgaTPYh0JkTy80Sz -t "audio" -l_t 2 
+```
