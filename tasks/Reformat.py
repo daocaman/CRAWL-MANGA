@@ -21,8 +21,9 @@ def main():
 
     args = parser.parse_args()
 
-    REFORMAT_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-    REFORMAT_DEBUG and print(Fore.YELLOW + 'Tasks: Reformat'.center(70) + Style.RESET_ALL)
+    if REFORMAT_DEBUG:
+        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'Tasks: Reformat'.center(70) + Style.RESET_ALL)
 
     try:
         if args.m:
@@ -55,8 +56,9 @@ def main():
 
         REFORMAT_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
     except Exception as e:
-        print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-        REFORMAT_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        if REFORMAT_DEBUG:
+            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
+            print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
 
 
 if __name__ == "__main__":
