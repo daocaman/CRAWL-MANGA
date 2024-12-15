@@ -128,7 +128,7 @@ python -m tasks.DownloadYT
 | Option | Argument | Description                               |
 | ------ | -------- | ----------------------------------------- |
 | -l     | L        | Link to the youtube video or playlist     |
-| -t     | T        | Type of download ('audio', 'video')        |
+| -t     | T        | Type of download ('audio', 'video')       |
 | -l_t   | L_T      | Youtube link type (1: video, 2: playlist) |
 | -n     | N        | Number of videos to download              |
 | -s_i   | S_I      | Start index                               |
@@ -136,5 +136,17 @@ python -m tasks.DownloadYT
 Example download playlist
 
 ```
-python -m tasks.DownloadYT -l https://www.youtube.com/playlist?list=PLERnQ6RdlqxBVs4j2EgaTPYh0JkTy80Sz -t "audio" -l_t 2 
+python -m tasks.DownloadYT -l https://www.youtube.com/playlist?list=PLERnQ6RdlqxBVs4j2EgaTPYh0JkTy80Sz -t "audio" -l_t 2
 ```
+
+6. Reformat the manga
+
+```
+python -m tasks.Reformat
+```
+
+| Option | Argument | Description                            |
+| ------ | -------- | -------------------------------------- |
+| -o     | O        | Target folder                          |
+| -m     | -        | Is multiple folders                    |
+| -d     | -        | Is delete child folders after reformat |
