@@ -4,7 +4,7 @@ import sys
 from colorama import Fore, Style
 import concurrent.futures
 
-from controllers.ReformatController import reformat_folder_process, reformat_folder, REFORMAT_DEBUG
+from controllers.ReformatController import reformat_folders_process, reformat_folder, REFORMAT_DEBUG
 from common.Commons import extract_number
 
 
@@ -45,10 +45,10 @@ def main():
                 current_cpu = os.cpu_count() // 2
                 REFORMAT_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{current_cpu}')
                 with concurrent.futures.ThreadPoolExecutor(max_workers=current_cpu) as executor:
-                    executor.map(reformat_folder_process, reformat_folders)
+                    executor.map(reformat_folders_process, reformat_folders)
             else:
                 for reformat_obj in reformat_folders:
-                    reformat_folder_process(reformat_obj)
+                    reformat_folders_process(reformat_obj)   
 
 
         else:

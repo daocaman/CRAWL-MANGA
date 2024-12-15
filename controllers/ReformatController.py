@@ -73,4 +73,5 @@ def reformat_folder(folder='', is_delete=False):
 
 
 def reformat_folders_process(reformat_obj):
-    reformat_folder(reformat_obj.folder, reformat_obj.is_delete)
+    pprint(reformat_obj)
+    reformat_folder(reformat_obj['folder'], reformat_obj['is_delete'])
