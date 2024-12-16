@@ -127,7 +127,7 @@ python -m tasks.ResizeImages -o 'Rent a Girlfriend'
 
 5. Download the youtube
 
-Note: Before using this script, you need to install ffmpeg [ffmpeg](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/)
+Note: Before using this script, you need to install [ffmpeg](https://www.geeksforgeeks.org/how-to-install-ffmpeg-on-windows/)
 
 ```
 python -m tasks.DownloadYT
