@@ -10,6 +10,7 @@ DOWNLOAD_COVERS_DEBUG = True
 DOWNLOAD_MANGA_DEBUG = True
 RENAME_DEBUG = True
 DOWNLOAD_YOUTUBE_DEBUG = True
+MOVE_CHAP_VOL_DEBUG = True
 
 # Constants number
 max_length_idx = 4
@@ -45,6 +46,7 @@ file_comic_json = "ComicInfo.json"
 file_comic_xml = "ComicInfo.xml"
 file_chapters = "Chapters.json"
 cover_folder = "Covers"
+manga_vol = "{0} - Vol{1}"
 
 # example objects
 bookmark_obj = {
