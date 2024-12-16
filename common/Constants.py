@@ -86,3 +86,19 @@ ydl_opts_playlist = {
 
 save_yt_audio = "yt_audio/%(title)s.%(ext)s"
 save_yt_video = "yt_video/%(title)s.%(ext)s"
+
+main_menu = [
+    "Download Manga",
+    "Create metadata",
+    "Archive folder",
+    "Resize image",
+    "Download Youtube",
+    "Reformat old folder manga",
+    "Rename file",
+    "Move chapter to volume",
+]
+
+manga_menu = [
+    "Nettruyen",
+    "Mangasee",
+]
