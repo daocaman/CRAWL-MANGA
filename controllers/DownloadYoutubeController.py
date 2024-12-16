@@ -8,7 +8,7 @@ DEBUG_OBJ = {
     "get_playlist_videos": True,
 }
 
-def download_from_youtube(url: str, type_download: str):
+def download_from_youtube(url: str, type_download: str, is_convert_mp4: bool = False):
     """
     Download content from YouTube based on the provided URL and type of download.
     :param url: The URL of the YouTube video or playlist to download.
@@ -26,6 +26,13 @@ def download_from_youtube(url: str, type_download: str):
     if type_download == "video":
         ydl_opts = ydl_opts_video
         ydl_opts['outtmpl'] = save_yt_video
+        if is_convert_mp4:
+            ydl_opts['postprocessors'] = [
+                {
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp4',
+                }
+            ]
     elif type_download == "audio":
         ydl_opts = ydl_opts_audio
         ydl_opts['outtmpl'] = save_yt_audio
@@ -66,4 +73,4 @@ def get_playlist_videos(playlist_url: str):
         return list_videos
 
 def download_yt_process(link_yt_obj):
-    download_from_youtube(link_yt_obj["link"], link_yt_obj["type"])
+    download_from_youtube(link_yt_obj["link"], link_yt_obj["type"], link_yt_obj["is_convert_mp4"])

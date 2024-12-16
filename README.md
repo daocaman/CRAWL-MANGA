@@ -139,6 +139,7 @@ python -m tasks.DownloadYT
 | -t     | T        | Type of download ('audio', 'video')       |
 | -l_t   | L_T      | Youtube link type (1: video, 2: playlist) |
 | -f_yt  | F_YT     | File youtube link                         |
+| -c     | C        | Convert video to mp4                      |
 
 Example download playlist
 

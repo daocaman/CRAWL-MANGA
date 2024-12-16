@@ -12,6 +12,7 @@ def main():
     parser.add_argument('-t', type=str, help='Type of download')
     parser.add_argument('-l_t', type=int, default=1, help='Youtube link type')
     parser.add_argument('-f_yt', default="", type=str, help='File youtube link')
+    parser.add_argument('-c', default=False, action='store_true', help='Convert video to mp4')
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -30,13 +31,13 @@ def main():
                 download_yt_process(video)
         else:
             if args.l_t == 1:
-                download_yt_process({"link": args.l, "type": args.t})
+                download_yt_process({"link": args.l, "type": args.t, "is_convert_mp4": args.c})
             elif args.l_t == 2:
                 list_videos = get_playlist_videos(args.l)
 
                 list_videos_process = []
                 for video in list_videos:
-                    list_videos_process.append({"link": video, "type": args.t})
+                    list_videos_process.append({"link": video, "type": args.t, "is_convert_mp4": args.c})
 
             
                 for video in list_videos_process:
