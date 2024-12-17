@@ -7,9 +7,6 @@ from common.Constant_v1_1 import radio_menu, error_message
 from tasks.MoveChapVol import main_process
 
 def quest_form_move_chap_vol():
-    #  parser.add_argument('-f', type=str, required=True, help='Chapters per volume in json format')
-    # parser.add_argument('-t', type=str, required=True, help='Manga title')
-    # parser.add_argument('-d', default=False, action='store_true', help='Delete folder chapters after copying')
     
     while True:
         ques_chap_vol_file = f"Enter chapters per volume file: {art('gimme')}"
