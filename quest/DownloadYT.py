@@ -17,6 +17,7 @@ def quest_form_download_yt():
     type_download = "audio",
     link_type = 1,
     is_convert_mp4 = False
+    quality = "720"
     
     if not is_file_download:
         ques_link_type = f"Is link playlist? {art('gimme')}"
@@ -41,6 +42,18 @@ def quest_form_download_yt():
                 return
             
             break
+
+        while True:
+            ques_quality = f"Quality: {art('gimme')}"
+            quality = questionary.text(ques_quality).ask()
+            if quality == "":
+                quality = "720"
+                break
+            if quality not in ["144", "240", "360", "480", "720", "1080"]:
+                print(Fore.RED + error_message["quality"] + art("error", 3, 1) + Style.RESET_ALL)
+                print(Fore.CYAN + "Quality must be 144, 240, 360, 480, 720, 1080" + art("cat4") + Style.RESET_ALL)
+                continue
+            break
         
         file_yt = ""
         ques_type_download = f"Type download: {art('gimme')}"
@@ -64,7 +77,5 @@ def quest_form_download_yt():
     is_convert_mp4 = questionary.select(ques_convert_mp4, radio_menu).ask()
     is_convert_mp4 = radio_menu.index(is_convert_mp4) == 1
     
-    print(youtube_link, type_download, link_type, file_yt, is_convert_mp4)
-    
-    main_process(youtube_link, type_download, link_type, file_yt, is_convert_mp4)
+    main_process(youtube_link, type_download, link_type, file_yt, quality, is_convert_mp4)
         

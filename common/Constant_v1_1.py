@@ -39,4 +39,5 @@ error_message = {
     "file_not_found": "File not found ",
     "folder_not_found": "Folder not found ",
     "manga_title": "Please enter a valid manga title ",
+    "quality": "Please enter a valid quality ",
 }
