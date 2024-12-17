@@ -7,6 +7,35 @@ from pprint import pprint
 from common.Constants import MOVE_CHAP_VOL_DEBUG, manga_vol
 from controllers.MoveChapController import move_chap_vol
 
+def main_process(file_chapters, manga_title, delete_chapters):
+    if MOVE_CHAP_VOL_DEBUG:
+        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'MoveChapVol: main'.center(70) + Style.RESET_ALL)
+    
+    try:
+        if not os.path.exists(file_chapters):
+            raise Exception('File not found')
+        
+        if not manga_title: 
+            raise Exception('Manga title not found')
+        
+        with open(file_chapters, 'r') as f:
+            chapters_per_volume = json.load(f)
+            
+        pprint(chapters_per_volume)
+            
+        for vol in chapters_per_volume:
+            target_folder = manga_vol.format(manga_title, vol['vol'])
+            print(target_folder)
+            move_chap_vol(target_folder, vol['start_chap'], vol['end_chap'], delete_chapters)
+        
+            
+    except Exception as e:
+        if MOVE_CHAP_VOL_DEBUG:
+            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
+            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        return
+
 def main():
     parser = argparse.ArgumentParser(
         description='Move chapters into volumes')
@@ -20,33 +49,7 @@ def main():
 
     args = parser.parse_args()
     
-    if MOVE_CHAP_VOL_DEBUG:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MoveChapVol: main'.center(70) + Style.RESET_ALL)
-    
-    try:
-        if not os.path.exists(args.f):
-            raise Exception('File not found')
-        
-        if not args.t: 
-            raise Exception('Manga title not found')
-        
-        with open(args.f, 'r') as f:
-            chapters_per_volume = json.load(f)
-            
-        pprint(chapters_per_volume)
-            
-        for vol in chapters_per_volume:
-            target_folder = manga_vol.format(args.t, vol['vol'])
-            print(target_folder)
-            move_chap_vol(target_folder, vol['start_chap'], vol['end_chap'], args.d)
-        
-            
-    except Exception as e:
-        if MOVE_CHAP_VOL_DEBUG:
-            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-        return
+    main_process(args.f, args.t, args.d)
 
     
 if __name__ == '__main__':
