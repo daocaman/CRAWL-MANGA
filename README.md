@@ -136,27 +136,28 @@ python -m tasks.DownloadYT
 | Option | Argument | Description                               |
 | ------ | -------- | ----------------------------------------- |
 | -l     | L        | Link to the youtube video or playlist     |
-| -t     | T        | Type of download ('audio', 'video')       |
+| -t     | T        | Type of download (audio, video)           |
 | -l_t   | L_T      | Youtube link type (1: video, 2: playlist) |
 | -f_yt  | F_YT     | File youtube link                         |
-| -c     | C        | Convert video to mp4                      |
+| -q     | Q        | Quality of video (default: 720)           |
+| -c     | C        | Convert video to mp4 (default: False)     |
 
 Example download playlist
 
 ```
-python -m tasks.DownloadYT -l https://www.youtube.com/playlist?list=PLERnQ6RdlqxBVs4j2EgaTPYh0JkTy80Sz -t "audio" -l_t 2
+python -m tasks.DownloadYT -l https://www.youtube.com/playlist?list=PLERnQ6RdlqxBVs4j2EgaTPYh0JkTy80Sz -t "audio" -l_t 2 -q 720
 ```
 
 Example download video
 
 ```
-python -m tasks.DownloadYT -l https://www.youtube.com/watch?v=pjBDwB4jaRc -t "video" -l_t 1
+python -m tasks.DownloadYT -l https://www.youtube.com/watch?v=pjBDwB4jaRc -t "video" -l_t 1 -q 720
 ```
 
 Example download from file
 
 ```
-python -m tasks.DownloadYT -f_yt ./resource/youtube.json 
+python -m tasks.DownloadYT -f_yt ./resource/youtube.json
 ```
 
 6. Reformat the manga
@@ -182,11 +183,12 @@ python -m tasks.Reformat -o 'Rent a Girlfriend' -m -d
 ```
 python -m tasks.RenameFiles
 ```
-| Option | Argument | Description                            |
-| ------ | -------- | -------------------------------------- |
-| -o     | O        | Target folder                          |
-| -s     | S        | Sort file                              |
-| -s_i   | S_I      | Start index                            |
+
+| Option | Argument | Description   |
+| ------ | -------- | ------------- |
+| -o     | O        | Target folder |
+| -s     | S        | Sort file     |
+| -s_i   | S_I      | Start index   |
 
 Example:
 
@@ -199,15 +201,15 @@ python -m tasks.RenameFiles -o 'Rent a Girlfriend' -s 0 -s_i 0
 ```
 python -m tasks.MoveChapVol
 ```
-| Option | Argument | Description                                  |
-| ------ | -------- | -------------------------------------------- |
-| -f     | F        | Chapters per volume in json format           |
-| -t     | T        | Manga title                                  |
-| -d     | D        | Delete folder chapters after copying         |
+
+| Option | Argument | Description                          |
+| ------ | -------- | ------------------------------------ |
+| -f     | F        | Chapters per volume in json format   |
+| -t     | T        | Manga title                          |
+| -d     | D        | Delete folder chapters after copying |
 
 Example:
 
 ```
 python -m tasks.MoveChapVol -f ./resource/vol_chaps.json -t 'Rent a Girlfriend' -d
 ```
-
