@@ -1,16 +1,16 @@
 # Debug variables
-COMMON_DEBUG = True
-ARCHIVE_DEBUG = True
-METADATA_DEBUG = True
-NETTRUYEN_DEBUG = True
-MANGASEE_DEBUG = True   
-REFORMAT_DEBUG = True  
+COMMON_DEBUG = False
+ARCHIVE_DEBUG = False
+METADATA_DEBUG = False
+NETTRUYEN_DEBUG = False
+MANGASEE_DEBUG = False   
+REFORMAT_DEBUG = False  
 RESIZE_DEBUG = False
-DOWNLOAD_COVERS_DEBUG = True
-DOWNLOAD_MANGA_DEBUG = True
-RENAME_DEBUG = True
+DOWNLOAD_COVERS_DEBUG = False
+DOWNLOAD_MANGA_DEBUG = False
+RENAME_DEBUG = False
 DOWNLOAD_YOUTUBE_DEBUG = True
-MOVE_CHAP_VOL_DEBUG = True
+MOVE_CHAP_VOL_DEBUG = False
 
 # Constants number
 max_length_idx = 4
@@ -86,19 +86,3 @@ ydl_opts_playlist = {
 
 save_yt_audio = "yt_audio/%(title)s.%(ext)s"
 save_yt_video = "yt_video/%(title)s.%(ext)s"
-
-main_menu = [
-    "Download Manga",
-    "Create metadata",
-    "Archive folder",
-    "Resize image",
-    "Download Youtube",
-    "Reformat old folder manga",
-    "Rename file",
-    "Move chapter to volume",
-]
-
-manga_menu = [
-    "Nettruyen",
-    "Mangasee",
-]
