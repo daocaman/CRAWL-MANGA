@@ -7,6 +7,9 @@ from quest.DownloadCovers import quest_form_download_cover
 from quest.ArchiveFolders import quest_form_archive_folders
 from quest.ResizeImages import quest_form_resize_images
 from quest.DownloadYT import quest_form_download_yt
+from quest.Reformat import quest_form_reformat
+from quest.RenameFiles import quest_form_rename_files
+from quest.MoveChapVol import quest_form_move_chap_vol
 from common.Constant_v1_1 import main_menu, radio_menu
 
 
@@ -35,6 +38,12 @@ def main():
             quest_form_resize_images()
         elif task_index == 5:
             quest_form_download_yt()
+        elif task_index == 6:
+            quest_form_reformat()
+        elif task_index == 7:
+            quest_form_rename_files()
+        elif task_index == 8:
+            quest_form_move_chap_vol()
 
         continue_task = questionary.select("Do you want to continue? ", radio_menu).ask()
         continue_task_index = radio_menu.index(continue_task)

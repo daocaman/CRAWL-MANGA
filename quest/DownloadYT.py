@@ -3,14 +3,14 @@ import questionary
 from colorama import Fore, Style
 import os
 
-from common.Constant_v1_1 import radio_menu, download_yt_menu, error_message
+from common.Constant_v1_1 import radio_menu, download_yt_menu, error_message, youtube_file_type
 from tasks.DownloadYT import main_process
 
 def quest_form_download_yt():
     
-    ques_type_download = f"Type download: {art('gimme')}"
-    type_download = questionary.select(ques_type_download, download_yt_menu).ask()
-    type_download = download_yt_menu.index(type_download)
+    ques_is_file_download = f"Type download: {art('gimme')}"
+    is_file_download = questionary.select(ques_is_file_download, download_yt_menu).ask()
+    is_file_download = download_yt_menu.index(is_file_download) == 1
     
     youtube_link = ""
     file_yt = "",
@@ -18,7 +18,7 @@ def quest_form_download_yt():
     link_type = 1,
     is_convert_mp4 = False
     
-    if type_download == 0:
+    if not is_file_download:
         ques_link_type = f"Is link playlist? {art('gimme')}"
         is_link_playlist = questionary.select(ques_link_type, radio_menu).ask()
         link_type = radio_menu.index(is_link_playlist) + 1
@@ -41,6 +41,11 @@ def quest_form_download_yt():
                 return
             
             break
+        
+        file_yt = ""
+        ques_type_download = f"Type download: {art('gimme')}"
+        type_download = questionary.select(ques_type_download, youtube_file_type).ask()
+        
     else:
         while True:
             ques_file_yt = f"Enter file youtube: {art('gimme')}"
