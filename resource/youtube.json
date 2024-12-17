@@ -1,3 +1,8 @@
 [
-  { "link": "https://www.youtube.com/watch?v=-qeK3dRoZ9U", "type": "audio" }
+  {
+    "link": "https://www.youtube.com/watch?v=0MOELM7O4sg",
+    "type": "video",
+    "quality": "720",
+    "convert": false
+  }
 ]

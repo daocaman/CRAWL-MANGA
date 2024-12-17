@@ -10,7 +10,8 @@ DOWNLOAD_COVERS_DEBUG = False
 DOWNLOAD_MANGA_DEBUG = False
 RENAME_DEBUG = False
 DOWNLOAD_YOUTUBE_DEBUG = True
-MOVE_CHAP_VOL_DEBUG = False
+MOVE_CHAP_VOL_DEBUG = True
+DOWNLOAD_NOVEL_DEBUG = True
 
 # Constants number
 max_length_idx = 4
@@ -86,3 +87,7 @@ ydl_opts_playlist = {
 
 save_yt_audio = "yt_audio/%(title)s.%(ext)s"
 save_yt_video = "yt_video/%(title)s.%(ext)s"
+
+page_break = "※----*-------⁛-------*----※"
+
+sstruyen_link = "https://sstruyen.vn/{0}/chuong-{1}"

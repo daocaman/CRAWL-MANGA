@@ -5,7 +5,7 @@ from colorama import Fore, Style
 
 from controllers.DownloadYoutubeController import get_playlist_videos, download_yt_process, DOWNLOAD_YOUTUBE_DEBUG
 
-def main_process(youtube_link, type, link_type, file_yt, is_convert_mp4):
+def main_process(youtube_link, type, link_type, file_yt, quality, convert):
     
     if DOWNLOAD_YOUTUBE_DEBUG:
         print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
@@ -16,18 +16,16 @@ def main_process(youtube_link, type, link_type, file_yt, is_convert_mp4):
             with open(file_yt, 'r') as file:
                 list_videos = json.load(file)
             for video in list_videos:   
-                video["is_convert_mp4"] = is_convert_mp4
                 download_yt_process(video)
         else:
             if link_type == 1:
-                download_yt_process({"link": youtube_link, "type": type, "is_convert_mp4": is_convert_mp4})
+                download_yt_process({"link": youtube_link, "type": type, "quality": quality, "convert": convert})
             elif link_type == 2:
                 list_videos = get_playlist_videos(youtube_link)
 
                 list_videos_process = []
                 for video in list_videos:
-                    list_videos_process.append({"link": video, "type": type, "is_convert_mp4": is_convert_mp4})
-
+                    list_videos_process.append({"link": video, "type": type, "quality": quality, "convert": convert})
             
                 for video in list_videos_process:
                     download_yt_process(video)
@@ -39,7 +37,6 @@ def main_process(youtube_link, type, link_type, file_yt, is_convert_mp4):
         return
 
 
-
 def main():
     parser = argparse.ArgumentParser(
         description='Download youtube')
@@ -47,6 +44,7 @@ def main():
     parser.add_argument('-t', type=str, help='Type of download')
     parser.add_argument('-l_t', type=int, default=1, help='Youtube link type')
     parser.add_argument('-f_yt', default="", type=str, help='File youtube link')
+    parser.add_argument('-q', default="720", type=str, help='Quality of video')
     parser.add_argument('-c', default=False, action='store_true', help='Convert video to mp4')
 
     if len(sys.argv) == 1:
@@ -55,7 +53,7 @@ def main():
 
     args = parser.parse_args()
     
-    main_process(args.l, args.t, args.l_t, args.f_yt, args.c)
+    main_process(args.l, args.t, args.l_t, args.f_yt, args.q, args.c)
 
 if __name__ == "__main__":
     main()
