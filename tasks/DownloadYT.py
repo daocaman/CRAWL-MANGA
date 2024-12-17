@@ -15,7 +15,8 @@ def main_process(youtube_link, type, link_type, file_yt, is_convert_mp4):
         if file_yt:
             with open(file_yt, 'r') as file:
                 list_videos = json.load(file)
-            for video in list_videos:
+            for video in list_videos:   
+                video["is_convert_mp4"] = is_convert_mp4
                 download_yt_process(video)
         else:
             if link_type == 1:

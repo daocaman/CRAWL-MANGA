@@ -69,13 +69,13 @@ ydl_opts_video = {
 
 ydl_opts_audio = {
     'format': 'bestaudio/best',  # Download the best quality audio
-    'postprocessors': [
-        {
-            'key': 'FFmpegExtractAudio',  # Correct key for extracting audio
-            'preferredcodec': 'mp3',  # Convert audio to mp3 format
-            'preferredquality': '192',  # Set the preferred quality to 192 kbps
-        },
-    ],
+    # 'postprocessors': [
+    #     {
+    #         'key': 'FFmpegExtractAudio',  # Correct key for extracting audio
+    #         'preferredcodec': 'mp3',  # Convert audio to mp3 format
+    #         'preferredquality': '192',  # Set the preferred quality to 192 kbps
+    #     },
+    # ],
     'outtmpl': '%(title)s.%(ext)s',  # Output filename format
 }   
 
