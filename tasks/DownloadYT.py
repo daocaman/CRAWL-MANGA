@@ -5,6 +5,40 @@ from colorama import Fore, Style
 
 from controllers.DownloadYoutubeController import get_playlist_videos, download_yt_process, DOWNLOAD_YOUTUBE_DEBUG
 
+def main_process(youtube_link, type, link_type, file_yt, is_convert_mp4):
+    
+    if DOWNLOAD_YOUTUBE_DEBUG:
+        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        print(Fore.YELLOW + 'DownloadYT: main'.center(70) + Style.RESET_ALL)
+    
+    try:
+        if file_yt:
+            with open(file_yt, 'r') as file:
+                list_videos = json.load(file)
+            for video in list_videos:
+                download_yt_process(video)
+        else:
+            if link_type == 1:
+                download_yt_process({"link": youtube_link, "type": type, "is_convert_mp4": is_convert_mp4})
+            elif link_type == 2:
+                list_videos = get_playlist_videos(youtube_link)
+
+                list_videos_process = []
+                for video in list_videos:
+                    list_videos_process.append({"link": video, "type": type, "is_convert_mp4": is_convert_mp4})
+
+            
+                for video in list_videos_process:
+                    download_yt_process(video)
+
+        DOWNLOAD_YOUTUBE_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+    except Exception as e:
+        print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
+        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        return
+
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Download youtube')
@@ -19,36 +53,8 @@ def main():
         sys.exit(0)
 
     args = parser.parse_args()
-    try:
-        if DOWNLOAD_YOUTUBE_DEBUG:
-            print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-            print(Fore.YELLOW + 'DownloadYT: main'.center(70) + Style.RESET_ALL)
-        
-        if args.f_yt:
-            with open(args.f_yt, 'r') as file:
-                list_videos = json.load(file)
-            for video in list_videos:
-                download_yt_process(video)
-        else:
-            if args.l_t == 1:
-                download_yt_process({"link": args.l, "type": args.t, "is_convert_mp4": args.c})
-            elif args.l_t == 2:
-                list_videos = get_playlist_videos(args.l)
-
-                list_videos_process = []
-                for video in list_videos:
-                    list_videos_process.append({"link": video, "type": args.t, "is_convert_mp4": args.c})
-
-            
-                for video in list_videos_process:
-                    download_yt_process(video)
-
-        DOWNLOAD_YOUTUBE_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-    except Exception as e:
-        print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-        return
-
+    
+    main_process(args.l, args.t, args.l_t, args.f_yt, args.c)
 
 if __name__ == "__main__":
     main()

@@ -2,34 +2,21 @@ import argparse
 import os
 import sys
 from colorama import Fore, Style
-import multiprocessing
 import concurrent.futures
 
 from common.Commons import extract_number
 from controllers.ArchiveController import archive_folder_process, ARCHIVE_DEBUG
 from controllers.ResizeController import resize_image_process
 
-def main():
-    parser = argparse.ArgumentParser(
-        description='Archive folders')
-    parser.add_argument('-o', type=str, required=True, help='Target folder')
-    parser.add_argument('-m', action='store_true', help='Is multiple folders')
-    parser.add_argument('-d', default=False, action='store_true', help='Is delete folders after archiving')
-
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(1)
-
-    args = parser.parse_args()
-
+def main_process(target_folder, is_multiple_folders, is_delete_folders):
     if ARCHIVE_DEBUG:
         print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
         print(Fore.YELLOW + 'Tasks: ArchiveFolders'.center(70) + Style.RESET_ALL)
 
     try:
-        if args.m:
+        if is_multiple_folders:
             folders = os.listdir()
-            folders = [f for f in folders if os.path.isdir(f) and args.o in f]
+            folders = [f for f in folders if os.path.isdir(f) and target_folder in f]
             folders = sorted(folders, key=lambda x: extract_number(x, True))
             if len(folders) == 0:
                 raise Exception('No folders found')
@@ -54,7 +41,7 @@ def main():
             for fol in folders:
                 folders_process.append({
                     "folder": fol,
-                    "is_delete": args.d
+                    "is_delete": is_delete_folders
                 })
 
             if os.cpu_count() > 1:
@@ -66,18 +53,33 @@ def main():
                 for folder_process in folders_process:
                     archive_folder_process(folder_process)
         else:
-            if not os.path.isdir(args.o):
+            if not os.path.isdir(target_folder):
                 raise Exception('Target folder not found')
 
             archive_folder_process({
-                "folder": args.o,
-                "is_delete": args.d
+                "folder": target_folder,
+                "is_delete": is_delete_folders
             })
-
     except Exception as e:
         if ARCHIVE_DEBUG:
             print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
             print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Archive folders')
+    parser.add_argument('-o', type=str, required=True, help='Target folder')
+    parser.add_argument('-m', action='store_true', help='Is multiple folders')
+    parser.add_argument('-d', default=False, action='store_true', help='Is delete folders after archiving')
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    args = parser.parse_args()
+
+    main_process(args.o, args.m, args.d)
+
 
 if __name__ == "__main__":
     main()
