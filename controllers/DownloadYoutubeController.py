@@ -2,6 +2,8 @@ import yt_dlp
 from colorama import Fore, Style
 from pprint import pprint
 from common.Constants import ydl_opts_video, ydl_opts_audio, save_yt_audio, save_yt_video, ydl_opts_playlist, DOWNLOAD_YOUTUBE_DEBUG
+import os
+import ffmpeg
 
 DEBUG_OBJ = {
     "download_from_youtube": True,
@@ -39,6 +41,12 @@ def download_from_youtube(url: str, type_download: str, is_convert_mp4: bool = F
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
+        
+    if type_download == "audio":
+        convert_file_ffmpeg(target_format="mp3", type_download="audio")
+    else:
+        convert_file_ffmpeg(target_format="mp4", type_download="video")
+
     
     print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
@@ -71,6 +79,33 @@ def get_playlist_videos(playlist_url: str):
             print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
         return list_videos
+    
+def convert_file_ffmpeg(target_format: str, type_download: str):
+    if type_download == "audio":
+        folder_save = save_yt_audio
+    else:
+        folder_save = save_yt_video
+
+    src_files = os.listdir(folder_save)
+    for file in src_files:
+        if os.path.isfile(os.path.join(folder_save, file)):
+            file_name = os.path.splitext(file)[0]
+            new_file_name = f"{file_name}.{target_format}"
+            
+            if os.path.exists(os.path.join(folder_save, new_file_name)):
+                continue
+            
+            input_path = os.path.join(folder_save, file)
+            output_path = os.path.join(folder_save, new_file_name)
+            
+            try:
+                ffmpeg.input(input_path).output(output_path).run(overwrite_output=True)
+                os.remove(input_path)  # Remove original file after conversion
+            except ffmpeg.Error as e:
+                print(Fore.RED + f'Error converting file: {e}' + Style.RESET_ALL)
+                return False
+            
+    return True
 
 def download_yt_process(link_yt_obj):
     download_from_youtube(link_yt_obj["link"], link_yt_obj["type"], link_yt_obj["is_convert_mp4"])

@@ -69,7 +69,7 @@ def main():
     parser.add_argument('-l', type=str, required=True, help='Link to the manga page')
     parser.add_argument('-n', type=int, default=-1, required=True, help='Number of chapters to download')
     parser.add_argument('-s', type=int, default=1, required=True, help='Server to download from')
-    parser.add_argument('-s_i', type=int, default=1, required=False, help='Start index')
+    parser.add_argument('-s_i', type=int, default=-1, required=False, help='Start index')
     
     if len(sys.argv) == 1:
         parser.print_help()
