@@ -18,11 +18,8 @@
     <!-- Download Form -->
     <div class="col-12">
       <div class="card shadow mb-4">
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">Archive folder</h6>
-        </div>
         <div class="card-body">
-          <form id="archiveForm" onsubmit="archive(event)">
+          <form id="archiveForm" onsubmit="archive_manga(event)">
             
             <div class="mb-3">
               <label for="targetFolder" class="form-label">Target folder</label>
@@ -30,11 +27,19 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Archive options</label>
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="multipleFolders">
                 <label class="form-check-label" for="multipleFolders">
                   Multiple folders
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="deleteFolders">
+                <label class="form-check-label" for="deleteFolders">
+                  Delete folders after archiving
                 </label>
               </div>
             </div>
