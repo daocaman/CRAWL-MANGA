@@ -1,7 +1,7 @@
 # Debug variables
 COMMON_DEBUG = False
 ARCHIVE_DEBUG = False
-METADATA_DEBUG = False
+METADATA_DEBUG = True
 NETTRUYEN_DEBUG = False
 MANGASEE_DEBUG = False   
 REFORMAT_DEBUG = False  

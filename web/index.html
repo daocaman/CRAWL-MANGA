@@ -47,6 +47,26 @@
 
         <div class="nav-item cursor-pointer">
           <a
+            onclick="navigateToPage('move_vol_chapter')"
+            class="nav-link justify-content-start"
+          >
+            <i class="fas fa-fw fa-exchange-alt text-white"></i>
+            <span class="text-white">Move vol/chap</span>
+          </a>
+        </div>
+
+        <div class="nav-item cursor-pointer">
+          <a
+            onclick="navigateToPage('create_metadata')"
+            class="nav-link justify-content-start"
+          >
+            <i class="fas fa-fw fa-file-code text-white"></i>
+            <span class="text-white">Create metadata</span>
+          </a>
+        </div>
+
+        <div class="nav-item cursor-pointer">
+          <a
             onclick="navigateToPage('archive')"
             class="nav-link justify-content-start"
           >
@@ -161,5 +181,8 @@
 
     <script src="js/download_manga.js"></script>
     <script src="js/archive.js"></script>
+    <script src="js/move_chapters.js"></script>
+    <script src="js/create_metadata.js"></script>
   </body>
 </html>
+

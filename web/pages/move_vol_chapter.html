@@ -1,0 +1,50 @@
+<!-- Topbar -->
+<nav
+  class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+>
+  <!-- Topbar Title -->
+  <div
+    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100"
+  >
+    <h1 class="h3 mb-0 text-gray-800 ps-2 text-primary">Move Vol/Chap</h1>
+  </div>
+</nav>
+<!-- End of Topbar -->
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Content Row -->
+  <div class="row">
+    <!-- Download Form -->
+    <div class="col-12">
+      <div class="card shadow mb-4">
+        <div class="card-body">
+          <form id="moveChaptersForm" onsubmit="moveChapters(event)">
+            <div class="mb-3">
+              <label for="folChaptersFile" class="form-label text-info">File containing chapters</label>
+              <input
+                type="text"
+                class="form-control"
+                id="folChaptersFile"
+                placeholder="Enter file containing chapters"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="mangaTitle" class="form-label text-info">Manga title</label>
+              <input type="text" class="form-control" id="mangaTitle" placeholder="Enter manga title" />
+            </div>
+
+            <div class="mb-3">
+              <input type="checkbox" class="form-check-input" id="deleteAfterMove" />
+              <label for="deleteAfterMove" class="form-label">Delete source folder after moving</label>
+            </div>
+           
+            <button type="submit" class="btn btn-primary">Move</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Page Content -->
