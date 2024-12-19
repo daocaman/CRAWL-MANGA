@@ -27,8 +27,6 @@ def main_process(manga_link, number_of_chapters, server_type, start_index):
             print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
             pprint(list_chapters, indent=2)
 
-        print('server: ', server)
-
         for chapter in list_chapters:
             if server_type == 1:
                 (chapter_name, list_images) = get_list_image_nettruyen(chapter)
