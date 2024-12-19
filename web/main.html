@@ -23,7 +23,7 @@
         >
           <a
             onclick="navigateToPage('dashboard')"
-            class="text-decoration-none d-flex align-items-center pointer"
+            class="text-decoration-none d-flex align-items-center cursor-pointer"
           >
             <i class="fas fa-desktop text-white"></i>
             <div class="sidebar-brand-text mx-3 text-white">Crawl Manga</div>
@@ -35,16 +35,22 @@
 
         <!-- Nav Items -->
         <div class="nav-item">
-          <a onclick="navigateToPage('download_manga')" class="nav-link">
+          <a
+            onclick="navigateToPage('download_manga')"
+            class="nav-link cursor-pointer"
+          >
             <i class="fa-solid fa-book-journal-whills text-white"></i>
             <span class="text-white">Download Manga</span>
           </a>
         </div>
 
         <div class="nav-item">
-          <a class="nav-link" href="">
-            <i class="fas fa-fw fa-cog text-white"></i>
-            <span class="text-white">Settings</span>
+          <a
+            onclick="navigateToPage('archive')"
+            class="nav-link cursor-pointer"
+          >
+            <i class="fas fa-fw fa-archive text-white"></i>
+            <span class="text-white">Archive folder</span>
           </a>
         </div>
       </nav>
@@ -77,27 +83,45 @@
     <!-- End of Page Wrapper -->
 
     <!-- Loading Screen -->
-    <div id="loadingScreen" class="position-fixed w-100 h-100 d-none" style="top: 0; left: 0; z-index: 9999;">
-        <div class="d-flex justify-content-center align-items-center h-100">
-            <div class="text-center">
-                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <h5 class="text-primary">Loading...</h5>
-            </div>
+    <div
+      id="loadingScreen"
+      class="position-fixed w-100 h-100 d-none"
+      style="top: 0; left: 0; z-index: 9999"
+    >
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="text-center">
+          <div
+            class="spinner-border text-primary mb-3"
+            role="status"
+            style="width: 3rem; height: 3rem"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h5 class="text-primary">Loading...</h5>
         </div>
+      </div>
     </div>
 
     <!-- Toast Container -->
-    <div id="toast" class="toast position-fixed top-0 end-0 m-3" style="z-index: 9999;" role="alert" aria-live="assertive" aria-atomic="true">
-			<div class="toast-header text-white" id="toastHeader">
-				<strong class="me-auto" id="toastTitle"></strong>
-				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-			</div>
-			<div class="toast-body" id="toastBody">
-			
-			</div>
-		</div>
+    <div
+      id="toast"
+      class="toast position-fixed top-0 end-0 m-3"
+      style="z-index: 9999"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="toast-header text-white" id="toastHeader">
+        <strong class="me-auto" id="toastTitle"></strong>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="toast-body" id="toastBody"></div>
+    </div>
 
     <script src="js/all.js"></script>
 
@@ -119,7 +143,6 @@
           .then((response) => response.text())
           .then((data) => {
             document.getElementById("content").innerHTML = data;
-						
           })
           .catch((error) => {
             console.error("Error loading dashboard:", error);
@@ -131,14 +154,14 @@
         document.getElementById("loadingScreen").classList.add("d-none");
       }
 
-			eel.expose(showMessage);
-			function showMessage(title, message) {
-				console.log(title, message);
-				document.getElementById("toastBody").innerHTML = message;
-				document.getElementById("toast").classList.add("show");
-				document.getElementById("toastHeader").classList.add("bg-success");
-				document.getElementById("toastTitle").innerHTML = title;
-			}
+      eel.expose(showMessage);
+      function showMessage(title, message) {
+        console.log(title, message);
+        document.getElementById("toastBody").innerHTML = message;
+        document.getElementById("toast").classList.add("show");
+        document.getElementById("toastHeader").classList.add("bg-success");
+        document.getElementById("toastTitle").innerHTML = title;
+      }
     </script>
 
     <script src="js/download_manga.js"></script>
