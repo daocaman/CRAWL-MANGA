@@ -11,14 +11,14 @@ from controllers.DownloadImageController import download_image_process
 from common.Commons import generate_filename
 from common.Constants import DOWNLOAD_MANGA_DEBUG
 
-def main_process(manga_link, number_of_chapters, server, start_index):
+def main_process(manga_link, number_of_chapters, server_type, start_index):
     if DOWNLOAD_MANGA_DEBUG:
         print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
         print(Fore.YELLOW + 'DownloadManga: main'.center(70) + Style.RESET_ALL)
 
     try:
 
-        if server == 1:
+        if server_type == 1:
             (server, list_chapters) = get_link_chapter_nettruyen(manga_link, number_of_chapters, start_index)
         else:
             (server, list_chapters, cur_path_name, index_name) = get_link_chapter_mangasee(manga_link, number_of_chapters, start_index)
@@ -27,9 +27,10 @@ def main_process(manga_link, number_of_chapters, server, start_index):
             print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
             pprint(list_chapters, indent=2)
 
+        print('server: ', server)
 
         for chapter in list_chapters:
-            if server == 1:
+            if server_type == 1:
                 (chapter_name, list_images) = get_list_image_nettruyen(chapter)
             else:
                 (chapter_name, list_images) = get_list_image_mangasee(index_name, chapter)
