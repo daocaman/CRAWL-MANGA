@@ -49,16 +49,15 @@ def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
         list_chapters = [a['href'] for a in a_eles]
         
         if start_idx != -1:
-            list_chapters = list_chapters[start_idx:]
-        else:
             list_chapters = list_chapters[::-1]
+            list_chapters = list_chapters[start_idx:]
             
         if num_chap != -1:
             list_chapters = list_chapters[:num_chap]
             
-        if start_idx != -1:
+        if start_idx == -1:
             list_chapters = list_chapters[::-1]
-            
+
         # Debug print list_chapters
         if NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"]:
             print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
@@ -104,6 +103,7 @@ def get_list_image_nettruyen(link=''):
         soup = BeautifulSoup(htmlSource, 'html.parser')
 
         title = soup.find('title')
+        print(title)
         title = title.text.split(" Next Chap ")[0].strip()
 
         chap = title.split(" ")[-1]
