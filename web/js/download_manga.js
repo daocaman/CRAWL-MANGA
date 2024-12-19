@@ -6,7 +6,7 @@ function downloadManga(event) {
     ele = document.getElementById("mangaUrl");
 
     link = document.getElementById("link").value;
-    server = document.getElementById("server").value;
+    server = parseInt(document.getElementById("server").value);
     startChapterIndex = parseInt(document.getElementById("startChapterIndex").value);
     numChapters = parseInt(document.getElementById("numChapters").value);
 

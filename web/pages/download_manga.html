@@ -19,12 +19,12 @@
     <div class="col-12">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">Download Manga</h6>
+          <h6 class="m-0 font-weight-bold text-info">Download Manga</h6>
         </div>
         <div class="card-body">
           <form id="downloadMangaForm" onsubmit="downloadManga(event)">
             <div class="mb-3">
-              <label for="link" class="form-label">Manga URL</label>
+              <label for="link" class="form-label text-info">Manga URL</label>
               <input
                 type="url"
                 class="form-control"
@@ -34,7 +34,7 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Manga Source</label>
+              <label class="form-label text-info">Manga Source</label>
               <select class="form-select" id="server">
                 <option value="1">NetTruyen</option>
                 <option value="2">Mangasee</option>
@@ -42,12 +42,12 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Start chapter index</label>
+              <label class="form-label text-info">Start chapter index</label>
               <input type="number" class="form-control" id="startChapterIndex" />
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Number of chapters to download</label>
+              <label class="form-label text-info">Number of chapters to download</label>
               <input type="number" class="form-control" id="numChapters" />
             </div>
 

@@ -17,4 +17,4 @@ def download_manga(manga_link, number_of_chapters, server, start_index):
     eel.noLoadingScreen()
     eel.showMessage("Download manga", "Manga downloaded successfully")
 
-eel.start("main.html", size=(1200, 800)) 
+eel.start("index.html", size=(1200, 800)) 
