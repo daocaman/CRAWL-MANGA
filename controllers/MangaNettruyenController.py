@@ -103,7 +103,7 @@ def get_list_image_nettruyen(link=''):
         soup = BeautifulSoup(htmlSource, 'html.parser')
 
         title = soup.find('title')
-        print(title)
+
         title = title.text.split(" Next Chap ")[0].strip()
 
         chap = title.split(" ")[-1]
