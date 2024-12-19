@@ -1,0 +1,146 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Main layout</title>
+    <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.css" />
+    <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+    <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+    <script type="text/javascript" src="/eel.js"></script>
+  </head>
+  <body>
+    <!-- Page Wrapper -->
+    <div class="d-flex h-100 w-100">
+      <!-- Sidebar -->
+      <nav
+        id="accordionSidebar"
+        class="navbar-nav bg-dark bg-gradient sidebar sidebar-dark py-2 px-1"
+      >
+        <!-- Sidebar - Brand -->
+        <div
+          class="sidebar-brand d-flex align-items-center justify-content-center"
+        >
+          <a
+            onclick="navigateToPage('dashboard')"
+            class="text-decoration-none d-flex align-items-center pointer"
+          >
+            <i class="fas fa-desktop text-white"></i>
+            <div class="sidebar-brand-text mx-3 text-white">Crawl Manga</div>
+          </a>
+        </div>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider text-white" />
+
+        <!-- Nav Items -->
+        <div class="nav-item">
+          <a onclick="navigateToPage('download_manga')" class="nav-link">
+            <i class="fa-solid fa-book-journal-whills text-white"></i>
+            <span class="text-white">Download Manga</span>
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a class="nav-link" href="">
+            <i class="fas fa-fw fa-cog text-white"></i>
+            <span class="text-white">Settings</span>
+          </a>
+        </div>
+      </nav>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column flex-grow-1">
+        <!-- Main Content -->
+        <div id="content" class="flex-grow-1"></div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <p class="py-2 mb-0 text-muted">
+                Developed by
+                <a href="https://github.com/daocaman" class="text-muted"
+                  >An Đào</a
+                >
+              </p>
+            </div>
+          </div>
+        </footer>
+
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="position-fixed w-100 h-100 d-none" style="top: 0; left: 0; z-index: 9999;">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 class="text-primary">Loading...</h5>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast" class="toast position-fixed top-0 end-0 m-3" style="z-index: 9999;" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header text-white" id="toastHeader">
+				<strong class="me-auto" id="toastTitle"></strong>
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body" id="toastBody">
+			
+			</div>
+		</div>
+
+    <script src="js/all.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load dashboard page by default
+        fetch("pages/dashboard.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("content").innerHTML = data;
+          })
+          .catch((error) => {
+            console.error("Error loading dashboard:", error);
+          });
+      });
+
+      function navigateToPage(page) {
+        fetch(`pages/${page}.html`)
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("content").innerHTML = data;
+						
+          })
+          .catch((error) => {
+            console.error("Error loading dashboard:", error);
+          });
+      }
+
+      eel.expose(noLoadingScreen);
+      function noLoadingScreen() {
+        document.getElementById("loadingScreen").classList.add("d-none");
+      }
+
+			eel.expose(showMessage);
+			function showMessage(title, message) {
+				console.log(title, message);
+				document.getElementById("toastBody").innerHTML = message;
+				document.getElementById("toast").classList.add("show");
+				document.getElementById("toastHeader").classList.add("bg-success");
+				document.getElementById("toastTitle").innerHTML = title;
+			}
+    </script>
+
+    <script src="js/download_manga.js"></script>
+  </body>
+</html>
