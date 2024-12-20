@@ -5,6 +5,7 @@ from tasks.ArchiveFolders import main_process as archive_manga_task
 from tasks.MoveChapVol import main_process as move_chapters_task
 from tasks.CreateMetadata import main_process as create_metadata_task
 from tasks.DownloadYT import main_process as download_yt_task
+from tasks.DownloadCovers import main_process as download_covers_task
 
 eel.init("web")
 
@@ -42,5 +43,11 @@ def download_yt(youtube_link, yt_type, is_playlist, file_yt, quality, is_convert
     download_yt_task(youtube_link, yt_type, is_playlist, file_yt, quality, is_convert)
     eel.noLoadingScreen()
     eel.showMessage("Download youtube", "Youtube downloaded successfully")
+
+@eel.expose
+def download_cover(mangadex_url, number_of_covers):
+    download_covers_task(mangadex_url, number_of_covers)
+    eel.noLoadingScreen()
+    eel.showMessage("Download cover", "Cover downloaded successfully")
 
 eel.start("index.html", size=(1200, 800)) 
