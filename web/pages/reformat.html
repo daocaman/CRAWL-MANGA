@@ -6,7 +6,7 @@
   <div
     class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100"
   >
-    <h1 class="h3 mb-0 text-gray-800 ps-2 text-primary">Resize images</h1>
+    <h1 class="h3 mb-0 text-gray-800 ps-2 text-primary">Reformat manga folder</h1>
   </div>
 </nav>
 <!-- End of Topbar -->
@@ -19,7 +19,7 @@
     <div class="col-12">
       <div class="card shadow mb-4">
         <div class="card-body">
-          <form id="resizeForm" onsubmit="resizeImages(event)">
+          <form id="reformatForm" onsubmit="reformatManga(event)">
             <div class="mb-3">
               <label for="targetFolder" class="form-label text-info">Target folder</label>
               <input type="text" class="form-control" id="targetFolder" />
@@ -27,31 +27,23 @@
 
             <div class="mb-3">
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="isHorizontal"
-                />
-                <label class="form-check-label" for="isHorizontal">
-                  Horizontal
+                <input class="form-check-input" type="checkbox" id="multipleFolders">
+                <label class="form-check-label" for="multipleFolders">
+                  Multiple folders
                 </label>
               </div>
             </div>
 
             <div class="mb-3">
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="isMultiple"
-                />
-                <label class="form-check-label" for="isMultiple">
-                  Multiple folders
+                <input class="form-check-input" type="checkbox" id="deleteFolders">
+                <label class="form-check-label" for="deleteFolders">
+                  Delete folders after archiving
                 </label>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Resize</button>
+            <button type="submit" class="btn btn-primary">Reformat</button>
           </form>
         </div>
       </div>

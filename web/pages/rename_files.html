@@ -6,7 +6,7 @@
   <div
     class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100"
   >
-    <h1 class="h3 mb-0 text-gray-800 ps-2 text-primary">Resize images</h1>
+    <h1 class="h3 mb-0 text-gray-800 ps-2 text-primary">Rename files</h1>
   </div>
 </nav>
 <!-- End of Topbar -->
@@ -19,23 +19,25 @@
     <div class="col-12">
       <div class="card shadow mb-4">
         <div class="card-body">
-          <form id="resizeForm" onsubmit="resizeImages(event)">
+          <form id="renameFilesForm" onsubmit="renameFiles(event)">
             <div class="mb-3">
-              <label for="targetFolder" class="form-label text-info">Target folder</label>
+              <label for="targetFolder" class="form-label text-info"
+                >Target folder</label
+              >
               <input type="text" class="form-control" id="targetFolder" />
             </div>
 
             <div class="mb-3">
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="isHorizontal"
-                />
-                <label class="form-check-label" for="isHorizontal">
-                  Horizontal
-                </label>
-              </div>
+              <label for="startIndex" class="form-label text-info"
+                >Start index</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="startIndex"
+                value="0"
+                min="0"
+              />
             </div>
 
             <div class="mb-3">
@@ -43,15 +45,15 @@
                 <input
                   class="form-check-input"
                   type="checkbox"
-                  id="isMultiple"
+                  id="sortFiles"
                 />
-                <label class="form-check-label" for="isMultiple">
-                  Multiple folders
+                <label class="form-check-label" for="sortFiles">
+                  Sort files
                 </label>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Resize</button>
+            <button type="submit" class="btn btn-primary">Rename</button>
           </form>
         </div>
       </div>

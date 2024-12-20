@@ -7,6 +7,8 @@ from tasks.CreateMetadata import main_process as create_metadata_task
 from tasks.DownloadYT import main_process as download_yt_task
 from tasks.DownloadCovers import main_process as download_covers_task
 from tasks.ResizeImages import main_process as resize_images_task
+from tasks.RenameFiles import main_process as rename_files_task
+
 eel.init("web")
 
 @eel.expose
@@ -55,5 +57,11 @@ def resize_images(target_folder, is_multiple, is_horizontal):
     resize_images_task(target_folder, is_multiple, is_horizontal)
     eel.noLoadingScreen()
     eel.showMessage("Resize images", "Images resized successfully")
+
+@eel.expose
+def rename_files(target_folder, sort_files, start_index):
+    rename_files_task(target_folder, sort_files, start_index)
+    eel.noLoadingScreen()
+    eel.showMessage("Rename files", "Files renamed successfully")
 
 eel.start("index.html", size=(1200, 800)) 
