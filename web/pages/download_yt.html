@@ -1,0 +1,77 @@
+<!-- Topbar -->
+<nav
+  class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+>
+  <!-- Topbar Title -->
+  <div
+    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100"
+  >
+    <h1 class="h3 mb-0 text-gray-800 ps-2 text-primary">Download Youtube</h1>
+  </div>
+</nav>
+<!-- End of Topbar -->
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Content Row -->
+  <div class="row">
+    <!-- Download Form -->
+    <div class="col-12">
+      <div class="card shadow mb-4">
+        <div class="card-body">
+          <form id="downloadYtForm" onsubmit="downloadYt(event)">
+            <div class="mb-3">
+              <label for="link" class="form-label text-info">Youtube URL</label>
+              <input
+                type="url"
+                class="form-control"
+                id="link"
+                placeholder="Enter youtube URL"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-info">Download format</label>
+              <select class="form-select" id="format">
+                <option value="audio">audio</option>
+                <option value="video">video</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-info">Download quality</label>
+              <select class="form-select" id="quality">
+                <option value="1080p">1080p</option>
+                <option value="720p">720p</option>
+                <option value="480p">480p</option>
+                <option value="360p">360p</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="fileYt" class="form-label text-info">File youtube</label>
+              <input type="text" class="form-control" id="fileYt" />
+            </div>
+
+            <div class="mb-3">
+              <input type="checkbox" name="isPlaylist" id="isPlaylist" />
+              <label class="form-label text-info" for="isPlaylist">
+                Download playlist
+              </label>
+            </div>
+
+            <div class="mb-3">
+              <input type="checkbox" name="isConvert" id="isConvert" />
+              <label class="form-label text-info" for="isConvert">
+                Convert video to mp4
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Download</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Page Content -->

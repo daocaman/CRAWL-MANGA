@@ -4,6 +4,8 @@ from tasks.DownloadManga import main_process as download_manga_task
 from tasks.ArchiveFolders import main_process as archive_manga_task
 from tasks.MoveChapVol import main_process as move_chapters_task
 from tasks.CreateMetadata import main_process as create_metadata_task
+from tasks.DownloadYT import main_process as download_yt_task
+
 eel.init("web")
 
 @eel.expose
@@ -34,5 +36,11 @@ def create_metadata(bookmark_file, comic_info_file, target_folder, is_multiple_f
     create_metadata_task(bookmark_file, comic_info_file, target_folder, is_multiple_folders)
     eel.noLoadingScreen()
     eel.showMessage("Create metadata", "Metadata created successfully")
+    
+@eel.expose
+def download_yt(youtube_link, yt_type, is_playlist, file_yt, quality, is_convert):
+    download_yt_task(youtube_link, yt_type, is_playlist, file_yt, quality, is_convert)
+    eel.noLoadingScreen()
+    eel.showMessage("Download youtube", "Youtube downloaded successfully")
 
 eel.start("index.html", size=(1200, 800)) 
