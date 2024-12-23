@@ -1,16 +1,28 @@
 
 main_menu = [
+    "Manga project",
+    "Video project",
+    "Rename project",
+]
+
+manga_options_menu = [
     "Download Manga",
     "Create metadata",
     "Archive folder",
     "Download covers",
     "Resize image",
-    "Download Youtube",
     "Reformat old folder manga",
-    "Rename file",
     "Move chapter to volume",
+]
+
+rename_list_menu = [
+    "Rename file",
     "Create rename_list.json",
     "Rename by rename_list.json",
+]
+
+video_menu = [
+    "Download Youtube",
     "Download M3U8",
     "Convert ts to mp4",
 ]
