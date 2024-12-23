@@ -8,6 +8,8 @@ from tasks.DownloadYT import main_process as download_yt_task
 from tasks.DownloadCovers import main_process as download_covers_task
 from tasks.ResizeImages import main_process as resize_images_task
 from tasks.RenameFiles import main_process as rename_files_task
+from tasks.CreateListFile import main_process as create_list_file_task
+from tasks.RenameWithFile import main_process as rename_with_file_task
 
 eel.init("web")
 
@@ -61,6 +63,18 @@ def resize_images(target_folder, is_multiple, is_horizontal):
 @eel.expose
 def rename_files(target_folder, sort_files, start_index):
     rename_files_task(target_folder, sort_files, start_index)
+    eel.noLoadingScreen()
+    eel.showMessage("Rename files", "Files renamed successfully")
+
+@eel.expose
+def create_file_list(target_folder):
+    create_list_file_task(target_folder)
+    eel.noLoadingScreen()
+    eel.showMessage("Create file list", "File list created successfully! Please edit file rename_list.json")
+
+@eel.expose
+def rename_files_with_file():
+    rename_with_file_task()
     eel.noLoadingScreen()
     eel.showMessage("Rename files", "Files renamed successfully")
 
