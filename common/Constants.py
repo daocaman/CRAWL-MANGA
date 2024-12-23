@@ -14,6 +14,7 @@ MOVE_CHAP_VOL_DEBUG = True
 DOWNLOAD_NOVEL_DEBUG = True
 LIST_AND_RENAME_DEBUG = True
 DOWNLOAD_M3U8_DEBUG = True
+CONVERT_TS_DEBUG = True
 
 # Constants number
 max_length_idx = 4
