@@ -6,13 +6,14 @@ NETTRUYEN_DEBUG = False
 MANGASEE_DEBUG = False   
 REFORMAT_DEBUG = False  
 RESIZE_DEBUG = False
-DOWNLOAD_COVERS_DEBUG = False
-DOWNLOAD_MANGA_DEBUG = False
-RENAME_DEBUG = False
-DOWNLOAD_YOUTUBE_DEBUG = False
-MOVE_CHAP_VOL_DEBUG = False
-DOWNLOAD_NOVEL_DEBUG = False
-LIST_AND_RENAME_DEBUG = False
+DOWNLOAD_COVERS_DEBUG = True
+DOWNLOAD_MANGA_DEBUG = True
+RENAME_DEBUG = True
+DOWNLOAD_YOUTUBE_DEBUG = True
+MOVE_CHAP_VOL_DEBUG = True
+DOWNLOAD_NOVEL_DEBUG = True
+LIST_AND_RENAME_DEBUG = True
+DOWNLOAD_M3U8_DEBUG = True
 
 # Constants number
 max_length_idx = 4
@@ -94,3 +95,5 @@ page_break = "※----*-------⁛-------*----※"
 sstruyen_link = "https://sstruyen.vn/{0}/chuong-{1}"
 
 rename_list_file = "resource/rename_list.json"
+
+save_m3u8_file = "m3u8"
