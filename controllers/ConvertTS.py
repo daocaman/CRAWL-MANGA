@@ -26,4 +26,4 @@ def convert_ts_to_mp4(folder_path):
         input_path = os.path.join(folder_path, file)
         output_path = os.path.join(folder_path, file.replace('.ts', '.mp4'))
         
-        ffmpeg.input(input_path).output(output_path).run()
+        ffmpeg.input(input_path).output(output_path, threads=os.cpu_count()).run()
