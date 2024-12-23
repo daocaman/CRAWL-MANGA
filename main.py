@@ -13,6 +13,7 @@ from quest.MoveChapVol import quest_form_move_chap_vol
 from quest.CreateListFile import quest_form_create_list_file
 from quest.RenameWithFile import quest_form_rename_with_file
 from quest.DownloadM3U8 import quest_form_download_m3u8
+from quest.ConvertTS import quest_form_convert_ts
 from common.Constant_v1_1 import main_menu, radio_menu
 
 
@@ -53,6 +54,8 @@ def main():
             quest_form_rename_with_file()
         elif task_index == 11:
             quest_form_download_m3u8()
+        elif task_index == 12:
+            quest_form_convert_ts()
 
         continue_task = questionary.select("Do you want to continue? ", radio_menu).ask()
         continue_task_index = radio_menu.index(continue_task)
