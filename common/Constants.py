@@ -8,10 +8,11 @@ REFORMAT_DEBUG = False
 RESIZE_DEBUG = False
 DOWNLOAD_COVERS_DEBUG = False
 DOWNLOAD_MANGA_DEBUG = False
-RENAME_DEBUG = True
+RENAME_DEBUG = False
 DOWNLOAD_YOUTUBE_DEBUG = False
 MOVE_CHAP_VOL_DEBUG = False
 DOWNLOAD_NOVEL_DEBUG = False
+LIST_AND_RENAME_DEBUG = False
 
 # Constants number
 max_length_idx = 4
@@ -91,3 +92,5 @@ save_yt_video = "yt_video/%(title)s.%(ext)s"
 page_break = "※----*-------⁛-------*----※"
 
 sstruyen_link = "https://sstruyen.vn/{0}/chuong-{1}"
+
+rename_list_file = "resource/rename_list.json"
