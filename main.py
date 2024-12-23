@@ -10,6 +10,8 @@ from quest.DownloadYT import quest_form_download_yt
 from quest.Reformat import quest_form_reformat
 from quest.RenameFiles import quest_form_rename_files
 from quest.MoveChapVol import quest_form_move_chap_vol
+from quest.CreateListFile import quest_form_create_list_file
+from quest.RenameWithFile import quest_form_rename_with_file
 from common.Constant_v1_1 import main_menu, radio_menu
 
 
@@ -44,6 +46,10 @@ def main():
             quest_form_rename_files()
         elif task_index == 8:
             quest_form_move_chap_vol()
+        elif task_index == 9:
+            quest_form_create_list_file()
+        elif task_index == 10:
+            quest_form_rename_with_file()
 
         continue_task = questionary.select("Do you want to continue? ", radio_menu).ask()
         continue_task_index = radio_menu.index(continue_task)
