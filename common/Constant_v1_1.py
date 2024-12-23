@@ -9,6 +9,8 @@ main_menu = [
     "Reformat old folder manga",
     "Rename file",
     "Move chapter to volume",
+    "Create rename_list.json",
+    "Rename by rename_list.json",
 ]
 
 manga_menu = [
