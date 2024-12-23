@@ -11,6 +11,7 @@ main_menu = [
     "Move chapter to volume",
     "Create rename_list.json",
     "Rename by rename_list.json",
+    "Download M3U8",
 ]
 
 manga_menu = [
