@@ -12,6 +12,7 @@ RENAME_DEBUG = False
 DOWNLOAD_YOUTUBE_DEBUG = True
 MOVE_CHAP_VOL_DEBUG = True
 DOWNLOAD_NOVEL_DEBUG = True
+LIST_AND_RENAME_DEBUG = True
 
 # Constants number
 max_length_idx = 4
@@ -91,3 +92,5 @@ save_yt_video = "yt_video/%(title)s.%(ext)s"
 page_break = "※----*-------⁛-------*----※"
 
 sstruyen_link = "https://sstruyen.vn/{0}/chuong-{1}"
+
+rename_list_file = "resource/rename_list.json"
