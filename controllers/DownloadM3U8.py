@@ -18,6 +18,9 @@ def download_m3u8(file_path):
     
     with open(file_path, 'r') as file:
         list_m3u8 = json.load(file)
+        
+    if not os.path.exists(save_m3u8_file):
+        os.makedirs(save_m3u8_file)
     
     for m3u8 in list_m3u8:
         url = m3u8["url"]
