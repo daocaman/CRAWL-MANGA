@@ -13,6 +13,8 @@ DOWNLOAD_YOUTUBE_DEBUG = False
 MOVE_CHAP_VOL_DEBUG = False
 DOWNLOAD_NOVEL_DEBUG = False
 LIST_AND_RENAME_DEBUG = False
+DOWNLOAD_M3U8_DEBUG = False
+CONVERT_TS_DEBUG = False
 
 # Constants number
 max_length_idx = 4
@@ -94,3 +96,5 @@ page_break = "※----*-------⁛-------*----※"
 sstruyen_link = "https://sstruyen.vn/{0}/chuong-{1}"
 
 rename_list_file = "resource/rename_list.json"
+
+save_m3u8_file = "m3u8"
