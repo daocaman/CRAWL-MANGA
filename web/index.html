@@ -35,6 +35,37 @@
         <hr class="sidebar-divider text-white" />
 
         <!-- Nav Items -->
+
+        <div class="nav-item cursor-pointer">
+          <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapseManga">
+            <i class="fas fa-fw fa-book text-white"></i>
+            <span class="text-white">Manga</span>
+            <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
+          </a>
+          <div id="collapseManga" class="collapse">
+            <div class="bg-dark py-2 collapse-inner">
+              <div class="nav-item">
+                <a onclick="navigateToPage('download_cover')" class="nav-link">
+                  <i class="fas fa-fw fa-image text-white"></i>
+                  <span class="text-white">Download Cover</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('resize_images')" class="nav-link">
+                  <i class="fas fa-fw fa-compress text-white"></i>
+                  <span class="text-white">Resize Images</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('reformat')" class="nav-link">
+                  <i class="fas fa-fw fa-file text-white"></i>
+                  <span class="text-white">Reformat</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="nav-item cursor-pointer">
           <a
             onclick="navigateToPage('download_manga')"
