@@ -12,6 +12,7 @@ main_menu = [
     "Create rename_list.json",
     "Rename by rename_list.json",
     "Download M3U8",
+    "Convert ts to mp4",
 ]
 
 manga_menu = [
