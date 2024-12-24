@@ -1,4 +1,4 @@
-import eel
+import eel  
 
 from tasks.DownloadManga import main_process as download_manga_task
 from tasks.ArchiveFolders import main_process as archive_manga_task
@@ -10,6 +10,8 @@ from tasks.ResizeImages import main_process as resize_images_task
 from tasks.RenameFiles import main_process as rename_files_task
 from tasks.CreateListFile import main_process as create_list_file_task
 from tasks.RenameWithFile import main_process as rename_with_file_task
+from tasks.ConvertTS import main_process as convert_ts_task
+from tasks.DownloadM3U8 import main_process as download_m3u8_task
 
 eel.init("web")
 
@@ -77,5 +79,18 @@ def rename_files_with_file():
     rename_with_file_task()
     eel.noLoadingScreen()
     eel.showMessage("Rename files", "Files renamed successfully")
+    
+@eel.expose
+def covert_ts(target_folder):
+    convert_ts_task(target_folder)
+    eel.noLoadingScreen()
+    eel.showMessage("Convert ts", "Ts converted successfully")
+    
+@eel.expose
+def download_m3u8(target_file):
+    download_m3u8_task(target_file)
+    eel.noLoadingScreen()
+    eel.showMessage("Download m3u8", "M3u8 downloaded successfully")
 
-eel.start("index.html", size=(1200, 800)) 
+if __name__ == "__main__":
+    eel.start("index.html", size=(1200, 800))
