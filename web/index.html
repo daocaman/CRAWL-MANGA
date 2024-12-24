@@ -43,7 +43,13 @@
             <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
           </a>
           <div id="collapseManga" class="collapse">
-            <div class="bg-dark py-2 collapse-inner">
+            <div class="bg-dark py-2 collapse-inner px-2">
+              <div class="nav-item">
+                <a onclick="navigateToPage('download_manga')" class="nav-link">
+                  <i class="fa-solid fa-book-journal-whills text-white"></i>
+                  <span class="text-white">Download Manga</span>
+                </a>
+              </div>
               <div class="nav-item">
                 <a onclick="navigateToPage('download_cover')" class="nav-link">
                   <i class="fas fa-fw fa-image text-white"></i>
@@ -62,28 +68,14 @@
                   <span class="text-white">Reformat</span>
                 </a>
               </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('move_vol_chapter')" class="nav-link">
+                  <i class="fas fa-fw fa-exchange-alt text-white"></i>
+                  <span class="text-white">Move vol/chap</span>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('download_manga')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fa-solid fa-book-journal-whills text-white"></i>
-            <span class="text-white">Download Manga</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('move_vol_chapter')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-exchange-alt text-white"></i>
-            <span class="text-white">Move vol/chap</span>
-          </a>
         </div>
 
         <div class="nav-item cursor-pointer">
