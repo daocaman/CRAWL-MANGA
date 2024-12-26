@@ -2,7 +2,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Main layout</title>
+    <title>Crawl Manga</title>
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.css" />
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
@@ -37,13 +37,35 @@
         <!-- Nav Items -->
 
         <div class="nav-item cursor-pointer">
-          <a class="nav-link collapsed" data-bs-toggle="collapse" href="#collapseManga">
+          <a
+            class="nav-link collapsed"
+            data-bs-toggle="collapse"
+            href="#collapseManga"
+          >
             <i class="fas fa-fw fa-book text-white"></i>
-            <span class="text-white">Manga</span>
+            <span class="text-white">Manga project</span>
             <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
           </a>
           <div id="collapseManga" class="collapse">
-            <div class="bg-dark py-2 collapse-inner">
+            <div class="bg-dark py-1 collapse-inner px-2 rounded">
+              <div class="nav-item">
+                <a onclick="navigateToPage('download_manga')" class="nav-link">
+                  <i class="fa-solid fa-book text-white"></i>
+                  <span class="text-white">Download Manga</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('create_metadata')" class="nav-link">
+                  <i class="fas fa-fw fa-file-code text-white"></i>
+                  <span class="text-white">Create metadata</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('archive')" class="nav-link">
+                  <i class="fas fa-fw fa-archive text-white"></i>
+                  <span class="text-white">Archive folder</span>
+                </a>
+              </div>
               <div class="nav-item">
                 <a onclick="navigateToPage('download_cover')" class="nav-link">
                   <i class="fas fa-fw fa-image text-white"></i>
@@ -62,108 +84,82 @@
                   <span class="text-white">Reformat</span>
                 </a>
               </div>
+              <div class="nav-item">
+                <a
+                  onclick="navigateToPage('move_vol_chapter')"
+                  class="nav-link"
+                >
+                  <i class="fas fa-fw fa-exchange-alt text-white"></i>
+                  <span class="text-white">Move vol/chap</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="nav-item cursor-pointer">
           <a
-            onclick="navigateToPage('download_manga')"
-            class="nav-link justify-content-start"
+            class="nav-link collapsed"
+            data-bs-toggle="collapse"
+            href="#collapseVideo"
           >
-            <i class="fa-solid fa-book-journal-whills text-white"></i>
-            <span class="text-white">Download Manga</span>
+            <i class="fas fa-fw fa-video text-white"></i>
+            <span class="text-white">Video project</span>
+            <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
           </a>
+          <div id="collapseVideo" class="collapse">
+            <div class="bg-dark py-1 collapse-inner px-2 rounded">
+              <div class="nav-item">
+                <a onclick="navigateToPage('download_yt')" class="nav-link">
+                  <i class="fas fa-fw fa-download text-white"></i>
+                  <span class="text-white">Download Youtube</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('download_m3u8')" class="nav-link">
+                  <i class="fas fa-fw fa-download text-white"></i>
+                  <span class="text-white">Download m3u8</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a onclick="navigateToPage('convert_ts')" class="nav-link"> 
+                  <i class="fas fa-fw fa-compress text-white"></i>
+                  <span class="text-white">Convert ts to mp4</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="nav-item cursor-pointer">
           <a
-            onclick="navigateToPage('move_vol_chapter')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-exchange-alt text-white"></i>
-            <span class="text-white">Move vol/chap</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('create_metadata')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-file-code text-white"></i>
-            <span class="text-white">Create metadata</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('archive')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-archive text-white"></i>
-            <span class="text-white">Archive folder</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('download_yt')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-download text-white"></i>
-            <span class="text-white">Download youtube</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('download_cover')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-image text-white"></i>
-            <span class="text-white">Download cover</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('resize_images')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-image text-white"></i>
-            <span class="text-white">Resize images</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('reformat')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-folder-open text-white"></i>
-            <span class="text-white">Reformat folder</span>
-          </a>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('rename_files')"
-            class="nav-link justify-content-start"
+            class="nav-link collapsed"
+            data-bs-toggle="collapse"
+            href="#collapseRename"
           >
             <i class="fas fa-fw fa-file-alt text-white"></i>
-            <span class="text-white">Rename files</span>
+            <span class="text-white">Rename project</span>
+            <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
           </a>
-        </div>
-        
-        <div class="nav-item cursor-pointer">
-          <a
-            onclick="navigateToPage('rename_with_file')"
-            class="nav-link justify-content-start"
-          >
-            <i class="fas fa-fw fa-file-alt text-white"></i>
-            <span class="text-white">Rename with file</span>
-          </a>
+          <div id="collapseRename" class="collapse">
+            <div class="bg-dark py-1 collapse-inner px-2 rounded">
+              <div class="nav-item">
+                <a onclick="navigateToPage('rename_files')" class="nav-link">
+                  <i class="fas fa-fw fa-file-alt text-white"></i>
+                  <span class="text-white">Rename files</span>
+                </a>
+              </div>
+              <div class="nav-item">
+                <a
+                  onclick="navigateToPage('rename_with_file')"
+                  class="nav-link"
+                >
+                  <i class="fas fa-fw fa-file-alt text-white"></i>
+                  <span class="text-white">Rename with file</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </nav>
       <!-- End of Sidebar -->
@@ -268,6 +264,10 @@
         document.getElementById("toastHeader").classList.add("bg-success");
         document.getElementById("toastTitle").innerHTML = title;
       }
+
+      document.addEventListener("beforeunload", function () {
+        eel.close_app();
+      });
     </script>
 
     <script src="js/download_manga.js"></script>
@@ -280,5 +280,7 @@
     <script src="js/reformat.js"></script>
     <script src="js/rename_files.js"></script>
     <script src="js/rename_with_file.js"></script>
+    <script src="js/download_m3u8.js"></script>
+    <script src="js/convert_ts.js"></script>
   </body>
 </html>
