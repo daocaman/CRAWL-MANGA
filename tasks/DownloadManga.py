@@ -7,6 +7,7 @@ import concurrent.futures
 
 from controllers.MangaMangaseeController import get_link_chapter_mangasee, get_list_image_mangasee
 from controllers.MangaNettruyenController import get_link_chapter_nettruyen, get_list_image_nettruyen
+from controllers.MangaWeebCentralController import get_link_chapter_weebcentral, get_list_image_weebcentral
 from controllers.DownloadImageController import download_image_process
 from common.Commons import generate_filename
 from common.Constants import DOWNLOAD_MANGA_DEBUG
@@ -20,8 +21,10 @@ def main_process(manga_link, number_of_chapters, server_type, start_index):
 
         if server_type == 1:
             (server, list_chapters) = get_link_chapter_nettruyen(manga_link, number_of_chapters, start_index)
-        else:
+        elif server_type == 2:
             (server, list_chapters, cur_path_name, index_name) = get_link_chapter_mangasee(manga_link, number_of_chapters, start_index)
+        else:
+            (server, list_chapters) = get_link_chapter_weebcentral(manga_link, number_of_chapters, start_index )
 
         if DOWNLOAD_MANGA_DEBUG:
             print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
@@ -30,8 +33,10 @@ def main_process(manga_link, number_of_chapters, server_type, start_index):
         for chapter in list_chapters:
             if server_type == 1:
                 (chapter_name, list_images) = get_list_image_nettruyen(chapter)
-            else:
+            elif server_type == 2:
                 (chapter_name, list_images) = get_list_image_mangasee(index_name, chapter)
+            else:
+                (chapter_name, list_images) = get_list_image_weebcentral(chapter)
 
             download_img_process = []
 
