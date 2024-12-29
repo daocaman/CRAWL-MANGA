@@ -5,9 +5,10 @@ from pprint import pprint
 
 from common.Constants import WEBCENTRAL_DEBUG
 from common.Commons import generate_filename
+
 DEBUG_OBJ = {
-    "get_link_chapter_weebcentral": False,
-    "get_list_image_weebcentral": False,
+    "get_link_chapter_weebcentral": True,
+    "get_list_image_weebcentral": True,
 }
 
 def get_link_chapter_weebcentral(link: str, num_chap = -1, start_idx = -1) -> str:
@@ -30,21 +31,24 @@ def get_link_chapter_weebcentral(link: str, num_chap = -1, start_idx = -1) -> st
     id_manga = link.split('/')[-2]
 
     link_list_chapters = f"https://weebcentral.com/series/{id_manga}/full-chapter-list"
+    if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
+        print(Fore.BLUE + f'{"Link list chapters:":<20}' + Style.RESET_ALL + f'{link_list_chapters: >49}')
 
     try:
         response = requests.get(link_list_chapters, headers={
             'User-agent': 'Mozilla/5.0'})
         if response.status_code != 200:
             raise Exception(f"Failed to fetch the list of chapters. Status code: {response.status_code}")
+       
         soup = BeautifulSoup(response.text, 'html.parser')
 
         link_a = soup.find_all('a')
-        list_chapters = [link.get('href') for link in link_a if link.get('href') and link.get('href').startswith('https')]
+        list_chapters = [link.get('href') for link in link_a if link.get('href') and link.get('href').startswith('http')]
 
         if start_idx != -1:
             list_chapters = list_chapters[::-1]
             list_chapters = list_chapters[start_idx:]
-            
+
         if num_chap != -1:
             list_chapters = list_chapters[:num_chap]
             
@@ -57,11 +61,17 @@ def get_link_chapter_weebcentral(link: str, num_chap = -1, start_idx = -1) -> st
             pprint(list_chapters)
             print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
-        return "https://weebcentral.com/", list_chapters
+    
+        # final print
+        if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
+            print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+
+        return ("https://weebcentral.com/", list_chapters)
 
     except Exception as e:
         if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
+            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL )
+            pprint(e)
             print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
 
 
