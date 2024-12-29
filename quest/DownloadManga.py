@@ -33,6 +33,8 @@ def quest_form_download_manga():
         if not number_of_chapter.isdigit():
             print(Fore.RED + error_message["number_invalid"] + art("error", 3, 1) + Style.RESET_ALL)
             continue
+
+        number_of_chapter = int(number_of_chapter)
         break
     
     # Start from index
@@ -40,15 +42,17 @@ def quest_form_download_manga():
     while True:
         start_from_index = questionary.text(ques_start_from_index).ask()
         if start_from_index == "":
-            start_from_index = 1
+            start_from_index = -1
             break
         
         if not start_from_index.isdigit():
             print(Fore.RED + error_message["number_invalid"] + art("error", 3, 1) + Style.RESET_ALL)
             continue
+
+        start_from_index = int(start_from_index)
         break
 
-    main_process(manga_link, server, number_of_chapter, start_from_index)
+    main_process(manga_link, number_of_chapter, server, start_from_index)
     
     
     
