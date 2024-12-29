@@ -21,7 +21,7 @@ def get_list_of_files(path):
         print(Fore.YELLOW + 'ListAndRenameController: get_list_of_files'.center(70) + Style.RESET_ALL)
         print(Fore.BLUE + f'{"Path:":<20}' + Style.RESET_ALL + f'{path: >49}')
 
-    files = os.listdir(path)
+    files = [f.encode('utf-8').decode('utf-8') for f in os.listdir(path)]
     file_objs = []
     for file in files:
         file_obj = {
@@ -36,8 +36,8 @@ def get_list_of_files(path):
         pprint(file_objs)
         print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
     
-    with open(rename_list_file, "w") as f:
-        json.dump(file_objs, f, indent=2)
+    with open(rename_list_file, "w+", encoding="utf-8") as f:
+        json.dump(file_objs, f, indent=2, ensure_ascii=False)
         
 def rename_file():
     """
@@ -53,7 +53,7 @@ def rename_file():
         print(Fore.RED + f'{"File not found:":<20}' + Style.RESET_ALL + f'{rename_list_file: >49}')
         return
     
-    with open(rename_list_file, "r") as f:
+    with open(rename_list_file, "r", encoding="utf-8") as f:
         file_objs = json.load(f)
         
     for file_obj in file_objs:
@@ -61,7 +61,3 @@ def rename_file():
         
     LIST_AND_RENAME_DEBUG and DEBUG_OBJ["rename_file"] and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
     
-    
-    
-
-
