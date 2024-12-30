@@ -1,17 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
-from colorama import Fore, Style
-from pprint import pprint
 
-from common.Constants import WEBCENTRAL_DEBUG
 from common.Commons import generate_filename
+from common.Constants import header_obj
+from common.Constants import WEEBCENTRAL_DEBUG, link_chapter_weebcentral, server_weebcentral
+from common.Messages import MSG_ERR_REQUEST_FAILED, MSG_ERR_CONTROLLER_WEEBCENTRAL
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
 
 DEBUG_OBJ = {
     "get_link_chapter_weebcentral": True,
     "get_list_image_weebcentral": True,
 }
 
-def get_link_chapter_weebcentral(link: str, num_chap = -1, start_idx = -1) -> str:
+def get_link_chapter_weebcentral(link: str, num_chap: int = -1, start_idx: int = -1):
     """
     Generate chapter link from server weebcentral.com
     :param link: link to get list of chapters
@@ -21,24 +22,23 @@ def get_link_chapter_weebcentral(link: str, num_chap = -1, start_idx = -1) -> st
     """
     
     # Debug print initial
-    if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaWeebCentralController: get_link_chapter_weebcentral'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
-        print(Fore.BLUE + f'{"Num chap:":<20}' + Style.RESET_ALL + f'{num_chap: >49}')
-        print(Fore.BLUE + f'{"Start idx:":<20}' + Style.RESET_ALL + f'{start_idx: >49}')
-
+    if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
+        log_start_function("MangaWeebCentralController", "get_link_chapter_weebcentral")
+        log_parameter("Link", link, 1)
+        log_parameter("Num chap", num_chap, 1)
+        log_parameter("Start idx", start_idx, 1)
+        
     id_manga = link.split('/')[-2]
 
-    link_list_chapters = f"https://weebcentral.com/series/{id_manga}/full-chapter-list"
-    if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
-        print(Fore.BLUE + f'{"Link list chapters:":<20}' + Style.RESET_ALL + f'{link_list_chapters: >49}')
+    link_list_chapters = link_chapter_weebcentral.format(id_manga)
+    
+    if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
+        log_parameter("Link list chapters", link_list_chapters, 1)
 
     try:
-        response = requests.get(link_list_chapters, headers={
-            'User-agent': 'Mozilla/5.0'})
+        response = requests.get(link_list_chapters, headers=header_obj)
         if response.status_code != 200:
-            raise Exception(f"Failed to fetch the list of chapters. Status code: {response.status_code}")
+            raise Exception(MSG_ERR_REQUEST_FAILED.format(response.status_code))
        
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -56,42 +56,33 @@ def get_link_chapter_weebcentral(link: str, num_chap = -1, start_idx = -1) -> st
             list_chapters = list_chapters[::-1]
         
         # Debug print list_chapters
-        if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
-            print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
-            pprint(list_chapters)
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
+            log_parameter("List chapters", list_chapters, 2)
+            print(END_LOG)
 
-    
-        # final print
-        if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
-            print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-
-        return ("https://weebcentral.com/", list_chapters)
+        return (server_weebcentral, list_chapters)
 
     except Exception as e:
-        if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL )
-            pprint(e)
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_link_chapter_weebcentral"]:
+            log_error("MangaWeebCentralController", "get_link_chapter_weebcentral", e)
+        raise Exception(MSG_ERR_CONTROLLER_WEEBCENTRAL.format("get_link_chapter_weebcentral"))
 
 
-def get_list_image_weebcentral(link: str) -> str:
+def get_list_image_weebcentral(link: str):
     """
     Get list of images from server weebcentral.com
     :param link: link to get list of images
     :return: list of images
     """
 
-    if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_list_image_weebcentral"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaWeebCentralController: get_list_image_weebcentral'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
+    if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_list_image_weebcentral"]:
+        log_start_function("MangaWeebCentralController", "get_list_image_weebcentral")
+        log_parameter("Link", link, 1)
 
     try:
-        response = requests.get(link, headers={
-            'User-agent': 'Mozilla/5.0'})
+        response = requests.get(link, headers=header_obj)
         if response.status_code != 200:
-            raise Exception(f"Failed to fetch the list of images. Status code: {response.status_code}")
+            raise Exception(MSG_ERR_REQUEST_FAILED.format(response.status_code))
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Get total images in chapter
@@ -118,15 +109,14 @@ def get_list_image_weebcentral(link: str) -> str:
         chap_name = f"Chapter {chapter_number}"
 
         # Debug print final
-        if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_list_image_weebcentral"]:
-            print(Fore.CYAN + f'{"Chapter name:":<20}' + Style.RESET_ALL + f'{chap_name: >49}' )
-            print(Fore.CYAN + f'{"List images:":<20}' + Style.RESET_ALL)
-            pprint(list_images)
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_list_image_weebcentral"]:
+            log_parameter("Chapter name", chap_name, 2)
+            log_parameter("List images", list_images, 2)
+            print(END_LOG)
 
         return chap_name, list_images
     
     except Exception as e:
-        if WEBCENTRAL_DEBUG and DEBUG_OBJ["get_list_image_weebcentral"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        if WEEBCENTRAL_DEBUG and DEBUG_OBJ["get_list_image_weebcentral"]:
+            log_error("MangaWeebCentralController", "get_list_image_weebcentral", e)
+        raise Exception(MSG_ERR_CONTROLLER_WEEBCENTRAL.format("get_list_image_weebcentral"))

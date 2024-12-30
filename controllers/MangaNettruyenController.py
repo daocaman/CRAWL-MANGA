@@ -1,17 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
-from colorama import Fore, Style
-from pprint import pprint
 
-from common.Constants import NETTRUYEN_DEBUG, chapter_folder_prefix
 from common.Commons import generate_filename
+from common.Constants import NETTRUYEN_DEBUG, prefix_chapter_folder
+from common.Constants import header_obj, timeout_obj
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Messages import MSG_ERR_CONTROLLER_NETTRUYEN
 
 DEBUG_OBJ = {
     "get_link_chapter_nettruyen": False,
     "get_list_image_nettruyen": False,
 }
 
-def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
+nettruyen_req_headers = header_obj.copy()
+
+def get_link_chapter_nettruyen(link: str = '', num_chap: int = -1, start_idx: int = -1):
     """
     Get list of chapters from nettruyen
     :param link: link to get list of chapters
@@ -22,22 +25,21 @@ def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
     
     # Debug print initial
     if NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"]:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaNettruyenController: get_link_chapter_nettruyen'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
-        print(Fore.BLUE + f'{"Num chap:":<20}' + Style.RESET_ALL + f'{num_chap: >49}')
-        print(Fore.BLUE + f'{"Start idx:":<20}' + Style.RESET_ALL + f'{start_idx: >49}')
-
+        log_start_function("MangaNettruyenController", "get_link_chapter_nettruyen")
+        log_parameter("Link", link, 1)
+        log_parameter("Num chap", num_chap, 1)
+        log_parameter("Start idx", start_idx, 1)
+      
     list_chapters = []
     link_splits = link.split('/')
     server = '/'.join(link_splits[:3])
 
     container_chapters = "nt_listchapter"
     ul_id = "desc"
+    
 
     try:
-        r = requests.get(link, headers={
-            'User-agent': 'Mozilla/5.0'}, timeout=(3, 5))
+        r = requests.get(link, headers=nettruyen_req_headers, timeout=timeout_obj)
         
         htmlSource = r.content
         soup = BeautifulSoup(htmlSource, 'html.parser')
@@ -60,22 +62,20 @@ def get_link_chapter_nettruyen(link= '', num_chap = -1, start_idx = -1):
 
         # Debug print list_chapters
         if NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"]:
-            print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
-            pprint(list_chapters)
+            log_parameter("List chapters", list_chapters, 2)
 
         # Debug print final
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(END_LOG)
 
         return (server, list_chapters)
         
     except Exception as e:
         if NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-            print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        return (server, [])
+            log_error("MangaNettruyenController", "get_link_chapter_nettruyen", e)
+        raise Exception(MSG_ERR_CONTROLLER_NETTRUYEN.format("get_link_chapter_nettruyen"))
     
 
-def get_list_image_nettruyen(link=''):
+def get_list_image_nettruyen(link: str = ''):
     """
     Get list of images from nettruyen
     :param link: link to get list of images
@@ -83,9 +83,8 @@ def get_list_image_nettruyen(link=''):
     
     # Debug print initial
     if NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"]:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaNettruyenController: get_list_image_nettruyen'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
+        log_start_function("MangaNettruyenController", "get_list_image_nettruyen")
+        log_parameter("Link", link, 1)
 
     list_images = []
     
@@ -96,8 +95,7 @@ def get_list_image_nettruyen(link=''):
     div_images = ["page-chapter"]
 
     try:
-        r = requests.get(link, headers={
-            'User-agent': 'Mozilla/5.0'}, timeout=(3, 5))
+        r = requests.get(link, headers=nettruyen_req_headers, timeout=timeout_obj)
         
         htmlSource = r.content
         soup = BeautifulSoup(htmlSource, 'html.parser')
@@ -112,7 +110,7 @@ def get_list_image_nettruyen(link=''):
             odd = chap.split(".")[-1]
             chap = chap.split(".")[0]
 
-        title = f"{chapter_folder_prefix} {generate_filename(idx=int(chap))}"
+        title = f"{prefix_chapter_folder} {generate_filename(idx=int(chap))}"
 
         if odd != -1:
             title = f"{title}.{odd}"
@@ -134,17 +132,13 @@ def get_list_image_nettruyen(link=''):
 
         # Debug print list_images
         if NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"]:
-            print(Fore.CYAN + f'{"List images:":<20}' + Style.RESET_ALL)
-            pprint(list_images, indent=2)
-
-        # Debug print final
-        NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"] and print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+            log_parameter("List images", list_images, 2)
+            print(END_LOG)
 
         return (title, list_images)
         
     except Exception as e:
         if NETTRUYEN_DEBUG and DEBUG_OBJ["get_list_image_nettruyen"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-            print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        return (title, [])
+            log_error("MangaNettruyenController", "get_list_image_nettruyen", e)
+        raise Exception(MSG_ERR_CONTROLLER_NETTRUYEN.format("get_list_image_nettruyen"))
     

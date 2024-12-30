@@ -4,7 +4,7 @@ import sys
 from colorama import Fore, Style
 
 from common.Commons import extract_number, generate_filename, is_image_file
-from common.Constants import file_prefix, RENAME_DEBUG
+from common.Constants import prefix_image_file, RENAME_DEBUG
 
 def main_process(target_folder, is_sort, start_index):
     
@@ -18,7 +18,7 @@ def main_process(target_folder, is_sort, start_index):
         files = sorted(files, key=lambda x: extract_number(x, is_sort, start_index))
 
         for i, f in enumerate(files):
-            new_name = generate_filename(file_prefix, start_index + i, ".jpg")
+            new_name = generate_filename(prefix_image_file, start_index + i, ".jpg")
             os.rename(os.path.join(target_folder, f), os.path.join(target_folder, new_name))
 
         RENAME_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)

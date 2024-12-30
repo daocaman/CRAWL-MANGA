@@ -33,7 +33,7 @@ python -m tasks.DownloadManga
 | ------ | -------- | -------------------------------------------------------------------------- |
 | -l     | L        | Link to the manga page                                                     |
 | -n     | N        | Number of chapters to download (-1: all chapters, !-1: number of chapters) |
-| -s     | S        | Server to download from (1: nettruyen, 2: mangasee)                        |
+| -s     | S        | Server to download from (1: nettruyen, 2: mangasee, 3: )                        |
 | -s_i   | S_I      | Start index (-1: top down -- default, !-1: start from index)               |
 
 Example 1: Download from mangasee
@@ -47,6 +47,8 @@ Example 2: Download from nettruyen
 ```
 python -m tasks.DownloadManga -l https://nettruyenviet.com/truyen-tranh/van-co-chi-ton -n -1 -s 1 -s_i 0
 ```
+
+Example 3: Download from Weeb
 
 2. Create metadata manga
 

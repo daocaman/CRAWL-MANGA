@@ -3,24 +3,21 @@ import os
 import requests
 from PIL import Image
 from skimage import io
-from lxml import html
 from colorama import Fore, Style
 
-from common.Constants import COMMON_DEBUG
+from common.Constants import COMMON_DEBUG, images_ext
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Messages import MSG_ERR_DOWN_IMG
 
 # constants number
-from common.Constants import max_length_idx, max_download_trial
-
-# constants objects
-from common.Constants import header_obj
-
+from common.Constants import max_length_idx, max_download_trial, header_obj, timeout_obj
 
 DEBUG_OBJ = {
-    "is_image_file": False,
-    "generate_filename": False,
-    "extract_number": False,
+    "is_image_file": True,
+    "generate_filename": True,
+    "extract_number": True,
     "resize_image": True,
-    "check_image_error": False,
+    "check_image_error": True,
     "download_image": True,
 }
 
@@ -33,22 +30,21 @@ def is_image_file(file_name=''):
     
     # Debug print initial
     if COMMON_DEBUG and DEBUG_OBJ["is_image_file"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Common: is_image_file'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"File name:":<20}' + Style.RESET_ALL + f'{file_name: >49}')
+        log_start_function("Common", "is_image_file")
+        log_parameter("File name", file_name, 1)
     
     ext = file_name.split('.')[-1]
     
-    result = ext in ['jpg', 'png', 'jpeg']
+    result = ext in images_ext
     
     # Debug print result
     if COMMON_DEBUG and DEBUG_OBJ["is_image_file"]:
-        print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{str(result): >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        log_parameter("Result", result, 2)
+        print(END_LOG)
 
     return result
 
-def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
+def generate_filename(prefix: str='', idx: int=0, ext: str='', str_len: int=max_length_idx):
     """
     Generate a filename with a specific format
     :param prefix: prefix of the filename
@@ -60,12 +56,11 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
 
     # Debug print initial
     if COMMON_DEBUG and DEBUG_OBJ["generate_filename"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Common: generate_filename'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Prefix:":<20}' + Style.RESET_ALL + f'{prefix: >49}')
-        print(Fore.BLUE + f'{"Index:":<20}' + Style.RESET_ALL + f'{idx: >49}')
-        print(Fore.BLUE + f'{"Ext:":<20}' + Style.RESET_ALL + f'{ext: >49}')
-        print(Fore.BLUE + f'{"Str len:":<20}' + Style.RESET_ALL + f'{str_len: >49}')
+        log_start_function("Common", "generate_filename")
+        log_parameter("Prefix", prefix, 1)
+        log_parameter("Index", idx, 1)
+        log_parameter("File extension", ext, 1)
+        log_parameter("String length", str_len, 1)
     
     # Generate filename
     result_str = "0"*str_len + str(idx)
@@ -74,13 +69,13 @@ def generate_filename(prefix='', idx=0, ext='', str_len=max_length_idx):
     
     # Debug print result
     if COMMON_DEBUG and DEBUG_OBJ["generate_filename"]:
-        print(Fore.CYAN + f'{"Result str:":<20}' + Style.RESET_ALL + f'{result_str: >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        log_parameter("Result str", result_str, 2)
+        print(END_LOG)
     
     return result_str
 
 
-def extract_number(s='', last=False, is_float=False):
+def extract_number(s: str='', last: bool=False, is_float: bool=False):
     """
     Extract number from a string
     :param s: input string
@@ -91,11 +86,10 @@ def extract_number(s='', last=False, is_float=False):
     
     # Debug print initial
     if COMMON_DEBUG and DEBUG_OBJ["extract_number"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Common: extract_number'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"String:":<20}' + Style.RESET_ALL + f'{s: >49}')
-        print(Fore.BLUE + f'{"Last:":<20}' + Style.RESET_ALL + f'{last: >49}')
-        print(Fore.BLUE + f'{"Is float:":<20}' + Style.RESET_ALL + f'{is_float: >49}')
+        log_start_function("Common", "extract_number")
+        log_parameter("String", s, 1)
+        log_parameter("Last", last, 1)
+        log_parameter("Is float", is_float, 1)
     
     # Extract the last number in the string
     if last:
@@ -110,8 +104,8 @@ def extract_number(s='', last=False, is_float=False):
         
         # Debug print result
         if COMMON_DEBUG and DEBUG_OBJ["extract_number"]:
-            print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+            log_parameter("Result", result, 2)
+            print(END_LOG)
         
         return result
         
@@ -125,12 +119,12 @@ def extract_number(s='', last=False, is_float=False):
 
     # Debug print result
     if COMMON_DEBUG and DEBUG_OBJ["extract_number"]:
-        print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        log_parameter("Result", result, 2)
+        print(END_LOG)
 
     return result
 
-def is_image_error(filename=''):
+def is_image_error(filename: str=''):
     """
     Check image error
     :param filename: filename to check
@@ -139,9 +133,8 @@ def is_image_error(filename=''):
     
     # Debug print initial
     if COMMON_DEBUG and DEBUG_OBJ["check_image_error"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Common: check_image_error'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Filename:":<20}' + Style.RESET_ALL + f'{filename: >49}')
+        log_start_function("Common", "check_image_error")
+        log_parameter("Filename", filename, 1)
 
     is_error = False
     try:
@@ -149,14 +142,12 @@ def is_image_error(filename=''):
         img.verify()  # verify that it is, in fact an image
         img = io.imread(filename)
     except Exception as e:
-        if COMMON_DEBUG and DEBUG_OBJ["check_image_error"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
         is_error = True
     
     if COMMON_DEBUG and DEBUG_OBJ["check_image_error"]:
-        print(Fore.CYAN + f'{"Result is_error:":<20}' + Style.RESET_ALL + f'{str(is_error): >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-        
+        log_parameter("Is error", is_error, 2)
+        print(END_LOG)
+
     return is_error
         
 def download_image(link: str, server: str, file: str):
@@ -170,24 +161,28 @@ def download_image(link: str, server: str, file: str):
     
     # Debug print initial
     if COMMON_DEBUG and DEBUG_OBJ["download_image"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Common: download_image'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
-        print(Fore.BLUE + f'{"Server:":<20}' + Style.RESET_ALL + f'{server: >49}')
-        print(Fore.BLUE + f'{"File:":<20}' + Style.RESET_ALL + f'{file: >49}')
+        log_start_function("Common", "download_image")
+        log_parameter("Link", link, 1)
+        log_parameter("Server", server, 1)
+        log_parameter("File", file, 1)
 
     if os.path.exists(file) and not is_image_error(file):
         return 200
 
+    req_headers = {
+        **header_obj,
+        'Referer': server,
+    }
+
     download_success = False
     for i in range(max_download_trial):
         try:
-            r = requests.get(link, headers={
-                'User-agent': 'Mozilla/5.0', 'Referer': server}, timeout=(3, 5))
+            r = requests.get(link, headers=req_headers, timeout=timeout_obj)
             
             with open(file, "wb") as fd:
                 down_code = r.status_code
-                COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.CYAN + f'{"Down code:":<20}' + Style.RESET_ALL + f'{down_code: >49}')
+                if COMMON_DEBUG and DEBUG_OBJ["download_image"]:
+                    log_parameter("Down code", down_code, 2)
                 if down_code != 200:
                     raise Exception(f"Error download image {link}")
                 else:
@@ -200,13 +195,14 @@ def download_image(link: str, server: str, file: str):
             return 200
             
         except Exception as e:
-            COMMON_DEBUG and DEBUG_OBJ["download_image"] and print(Fore.RED + f'{"Error at trial:":<20}' + Style.RESET_ALL + f'{i: >49}')
+            if COMMON_DEBUG and DEBUG_OBJ["download_image"]:
+                log_error("Common", "download_image", MSG_ERR_DOWN_IMG.format(i), False)
             continue
 
     result = 200 if download_success else 400
 
     if COMMON_DEBUG and DEBUG_OBJ["download_image"]:
-        print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        log_parameter("Result", result, 2)
+        print(END_LOG)
 
     return result
