@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-from colorama import Fore, Style
 
 from common.Commons import extract_number, generate_filename, is_image_file
 from common.Constants import prefix_image_file, RENAME_DEBUG
@@ -41,7 +40,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Rename files')
     parser.add_argument('-o', type=str, required=True, help='target folder')
-    parser.add_argument('-s', type=bool, default=False, action='store_true', help='Sort file')
+    parser.add_argument('-s', default=False, action='store_true', help='Sort file')
     parser.add_argument('-s_i', type=int, default=0, help='Start index')
 
     # Show help if no arguments provided    

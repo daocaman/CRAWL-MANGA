@@ -1,11 +1,10 @@
 import argparse
 import sys
 import json
-from colorama import Fore, Style
 
 from controllers.DownloadYoutubeController import get_playlist_videos, download_yt_process, DOWNLOAD_YOUTUBE_DEBUG
-from common.Messages import log_start_function, log_parameter, log_end_function, log_error, END_LOG
-from common.Validations import check_file_exists
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Validations import check_file_exist
 
 def main_process(youtube_link: str, type: str, link_type: int, file_yt: str, quality: str):
     """
@@ -27,7 +26,7 @@ def main_process(youtube_link: str, type: str, link_type: int, file_yt: str, qua
     
     try:
         if file_yt:
-            check_file_exists(file_yt)
+            check_file_exist(file_yt)
             with open(file_yt, 'r') as file:
                 list_videos = json.load(file)
             for video in list_videos:   

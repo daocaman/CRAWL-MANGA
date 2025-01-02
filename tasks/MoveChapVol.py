@@ -1,15 +1,12 @@
 import argparse
 import sys
-import os
 import json
-from colorama import Fore, Style
-from pprint import pprint
 
 from controllers.MoveChapController import move_chap_vol, MOVE_CHAP_VOL_DEBUG
 from common.Constants import manga_vol
 from common.Messages import log_start_function, log_parameter, log_error, END_LOG
 from common.Messages import MSG_ERR_NO_MANGA_TITLE
-from common.Validations import check_file_exists
+from common.Validations import check_file_exist
 
 def main_process(file_chapters: str, manga_title: str, delete_chapters: bool):
     """
@@ -25,7 +22,7 @@ def main_process(file_chapters: str, manga_title: str, delete_chapters: bool):
         log_parameter("delete_chapters", delete_chapters, 1)
     
     try:
-        check_file_exists(file_chapters)
+        check_file_exist(file_chapters)
                 
         if not manga_title: 
             raise Exception(MSG_ERR_NO_MANGA_TITLE)
