@@ -3,14 +3,22 @@ import os
 import requests
 from PIL import Image
 from skimage import io
-from colorama import Fore, Style
-
+import concurrent.futures
+# Constants string
 from common.Constants import COMMON_DEBUG, images_ext
+
+# Constants number
+from common.Constants import max_length_idx, max_download_trial
+
+# Constant object
+from common.Constants import header_obj, timeout_obj
+
+# Other constants
+from common.Constants import using_thread
+
+# Messages
 from common.Messages import log_start_function, log_parameter, log_error, END_LOG
 from common.Messages import MSG_ERR_DOWN_IMG
-
-# constants number
-from common.Constants import max_length_idx, max_download_trial, header_obj, timeout_obj
 
 DEBUG_OBJ = {
     "is_image_file": True,
@@ -19,6 +27,7 @@ DEBUG_OBJ = {
     "resize_image": True,
     "check_image_error": True,
     "download_image": True,
+    "execute_process": True,
 }
 
 def is_image_file(file_name=''):
@@ -206,3 +215,19 @@ def download_image(link: str, server: str, file: str):
         print(END_LOG)
 
     return result
+
+def execute_process(func, obj_list):
+    """
+    Execute process with multithreading if supported
+    :param func: function to execute
+    :param obj_list: list of objects to execute
+    :return: None
+    """
+    if using_thread:
+        thread_count = os.cpu_count() // 2 if os.cpu_count() > 1 else 1
+        COMMON_DEBUG and DEBUG_OBJ["execute_process"] and log_parameter("Thread count", thread_count, 2)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=thread_count) as executor:
+            executor.map(func, obj_list)
+    else:
+        for obj in obj_list:
+            func(obj)

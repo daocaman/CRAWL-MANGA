@@ -1,43 +1,37 @@
 import argparse
-import os
-from colorama import Fore, Style
 import sys
-import multiprocessing
 
-from common.Constants import DOWNLOAD_COVERS_DEBUG
 from controllers.DownloadImageController import download_image_process
 from controllers.DownloadCoverController import download_cover_process
+from common.Commons import execute_process
+from common.Constants import DOWNLOAD_COVERS_DEBUG
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Messages import MSG_ERR_NO_COVERS_FOUND
 
-def main_process(manga_link, number_of_covers):
+def main_process(manga_link: str, number_of_covers: int):
+    
+    
     if DOWNLOAD_COVERS_DEBUG:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Tasks: DownloadCovers'.center(70) + Style.RESET_ALL)
+        log_start_function("Tasks: DownloadCovers", "main_process")
+        log_parameter("Manga link", manga_link, 1)
+        log_parameter("Number of covers", number_of_covers, 1)
     
     try:
 
         list_covers = download_cover_process(manga_link)
         
         if len(list_covers) == 0:
-            raise Exception('No covers found')
+            raise Exception(MSG_ERR_NO_COVERS_FOUND)
 
         list_covers = list_covers[:number_of_covers]
-
-        if os.cpu_count() > 1:
-            DOWNLOAD_COVERS_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{os.cpu_count()}')
-            with multiprocessing.Pool(os.cpu_count() // 2) as pool:  
-                pool.map(download_image_process, list_covers)
-        else:
-            for cover in list_covers:
-                code_result = download_image_process(cover)
-
-                if code_result != 200:
-                    DOWNLOAD_COVERS_DEBUG and print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'Download this cover {cover["link"]} failed')
-      
+        
+        execute_process(download_image_process, list_covers)
+        
+        DOWNLOAD_COVERS_DEBUG and print(END_LOG)
+        
     except Exception as e:
-
-        if DOWNLOAD_COVERS_DEBUG:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
-            print(Fore.GREEN + '<' +'='*68 + '<' + Style.RESET_ALL)
+        log_error("Tasks: DownloadCovers", "main_process", e)
+        DOWNLOAD_COVERS_DEBUG and print(END_LOG)
     
 
 def main():

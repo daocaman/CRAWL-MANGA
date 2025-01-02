@@ -147,3 +147,5 @@ resource_cp_files = [
     file_chapters,
 ]
 
+# Other constants
+using_thread = True

@@ -50,11 +50,14 @@ def log_error(controller: str, function_name: str, error, log_end: bool = True):
         print(END_LOG)
         
 MSG_ERR_DOWN_IMG = "Error download image at trial {0}!f"
-MSG_ERR_FILE_NOT_EXIST = "File {0} does not exist!"
-MSG_ERR_FOLDER_NOT_EXIST = "Folder {0} does not exist!"
+MSG_ERR_FILE_NOT_EXIST = "File <{0}> is not found!"
+MSG_ERR_FOLDER_NOT_EXIST = "Folder <{0}> is not found!"
 MSG_ERR_URL_NOT_VALID_VIDEO = "URL is not a valid YouTube video URL!"
 MSG_ERR_URL_NOT_VALID_PLAYLIST = "URL is not a valid YouTube playlist URL!"
 MSG_ERR_REQUEST_FAILED = "Failed to fetch the list of chapters with status code {0}!"
+MSG_ERR_NO_FOLDERS_WITH_NAME = "No folders found with name <{0}>!"
+MSG_ERR_NO_COVERS_FOUND = "No covers found!"
+MSG_ERR_NO_MANGA_TITLE = "No manga title found!"
 
 MSG_ERR_CONTROLLER_ARCHIVE = "Error in ArchiveController: {0}!"
 MSG_ERR_CONTROLLER_CONVERT_TS = "Error in ConvertTSController: {0}!"

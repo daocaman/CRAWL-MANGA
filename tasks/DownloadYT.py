@@ -4,15 +4,30 @@ import json
 from colorama import Fore, Style
 
 from controllers.DownloadYoutubeController import get_playlist_videos, download_yt_process, DOWNLOAD_YOUTUBE_DEBUG
+from common.Messages import log_start_function, log_parameter, log_end_function, log_error, END_LOG
+from common.Validations import check_file_exists
 
-def main_process(youtube_link, type, link_type, file_yt, quality):
+def main_process(youtube_link: str, type: str, link_type: int, file_yt: str, quality: str):
+    """
+    Main process for downloading youtube videos
+    :param youtube_link: str, link to the youtube video or playlist
+    :param type: str, type of download
+    :param link_type: int, type of youtube link
+    :param file_yt: str, file youtube link
+    :param quality: str, quality of video                                   
+    """
     
     if DOWNLOAD_YOUTUBE_DEBUG:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'DownloadYT: main'.center(70) + Style.RESET_ALL)
+        log_start_function("Tasks: DownloadYT", "main_process")
+        log_parameter("youtube_link", youtube_link, 1)
+        log_parameter("type", type, 1)
+        log_parameter("link_type", link_type, 1)
+        log_parameter("file_yt", file_yt, 1)
+        log_parameter("quality", quality, 1)
     
     try:
         if file_yt:
+            check_file_exists(file_yt)
             with open(file_yt, 'r') as file:
                 list_videos = json.load(file)
             for video in list_videos:   
@@ -30,11 +45,10 @@ def main_process(youtube_link, type, link_type, file_yt, quality):
                 for video in list_videos_process:
                     download_yt_process(video)
 
-        DOWNLOAD_YOUTUBE_DEBUG and print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        DOWNLOAD_YOUTUBE_DEBUG and print(END_LOG)
     except Exception as e:
-        print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-        return
+        log_error("Tasks: DownloadYT", "main_process", e)
+        DOWNLOAD_YOUTUBE_DEBUG and print(END_LOG)
 
 
 def main():
@@ -46,9 +60,10 @@ def main():
     parser.add_argument('-f_yt', default="", type=str, help='File youtube link')
     parser.add_argument('-q', default="720", type=str, help='Quality of video')
 
+    # Show help if no arguments provided    
     if len(sys.argv) == 1:
         parser.print_help()
-        sys.exit(0)
+        sys.exit(1)
 
     args = parser.parse_args()
     
