@@ -1,10 +1,11 @@
 import os
 import requests
 import json
-from colorama import Fore, Style
-from pprint import pprint
-from common.Constants import MANGASEE_DEBUG
+
+from common.Constants import MANGASEE_DEBUG, file_sample_html, link_chapter_mangasee, prefix_chapter_folder
 from common.Commons import generate_filename
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Messages import MSG_ERR_CONTROLLER_MANGASEE
 
 DEBUG_OBJ = {
     "generate_chapter_link_mangasee": False,
@@ -22,34 +23,37 @@ def generate_chapter_link_mangasee(chapter_str: str) -> str:
     
     # Debug print initial
     if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaMangaseeController: generate_chapter_link_mangasee'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Chapter str:":<20}' + Style.RESET_ALL + f'{chapter_str: >49}')
+        log_start_function("MangaMangaseeController", "generate_chapter_link_mangasee")
+        log_parameter("Chapter str", chapter_str, 1)
 
-    index = ""
+    try:
+        index = ""
 
-    idexStr = int(chapter_str[0])
+        idexStr = int(chapter_str[0])
 
-    if (idexStr != 1):
-        index = '-index-' + idexStr
+        if (idexStr != 1):
+            index = '-index-' + idexStr
 
-    chapter = int(chapter_str[1:-1])
+        chapter = int(chapter_str[1:-1])
 
-    odd = ""
+        odd = ""
 
-    odd_str = int(chapter_str[-1])
+        odd_str = int(chapter_str[-1])
 
-    if odd_str != 0:
-        odd = "." + str(odd_str)
+        if odd_str != 0:
+            odd = "." + str(odd_str)
 
-    result = "-chapter-" + str(chapter) + odd + index
+        result = "-chapter-" + str(chapter) + odd + index
 
-    if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"]:
-        print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"]:
+            log_parameter("Result", result, 2)
+            print(END_LOG)
 
-    return result
-
+        return result
+    except Exception as e:
+        if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"]:
+            log_error("MangaMangaseeController", "generate_chapter_link_mangasee", e)
+        raise Exception(MSG_ERR_CONTROLLER_MANGASEE.format("generate_chapter_link_mangasee"))
 
 def generate_chapter_img(chapter_str: str) -> str:
     """
@@ -60,23 +64,26 @@ def generate_chapter_img(chapter_str: str) -> str:
     
     # Debug print initial
     if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"]:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaMangaseeController: generate_chapter_img'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Chapter str:":<20}' + Style.RESET_ALL + f'{chapter_str: >49}')
+        log_start_function("MangaMangaseeController", "generate_chapter_img")
+        log_parameter("Chapter str", chapter_str, 1)
 
-    chapter_str = str(chapter_str)
-    chapter = chapter_str[1:-1]
-    odd = chapter_str[-1]
+    try:
+        chapter_str = str(chapter_str)
+        chapter = chapter_str[1:-1]
+        odd = chapter_str[-1]
 
-    result = chapter if odd == "0" else chapter + "." + odd
+        result = chapter if odd == "0" else chapter + "." + odd
 
-    # Debug print result
-    if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"]:
-        print(Fore.CYAN + f'{"Result:":<20}' + Style.RESET_ALL + f'{result: >49}')
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        # Debug print result
+        if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"]:
+            log_parameter("Result", result, 2)
+            print(END_LOG)
 
-    return result
-    
+        return result
+    except Exception as e:
+        if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_img"]:
+            log_error("MangaMangaseeController", "generate_chapter_img", e)
+        raise Exception(MSG_ERR_CONTROLLER_MANGASEE.format("generate_chapter_img"))
 
 def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1):
     """
@@ -89,11 +96,10 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
     
     # Debug print initial
     if MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"]:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MangaMangaseeController: get_link_chapter_mangasee'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Link:":<20}' + Style.RESET_ALL + f'{link: >49}')
-        print(Fore.BLUE + f'{"Num chap:":<20}' + Style.RESET_ALL + f'{num_chap: >49}')
-        print(Fore.BLUE + f'{"Start idx:":<20}' + Style.RESET_ALL + f'{start_idx: >49}')
+        log_start_function("MangaMangaseeController", "get_link_chapter_mangasee")
+        log_parameter("Link", link, 1)
+        log_parameter("Num chap", num_chap, 1)
+        log_parameter("Start idx", start_idx, 1)
 
     list_chapters = []
     cur_path_name = ""
@@ -105,14 +111,14 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
       
         r = requests.get(link)
 
-        f = open('test.html', mode='w+', encoding='utf-8')
+        f = open(file_sample_html, mode='w+', encoding='utf-8')
         f.write(r.text)
         f.close()
 
         chapters = []
         index_name = ""
 
-        f = open('test.html', mode='r+', encoding='utf-8')
+        f = open(file_sample_html, mode='r+', encoding='utf-8')
 
         for line in f.readlines():
             if "vm.CurPathName = " in line:
@@ -129,7 +135,7 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
                     'vm.CHAPTERS = ', "").replace(";", ""))
         
         f.close()
-        os.remove('test.html')
+        os.remove(file_sample_html)
         list_chapters = chapters
 
         if start_idx != -1:
@@ -145,17 +151,15 @@ def get_link_chapter_mangasee(link: str, num_chap: int = -1, start_idx: int = -1
             
         # Debug print list_chapters
         if MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"]:
-            print(Fore.CYAN + f'{"List chapters:":<20}' + Style.RESET_ALL)
-            pprint(list_chapters)
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+            log_parameter("List chapters", list_chapters, 2)
+            print(END_LOG)
 
         return (server, list_chapters, cur_path_name, index_name)
         
     except Exception as e:
         if MANGASEE_DEBUG and DEBUG_OBJ["get_link_chapter_mangasee"]:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{e: >49}')
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-        return (server, list_chapters, cur_path_name, index_name)
+            log_error("MangaMangaseeController", "get_link_chapter_mangasee", e)
+        raise Exception(MSG_ERR_CONTROLLER_MANGASEE.format("get_link_chapter_mangasee"))
     
 
 def get_list_image_mangasee(index_name: str, chapter: dict):
@@ -167,59 +171,61 @@ def get_list_image_mangasee(index_name: str, chapter: dict):
     
     # Debug print initial
     if MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"]:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)    
-        print(Fore.YELLOW + 'MangaMangaseeController: get_list_image_mangasee'.center(70) + Style.RESET_ALL)
-        print(Fore.BLUE + f'{"Index name:":<20}' + Style.RESET_ALL + f'{index_name: >49}')
-        print(Fore.BLUE + f'{"Chapter:":<20}' + Style.RESET_ALL)
-        pprint(chapter)
+        log_start_function("MangaMangaseeController", "get_list_image_mangasee")
+        log_parameter("Index name", index_name, 1)
+        log_parameter("Chapter", chapter, 1)
 
-    id_chap_link = index_name + generate_chapter_link_mangasee(chapter["Chapter"])
+    try:
+        id_chap_link = index_name + generate_chapter_link_mangasee(chapter["Chapter"])
 
-    link = "https://mangasee123.com/read-online/" + id_chap_link + ".html"
+        link = link_chapter_mangasee.format(id_chap_link)
 
-    list_images = []
+        list_images = []
 
-    r = requests.get(link)
-    f_tmp = open('test.html', 'w+', encoding='utf-8')
-    f_tmp.write(r.text)
-    f_tmp.close()
-    f_tmp = open('test.html', 'r+', encoding='utf-8')
+        r = requests.get(link)
+        f_tmp = open(file_sample_html, 'w+', encoding='utf-8')
+        f_tmp.write(r.text)
+        f_tmp.close()
+        f_tmp = open(file_sample_html, 'r+', encoding='utf-8')
 
-    cur_path_name = ""
-    for line in f_tmp.readlines():
-        if "vm.CurPathName = " in line:
-            cur_path_name = line.replace(
-                "vm.CurPathName = ", "").strip().replace(";", "").replace('"', "")
-            break
-    
-    f_tmp.close()
-    os.remove('test.html')
-
-    chap_name = "Chapter " + generate_chapter_img(chapter["Chapter"])
-
-    for p_idx in range(1, int(chapter["Page"])+1):
-        img_link = "https://{curPathName}/manga/{index_name}/{directory}{img}.png"
-        img_link = img_link.replace(
-            "{curPathName}", cur_path_name)
-        img_link = img_link.replace(
-            "{index_name}", index_name)
-        if chapter["Directory"] != "":
-            img_link = img_link.replace(
-                "{directory}", chapter["Directory"])
-        else:
-            img_link = img_link.replace(
-                "{directory}", "")
-        img_link = img_link.replace("{img}", generate_chapter_img(
-            chapter["Chapter"])+"-"+ generate_filename(idx=p_idx, str_len=3))
+        cur_path_name = ""
+        for line in f_tmp.readlines():
+            if "vm.CurPathName = " in line:
+                cur_path_name = line.replace(
+                    "vm.CurPathName = ", "").strip().replace(";", "").replace('"', "")
+                break
         
-        list_images.append(img_link)
-        
-    # Debug print final
-    if MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"]:
-        print(Fore.CYAN + f'{"List images:":<20}' + Style.RESET_ALL)
-        pprint(list_images)
-        print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
+        f_tmp.close()
+        os.remove(file_sample_html)
 
-    return (chap_name, list_images)
+        chap_name = f'{prefix_chapter_folder} {generate_chapter_img(chapter["Chapter"])}'
+
+        for p_idx in range(1, int(chapter["Page"])+1):
+            img_link = "https://{curPathName}/manga/{index_name}/{directory}{img}.png"
+            img_link = img_link.replace(
+                "{curPathName}", cur_path_name)
+            img_link = img_link.replace(
+                "{index_name}", index_name)
+            if chapter["Directory"] != "":
+                img_link = img_link.replace(
+                    "{directory}", chapter["Directory"])
+            else:
+                img_link = img_link.replace(
+                    "{directory}", "")
+            img_link = img_link.replace("{img}", generate_chapter_img(
+                chapter["Chapter"])+"-"+ generate_filename(idx=p_idx, str_len=3))
+            
+            list_images.append(img_link)
+            
+        # Debug print final
+        if MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"]:
+            log_parameter("List images", list_images, 2)
+            print(END_LOG)
+
+        return (chap_name, list_images)
+    except Exception as e:
+        if MANGASEE_DEBUG and DEBUG_OBJ["get_list_image_mangasee"]:
+            log_error("MangaMangaseeController", "get_list_image_mangasee", e)
+        raise Exception(MSG_ERR_CONTROLLER_MANGASEE.format("get_list_image_mangasee"))
     
     

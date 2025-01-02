@@ -1,26 +1,32 @@
 import argparse
-import os
 import sys
-from colorama import Fore, Style
-import concurrent.futures
 
-from common.Commons import extract_number
 from controllers.ArchiveController import archive_folder_process, ARCHIVE_DEBUG
 from controllers.ResizeController import resize_image_process
+from common.Commons import execute_process
+from common.Messages import log_start_function, END_LOG, log_parameter, log_error
+from common.Validations import check_and_get_list_of_folders, check_and_create_folder
 
-def main_process(target_folder, is_multiple_folders, is_delete_folders):
+def main_process(target_folder: str, is_multiple_folders: bool, is_delete_folders: bool):
+    """
+    Main process
+    :param target_folder: The target folder
+    :param is_multiple_folders: Is multiple folders
+    :param is_delete_folders: Is delete folders
+    :return: None
+    """
     if ARCHIVE_DEBUG:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Tasks: ArchiveFolders'.center(70) + Style.RESET_ALL)
+        log_start_function("Tasks: ArchiveFolders", "main_process")
+        log_parameter("Target folder", target_folder, 1)
+        log_parameter("Is multiple folders", is_multiple_folders, 1)
+        log_parameter("Is delete folders", is_delete_folders, 1)
 
     try:
         if is_multiple_folders:
-            folders = os.listdir()
-            folders = [f for f in folders if os.path.isdir(f) and target_folder in f]
-            folders = sorted(folders, key=lambda x: extract_number(x, True))
-            if len(folders) == 0:
-                raise Exception('No folders found')
+            
+            folders = check_and_get_list_of_folders(target_folder)
 
+            # List resize object for processing resize images
             resize_obj_list = []
             for fol in folders:
                 resize_obj_list.append({
@@ -28,42 +34,33 @@ def main_process(target_folder, is_multiple_folders, is_delete_folders):
                     "is_horizontal": False
                 })
 
-            if os.cpu_count() > 1:
-                current_cpu = os.cpu_count() // 2
-                ARCHIVE_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{current_cpu}')
-                with concurrent.futures.ThreadPoolExecutor(max_workers=current_cpu) as executor:
-                    executor.map(resize_image_process, resize_obj_list)
-            else:
-                for resize_obj in resize_obj_list:
-                    resize_image_process(resize_obj)
-
+            # Resize images before archiving
+            execute_process(resize_image_process, resize_obj_list)
+          
+            # List archive object for processing archive folders
             folders_process = []
             for fol in folders:
                 folders_process.append({
                     "folder": fol,
                     "is_delete": is_delete_folders
-                })
+                })  
 
-            if os.cpu_count() > 1:
-                current_cpu = os.cpu_count() // 2
-                ARCHIVE_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{current_cpu}')
-                with concurrent.futures.ThreadPoolExecutor(max_workers=current_cpu) as executor:
-                    executor.map(archive_folder_process, folders_process)
-            else:
-                for folder_process in folders_process:
-                    archive_folder_process(folder_process)
+            # Archive folders
+            execute_process(archive_folder_process, folders_process)
+            
         else:
-            if not os.path.isdir(target_folder):
-                raise Exception('Target folder not found')
+            check_and_create_folder(target_folder, True)
 
             archive_folder_process({
                 "folder": target_folder,
                 "is_delete": is_delete_folders
             })
+        
+        ARCHIVE_DEBUG and print(END_LOG)
+
     except Exception as e:
-        if ARCHIVE_DEBUG:
-            print(Fore.RED + f'{"Error:":<20}' + Style.RESET_ALL + f'{str(e): >49}')
-            print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
+        log_error("Tasks: ArchiveFolders", "main_process", e)
+        ARCHIVE_DEBUG and print(END_LOG)
 
 def main():
     parser = argparse.ArgumentParser(
@@ -72,6 +69,7 @@ def main():
     parser.add_argument('-m', action='store_true', help='Is multiple folders')
     parser.add_argument('-d', default=False, action='store_true', help='Is delete folders after archiving')
 
+    # Show help if no arguments provided
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
