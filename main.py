@@ -15,9 +15,12 @@ from quest.DownloadM3U8 import quest_form_download_m3u8
 from quest.ConvertTS import quest_form_convert_ts
 from common.Constant_v1_1 import main_menu, manga_options_menu, video_menu, rename_list_menu
 from common.QuestCommon import select_question, yes_no_question
+from common.Commons import init_app
 
 def main():
     title = text2art("Crawl Manga Tool", "standard")
+    
+    init_app()
 
     print(title)
     while True:
