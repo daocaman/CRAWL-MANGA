@@ -55,7 +55,7 @@ def main_process(manga_link: str, number_of_chapters: int, server_type: int, sta
                     "file": os.path.join(chapter_name, generate_filename(idx=idx, ext=".jpg"))
                 })
 
-            check_and_create_folder(chapter_name)
+            check_and_create_folder(chapter_name, create=True)
             
             execute_process(download_image_process, list_download_img)
 

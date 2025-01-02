@@ -22,7 +22,7 @@ def download_cover_process(mangadex_link: str):
         # get the manga id
         manga_id = mangadex_link.split("/")[-2]
 
-        check_and_create_folder(folder_cover, False)
+        check_and_create_folder(folder_cover, create=True)
 
         offset = 0
         list_covers = []

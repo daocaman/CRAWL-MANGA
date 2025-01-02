@@ -18,13 +18,13 @@ def move_chap_vol(target_folder: str, start_chap: int = -1, end_chap: int = -1, 
             log_parameter("End chapter", end_chap, 1)
             log_parameter("Delete chapter folder", delete_chap_folder, 1)
             
-        check_and_create_folder(target_folder)
+        check_and_create_folder(target_folder, create=True)
             
         chapters_folder_validation = []
             
         for i in range(start_chap, end_chap + 1):
             tmp_chap_folder = f'{prefix_chapter_folder} {generate_filename(idx=int(i))}'
-            check_and_create_folder(tmp_chap_folder, True)
+            check_and_create_folder(tmp_chap_folder, alert=True)
             chapters_folder_validation.append(tmp_chap_folder)
             
         list_chapters = []

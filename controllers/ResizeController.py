@@ -24,7 +24,7 @@ def resize_image(folder: str='', is_horizontal: bool = False):
         
     try:
         
-        check_and_create_folder(folder, True)
+        check_and_create_folder(folder, alert=True)
         
         image_files = [f for f in os.listdir(folder) if is_image_file(f)]
         

@@ -241,7 +241,7 @@ def init_app():
     Initial function for running app
     :return: None
     """
-    check_and_create_folder(folder_running_resource)
+    check_and_create_folder(folder_running_resource, create=True)
     
     for file in resource_cp_files:
         check_file_exist(os.path.join(folder_sample_resource, file))

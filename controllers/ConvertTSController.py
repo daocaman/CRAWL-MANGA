@@ -19,7 +19,7 @@ def convert_ts_to_mp4(folder_path: str = ''):
     try:
         folder_path = folder_path if folder_path else folder_ts
         
-        check_and_create_folder(folder_path, True)
+        check_and_create_folder(folder_path, alert=True)
             
         files = os.listdir(folder_path)
         files = [file for file in files if file.endswith('.ts')]

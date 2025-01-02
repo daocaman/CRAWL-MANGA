@@ -23,7 +23,7 @@ def archive_folder(folder: str='', is_delete: bool=False):
         
     try:
     
-        check_and_create_folder(folder, True)
+        check_and_create_folder(folder, alert=True)
     
         # Check if the folder exists
         if os.path.exists(f'{folder}/{file_chapters}'):
