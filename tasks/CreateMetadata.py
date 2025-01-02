@@ -2,7 +2,6 @@ import json
 import os
 import argparse
 import sys
-from colorama import Fore, Style
 
 from controllers.MetadataController import generate_metadata, METADATA_DEBUG
 from common.Commons import extract_number

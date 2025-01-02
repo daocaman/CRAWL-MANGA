@@ -4,6 +4,8 @@ import requests
 from PIL import Image
 from skimage import io
 import concurrent.futures
+import shutil
+
 # Constants string
 from common.Constants import COMMON_DEBUG, images_ext
 
@@ -11,14 +13,16 @@ from common.Constants import COMMON_DEBUG, images_ext
 from common.Constants import max_length_idx, max_download_trial
 
 # Constant object
-from common.Constants import header_obj, timeout_obj
+from common.Constants import header_obj, timeout_obj, resource_cp_files
 
 # Other constants
-from common.Constants import using_thread
+from common.Constants import using_thread, folder_running_resource, folder_sample_resource
 
 # Messages
 from common.Messages import log_start_function, log_parameter, log_error, END_LOG
 from common.Messages import MSG_ERR_DOWN_IMG
+
+from common.Validations import check_and_create_folder, check_file_exist
 
 DEBUG_OBJ = {
     "is_image_file": True,
@@ -231,3 +235,15 @@ def execute_process(func, obj_list):
     else:
         for obj in obj_list:
             func(obj)
+
+def init_app():
+    """
+    Initial function for running app
+    :return: None
+    """
+    check_and_create_folder(folder_running_resource)
+    
+    for file in resource_cp_files:
+        check_file_exist(os.path.join(folder_sample_resource, file))
+        if not os.path.exists(os.path.join(folder_running_resource, file)):
+            shutil.copy(os.path.join(folder_sample_resource, file), os.path.join(folder_running_resource, file))
