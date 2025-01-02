@@ -1,5 +1,4 @@
 from art import *
-import questionary
 
 from quest.DownloadManga import quest_form_download_manga
 from quest.CreateMeta import quest_form_create_metadata
@@ -14,8 +13,8 @@ from quest.CreateListFile import quest_form_create_list_file
 from quest.RenameWithFile import quest_form_rename_with_file
 from quest.DownloadM3U8 import quest_form_download_m3u8
 from quest.ConvertTS import quest_form_convert_ts
-from common.Constant_v1_1 import main_menu, radio_menu, manga_options_menu, video_menu, rename_list_menu
-
+from common.Constant_v1_1 import main_menu, manga_options_menu, video_menu, rename_list_menu
+from common.QuestCommon import select_question, yes_no_question
 
 def main():
     title = text2art("Crawl Manga Tool", "standard")
@@ -26,13 +25,10 @@ def main():
 
         menu_options = main_menu
 
-        choose_task = questionary.select("Select main task: ", menu_options).ask()
-
-        task_index = menu_options.index(choose_task)
+        task_index = select_question("Select main task: ", menu_options)
         
         if task_index == 0:
-            choose_task = questionary.select("Select manga task: ", manga_options_menu).ask()
-            manga_task_index = manga_options_menu.index(choose_task)
+            manga_task_index = select_question("Select manga task: ", manga_options_menu)
             if manga_task_index == 0:
                 quest_form_download_manga()
             elif manga_task_index == 1:
@@ -48,8 +44,7 @@ def main():
             elif manga_task_index == 6:
                 quest_form_move_chap_vol()
         elif task_index == 1:
-            choose_task = questionary.select("Select video task: ", video_menu).ask()
-            video_task_index = video_menu.index(choose_task)
+            video_task_index = select_question("Select video task: ", video_menu)
             if video_task_index == 0:
                 quest_form_download_yt()
             elif video_task_index == 1:
@@ -57,19 +52,16 @@ def main():
             elif video_task_index == 2:
                 quest_form_convert_ts()
         elif task_index == 2:
-            choose_task = questionary.select("Select rename list task: ", rename_list_menu).ask()
-            rename_list_task_index = rename_list_menu.index(choose_task)
+            rename_list_task_index = select_question("Select rename list task: ", rename_list_menu)
             if rename_list_task_index == 0:
                 quest_form_rename_files()
             elif rename_list_task_index == 1:
                 quest_form_create_list_file()
             elif rename_list_task_index == 2:
                 quest_form_rename_with_file()
-
-        continue_task = questionary.select("Do you want to continue? ", radio_menu).ask()
-        continue_task_index = radio_menu.index(continue_task)
-        
-        if continue_task_index == 0:
+                
+        is_continue = yes_no_question("Do you want to continue? ")
+        if not is_continue:
             break
 
 if __name__ == "__main__":
