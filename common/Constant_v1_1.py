@@ -1,6 +1,3 @@
-from colorama import Fore, Style
-from common.Commons import art
-
 main_menu = [
     "Manga project",
     "Video project",
