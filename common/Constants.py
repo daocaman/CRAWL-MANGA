@@ -144,6 +144,9 @@ resource_cp_files = [
     file_rename_list,
     file_comic_json,
     file_chapters,
+    "youtube.json",
+    "m3u8_mp4.json",
+    "vol_chaps.json",
 ]
 
 # Other constants
