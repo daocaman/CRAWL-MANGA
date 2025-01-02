@@ -71,6 +71,9 @@ file_comic_xml = "ComicInfo.xml"
 file_chapters = "Chapters.json"
 file_rename_list = "rename_list.json"
 file_sample_html = "sample.html"
+file_vol_chaps = "vol_chaps.json"
+file_yt_json = "youtube.json"
+file_m3u8_mp4_json = "m3u8_mp4.json"
 
 ### default folder name
 folder_running_resource = "running_resource"
@@ -144,9 +147,9 @@ resource_cp_files = [
     file_rename_list,
     file_comic_json,
     file_chapters,
-    "youtube.json",
-    "m3u8_mp4.json",
-    "vol_chaps.json",
+    file_vol_chaps,
+    file_yt_json,
+    file_m3u8_mp4_json,
 ]
 
 # Other constants
