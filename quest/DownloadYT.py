@@ -1,9 +1,5 @@
-from art import art
-import questionary
-from colorama import Fore, Style
-import os
-
-from common.Constant_v1_1 import radio_menu, download_yt_menu, error_message, youtube_file_type
+from common.Constant_v1_1 import radio_menu, download_yt_menu, youtube_file_type
+from common.Constants import file_yt_json
 from tasks.DownloadYT import main_process
 from common.QuestCommon import select_question, yes_no_question, ytb_link_question, quality_question, select_file_question
 
@@ -29,7 +25,7 @@ def quest_form_download_yt():
         type_download = select_question("Type download: ", youtube_file_type)
         
     else:
-        file_yt = select_file_question("Enter file youtube: ")
+        file_yt = select_file_question("Enter file youtube: ", file_yt_json)
       
     main_process(youtube_link, type_download, link_type, file_yt, quality)
         

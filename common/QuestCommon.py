@@ -3,6 +3,7 @@ import questionary
 from colorama import Fore, Style
 import os
 
+from common.Constants import folder_running_resource
 from common.Constant_v1_1 import radio_menu, error_message
 from common.Validations import check_and_get_list_of_folders, check_valid_video_url, check_valid_playlist_url
 
@@ -37,10 +38,11 @@ def select_question(question: str, options: list):
     answer = questionary.select(ques_sentence, options).ask()
     return options.index(answer)
 
-def select_folder_question(question: str):
+def select_folder_question(question: str, default_folder: str=""):
     """
     Ask a select folder question
     :param question: question to ask
+    :param default_folder: default folder
     :return: folder name
     """
     ques_sentence = f"{question} {art('gimme')}"
@@ -50,8 +52,12 @@ def select_folder_question(question: str):
         answer = questionary.text(ques_sentence).ask()
         
         if answer == "":
-            wrong_input(error_message["folder"])
-            continue
+            if default_folder != "":
+                answer = default_folder
+                break
+            else:
+                wrong_input(error_message["folder"])
+                continue
         
         folders = check_and_get_list_of_folders(answer, alert=False)
         if len(folders) == 0:
@@ -61,10 +67,11 @@ def select_folder_question(question: str):
     
     return answer
 
-def select_file_question(question: str):
+def select_file_question(question: str, default_file: str=""):
     """
     Ask a select file question
     :param question: question to ask
+    :param default_file: default file
     :return: file name
     """
     ques_sentence = f"{question} {art('gimme')}"
@@ -73,8 +80,12 @@ def select_file_question(question: str):
     while True:
         answer = questionary.text(ques_sentence).ask()
         if answer == "":
-            wrong_input(error_message["file"])
-            continue
+            if default_file != "":
+                answer = f'{folder_running_resource}/{default_file}'
+                break
+            else:
+                wrong_input(error_message["file"])
+                continue
         
         if not os.path.exists(answer):
             wrong_input(error_message["file_not_found"])
@@ -160,7 +171,7 @@ def ytb_link_question(question: str, is_link_playlist: bool):
             wrong_input(error_message["url"])
             continue
         
-        if not is_link_playlist and not check_valid_playlist_url(answer, False):
+        if not is_link_playlist and not check_valid_video_url(answer, False):
             wrong_input(error_message["url"])
             continue
             
