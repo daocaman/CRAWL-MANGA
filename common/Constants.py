@@ -1,31 +1,31 @@
 # Debug variables
-COMMON_DEBUG = True
+COMMON_DEBUG = False
 
 ## Manga project debug
-DOWNLOAD_MANGA_DEBUG = True
-METADATA_DEBUG = True
-ARCHIVE_DEBUG = True
-DOWNLOAD_COVERS_DEBUG = True
-RESIZE_DEBUG = True
-REFORMAT_DEBUG = True  
-MOVE_CHAP_VOL_DEBUG = True
+DOWNLOAD_MANGA_DEBUG = False
+METADATA_DEBUG = False
+ARCHIVE_DEBUG = False
+DOWNLOAD_COVERS_DEBUG = False
+RESIZE_DEBUG = False
+REFORMAT_DEBUG = False  
+MOVE_CHAP_VOL_DEBUG = False
 
 ### Manga server debug
-NETTRUYEN_DEBUG = True
-MANGASEE_DEBUG = True   
-WEEBCENTRAL_DEBUG = True
+NETTRUYEN_DEBUG = False
+MANGASEE_DEBUG = False   
+WEEBCENTRAL_DEBUG = False
 
 ## Download video project debug
-DOWNLOAD_YOUTUBE_DEBUG = True
-DOWNLOAD_M3U8_DEBUG = True
-CONVERT_TS_DEBUG = True
+DOWNLOAD_YOUTUBE_DEBUG = False
+DOWNLOAD_M3U8_DEBUG = False
+CONVERT_TS_DEBUG = False
 
 ## Rename project debug
-RENAME_DEBUG = True
-LIST_AND_RENAME_DEBUG = True
+RENAME_DEBUG = False
+LIST_AND_RENAME_DEBUG = False
 
 ## Download novel project debug
-DOWNLOAD_NOVEL_DEBUG = True
+DOWNLOAD_NOVEL_DEBUG = False
 
 # Constants number
 max_length_idx = 4
