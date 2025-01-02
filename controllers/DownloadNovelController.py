@@ -1,16 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
-from common.Constants import page_break
 import docx
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from colorama import Fore, Style
 
+from common.Constants import page_break
 from common.Constants import sstruyen_link, DOWNLOAD_NOVEL_DEBUG
 
 DEBUG_OBJ = {
-    "extract_info_novel_sstruyen": False,
-    "add_chapter_to_docx": False,
-    "download_novel": False
+    "extract_info_novel_sstruyen": True,
+    "add_chapter_to_docx": True,
+    "download_novel": True
 }
 
 def extract_info_novel_sstruyen(link_chap: str):

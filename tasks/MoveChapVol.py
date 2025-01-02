@@ -1,40 +1,46 @@
 import argparse
 import sys
-import os
 import json
-from colorama import Fore, Style
-from pprint import pprint
-from common.Constants import MOVE_CHAP_VOL_DEBUG, manga_vol
-from controllers.MoveChapController import move_chap_vol
 
-def main_process(file_chapters, manga_title, delete_chapters):
+from controllers.MoveChapController import move_chap_vol, MOVE_CHAP_VOL_DEBUG
+from common.Constants import manga_vol
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Messages import MSG_ERR_NO_MANGA_TITLE
+from common.Validations import check_file_exist
+
+def main_process(file_chapters: str, manga_title: str, delete_chapters: bool):
+    """
+    Main process for moving chapters into volumes
+    :param file_chapters: str, file chapters
+    :param manga_title: str, manga title
+    :param delete_chapters: bool, delete chapters
+    """
     if MOVE_CHAP_VOL_DEBUG:
-        print(Fore.GREEN + '>' +'='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'MoveChapVol: main'.center(70) + Style.RESET_ALL)
+        log_start_function("Tasks: MoveChapVol", "main_process")
+        log_parameter("file_chapters", file_chapters, 1)
+        log_parameter("manga_title", manga_title, 1)
+        log_parameter("delete_chapters", delete_chapters, 1)
     
     try:
-        if not os.path.exists(file_chapters):
-            raise Exception('File not found')
-        
+        check_file_exist(file_chapters)
+                
         if not manga_title: 
-            raise Exception('Manga title not found')
+            raise Exception(MSG_ERR_NO_MANGA_TITLE)
         
         with open(file_chapters, 'r') as f:
             chapters_per_volume = json.load(f)
             
-        pprint(chapters_per_volume)
+        # pprint(chapters_per_volume)
+        MOVE_CHAP_VOL_DEBUG and log_parameter("chapters_per_volume", chapters_per_volume, 2)
             
         for vol in chapters_per_volume:
             target_folder = manga_vol.format(manga_title, vol['vol'])
-            print(target_folder)
             move_chap_vol(target_folder, vol['start_chap'], vol['end_chap'], delete_chapters)
-        
             
     except Exception as e:
-        if MOVE_CHAP_VOL_DEBUG:
-            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-            print(Fore.GREEN + '<' + '='*68 + '<' + Style.RESET_ALL)
-        return
+        log_error("Tasks: MoveChapVol", "main_process", e)
+        MOVE_CHAP_VOL_DEBUG and print(END_LOG)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -43,6 +49,7 @@ def main():
     parser.add_argument('-t', type=str, required=True, help='Manga title')
     parser.add_argument('-d', default=False, action='store_true', help='Delete folder chapters after copying')
     
+    # Show help if no arguments provided    
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)

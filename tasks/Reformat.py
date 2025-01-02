@@ -1,25 +1,29 @@
 import argparse
-import os
 import sys
-from colorama import Fore, Style
-import concurrent.futures
 
-from controllers.ReformatController import reformat_folders_process, reformat_folder, REFORMAT_DEBUG
-from common.Commons import extract_number
+from controllers.ReformatController import reformat_folders_process, REFORMAT_DEBUG
+from common.Commons import execute_process
+from common.Messages import log_start_function, log_parameter, log_error, END_LOG
+from common.Validations import check_and_get_list_of_folders
 
-def main_process(target_folder, is_multiple, is_delete):
+def main_process(target_folder: str, is_multiple: bool, is_delete: bool):
+    """
+    Main process for reformatting folders
+    :param target_folder: str, target folder
+    :param is_multiple: bool, is multiple folders
+    :param is_delete: bool, is delete child folders after reformat
+    """
     if REFORMAT_DEBUG:
-        print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
-        print(Fore.YELLOW + 'Tasks: Reformat'.center(70) + Style.RESET_ALL)
+        log_start_function("Tasks: Reformat", "main_process")
+        log_parameter("target_folder", target_folder, 1)
+        log_parameter("is_multiple", is_multiple, 1)
+        log_parameter("is_delete", is_delete, 1)
+
         
     try:
         if is_multiple:
-            folders = os.listdir()
-            folders = [f for f in folders if os.path.isdir(f) and target_folder in f]
-            folders = sorted(folders, key=lambda x: extract_number(x, True))
-
-            if len(folders) == 0:
-                raise Exception('No folders found')
+            
+            folders = check_and_get_list_of_folders(target_folder)
 
             reformat_folders = []
             for fol in folders:
@@ -27,25 +31,16 @@ def main_process(target_folder, is_multiple, is_delete):
                     'folder': fol,
                     'is_delete': is_delete
                 })
-
-            if os.cpu_count() > 1:
-                current_cpu = os.cpu_count() // 2
-                REFORMAT_DEBUG and print(Fore.CYAN + f'{"Multithreading supported:":<20}' + Style.RESET_ALL + f'{current_cpu}')
-                with concurrent.futures.ThreadPoolExecutor(max_workers=current_cpu) as executor:
-                    executor.map(reformat_folders_process, reformat_folders)
-            else:
-                for reformat_obj in reformat_folders:
-                    reformat_folders_process(reformat_obj)   
-
-
+            
+            execute_process(reformat_folders_process, reformat_folders)
+            
         else:
-            reformat_folder(target_folder, is_delete)
+            reformat_folders_process({'folder': target_folder, 'is_delete': is_delete})
 
-        REFORMAT_DEBUG and print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        REFORMAT_DEBUG and print(END_LOG)
     except Exception as e:
-        if REFORMAT_DEBUG:
-            print(Fore.RED + f'Error: {e}' + Style.RESET_ALL)
-            print(Fore.GREEN + '>' + '='*68 + '>' + Style.RESET_ALL)
+        log_error("Tasks: Reformat", "main_process", e)
+        REFORMAT_DEBUG and print(END_LOG)
 
 
 def main():
@@ -55,6 +50,7 @@ def main():
     parser.add_argument('-m', default=False, action='store_true', help='Is multiple folders')
     parser.add_argument('-d', default=False, action='store_true', help='Is delete child folders after reformat')
 
+    # Show help if no arguments provided    
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
