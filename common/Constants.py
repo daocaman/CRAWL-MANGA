@@ -143,7 +143,6 @@ resource_cp_files = [
     file_bookmarks,
     file_rename_list,
     file_comic_json,
-    file_comic_xml,
     file_chapters,
 ]
 
