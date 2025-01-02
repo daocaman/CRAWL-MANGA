@@ -12,7 +12,7 @@ def log_start_function(controller: str, function_name: str):
     :return: None
     """
     print(START_LOG)
-    print(START_LOG + Fore.YELLOW + f'{controller}: {function_name}'.center(70) + Style.RESET_ALL)
+    print(Fore.YELLOW + f'{controller}: {function_name}'.center(70) + Style.RESET_ALL)
 
 def log_parameter(var_name: str, var_value, var_type: int = 1):
     """
