@@ -22,7 +22,7 @@ def get_list_of_files(path):
         log_parameter("Folder path", path, 1)
 
     try:
-        check_and_create_folder(path, True)
+        check_and_create_folder(path, alert=True)
 
         files = [f.encode('utf-8').decode('utf-8') for f in os.listdir(path)]
         file_objs = []

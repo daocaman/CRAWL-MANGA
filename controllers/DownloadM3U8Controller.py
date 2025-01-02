@@ -23,7 +23,7 @@ def download_m3u8(file_path: str):
         with open(file_path, 'r') as file:
             list_m3u8 = json.load(file)
         
-        check_and_create_folder(folder_save_m3u8, False)
+        check_and_create_folder(folder_save_m3u8, create=True)
         
         for m3u8 in list_m3u8:
             url = m3u8["url"]

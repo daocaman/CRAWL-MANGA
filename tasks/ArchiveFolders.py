@@ -49,7 +49,7 @@ def main_process(target_folder: str, is_multiple_folders: bool, is_delete_folder
             execute_process(archive_folder_process, folders_process)
             
         else:
-            check_and_create_folder(target_folder, True)
+            check_and_create_folder(target_folder, alert=True)
 
             archive_folder_process({
                 "folder": target_folder,

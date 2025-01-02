@@ -15,7 +15,7 @@ def main_process(folder_path):
         log_parameter("Folder path", folder_path, 1)
     
     try:
-        check_and_create_folder(folder_path, True)
+        check_and_create_folder(folder_path, alert=True)
         convert_ts_to_mp4(folder_path)
         CONVERT_TS_DEBUG and print(END_LOG)
     except Exception as e:
