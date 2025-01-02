@@ -4,7 +4,7 @@ from common.Constants import file_vol_chaps
 
 def quest_form_move_chap_vol():
     
-    chap_vol_file = select_file_question("Enter chapters per volume file: ", file_vol_chaps)
+    chap_vol_file = select_file_question("Enter chapters per volume file (optional): ", file_vol_chaps)
     
     manga_title = text_question("Enter manga title: ")
 

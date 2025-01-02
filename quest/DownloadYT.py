@@ -25,7 +25,7 @@ def quest_form_download_yt():
         type_download = select_question("Type download: ", youtube_file_type)
         
     else:
-        file_yt = select_file_question("Enter file youtube: ", file_yt_json)
+        file_yt = select_file_question("Enter file youtube (optional): ", file_yt_json)
       
     main_process(youtube_link, type_download, link_type, file_yt, quality)
         
