@@ -6,7 +6,7 @@ from common.QuestCommon import select_question, yes_no_question, ytb_link_questi
 def quest_form_download_yt():
     
     is_file_download = select_question("Type download: ", download_yt_menu)
-    is_file_download = download_yt_menu.index(is_file_download) == 1
+    is_file_download = is_file_download == 1
     
     youtube_link = ""
     file_yt = "",
