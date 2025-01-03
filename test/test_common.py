@@ -106,7 +106,7 @@ class TestCommonDownloadImage(unittest.TestCase):
             
             mock_open_obj = MagicMock()
             mock_open_obj.write.return_value = None
-            mock_open.return_value = mock_open_obj
+            mock_open.return_value.__enter__.return_value = mock_open_obj
             
             result = download_image("https://example.com/image.jpg", "https://example.com", "local_image.jpg")
             
@@ -116,7 +116,8 @@ class TestCommonDownloadImage(unittest.TestCase):
         """Test download_image with failed"""
         with patch('requests.get') as mock_requests_get, \
              patch('os.path.exists') as mock_os_path_exists, \
-             patch('common.Commons.is_image_error') as mock_is_image_error:
+             patch('common.Commons.is_image_error') as mock_is_image_error, \
+             patch('builtins.open') as mock_open:
             
             mock_response = MagicMock()
             mock_response.status_code = 400
@@ -125,6 +126,10 @@ class TestCommonDownloadImage(unittest.TestCase):
             
             mock_os_path_exists.return_value = False
             mock_is_image_error.return_value = False
+            
+            mock_open_obj = MagicMock()
+            mock_open_obj.write.return_value = None
+            mock_open.return_value.__enter__.return_value = mock_open_obj
             
             result = download_image("https://example.com/image.jpg", "https://example.com", "local_image.jpg")
             
