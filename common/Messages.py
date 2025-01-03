@@ -49,7 +49,7 @@ def log_error(controller: str, function_name: str, error, log_end: bool = True):
     if log_end:
         print(END_LOG)
         
-MSG_ERR_DOWN_IMG = "Error download image at trial {0}!f"
+MSG_ERR_DOWN_IMG = "Error download image at trial {0}!"
 MSG_ERR_FILE_NOT_EXIST = "File <{0}> is not found!"
 MSG_ERR_FOLDER_NOT_EXIST = "Folder <{0}> is not found!"
 MSG_ERR_URL_NOT_VALID_VIDEO = "URL is not a valid YouTube video URL!"
