@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
+import json
 from controllers.ListAndRenameController import get_list_of_files, rename_file
 from common.Messages import MSG_ERR_CONTROLLER_LIST_AND_RENAME
 
@@ -10,6 +11,14 @@ class TestListAndRenameController(unittest.TestCase):
             "test_file_1.txt",
             "test_file_2.txt",
             "test_file_3.txt"
+        ]
+        
+        self.test_list_file_obj = [
+            {
+                "root_path": self.test_path,
+                "current_file_name": "test_file_1.txt",
+                "new_file_name": "test_file_1_new.txt"
+            }
         ]
        
     def test_get_list_of_files_success(self):
@@ -48,3 +57,35 @@ class TestListAndRenameController(unittest.TestCase):
                 get_list_of_files(self.test_path)
                 
             self.assertEqual(str(exc_info.exception), MSG_ERR_CONTROLLER_LIST_AND_RENAME.format("get_list_of_files"))
+
+    def test_rename_file_success(self):
+        """Test rename_file with success"""
+        with patch('common.Validations.check_file_exist') as mock_check_file_exist, \
+            patch('os.path.exists') as mock_path_exists, \
+            patch('os.rename') as mock_rename, \
+            patch('builtins.open') as mock_open:
+            
+            mock_check_file_exist.return_value = True
+            mock_path_exists.return_value = True
+            
+            mock_open_obj = MagicMock()
+            mock_open_obj.read.return_value = json.dumps(self.test_list_file_obj)
+            mock_open.return_value.__enter__.return_value = mock_open_obj
+            
+            mock_rename.return_value = None
+            
+            rename_file()
+
+    def test_rename_file_failure(self):
+        """Test rename_file with failure"""
+        with patch('common.Validations.check_file_exist') as mock_check_file_exist, \
+            patch('builtins.open') as mock_open:
+            
+            mock_check_file_exist.return_value = False
+            mock_open.return_value.__enter__.return_value = MagicMock()
+
+            with self.assertRaises(Exception) as exc_info:
+                rename_file()
+                
+            self.assertEqual(str(exc_info.exception), MSG_ERR_CONTROLLER_LIST_AND_RENAME.format("rename_file"))
+
