@@ -17,151 +17,7 @@
       <nav
         id="accordionSidebar"
         class="navbar-nav bg-dark bg-gradient sidebar sidebar-dark py-2 px-2"
-      >
-        <!-- Sidebar - Brand -->
-        <div
-          class="sidebar-brand d-flex align-items-center justify-content-start"
-        >
-          <a
-            onclick="navigateToPage('dashboard')"
-            class="text-decoration-none d-flex align-items-center cursor-pointer"
-          >
-            <i class="fas fa-desktop text-white"></i>
-            <div class="sidebar-brand-text mx-3 text-white">Crawl Manga</div>
-          </a>
-        </div>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider text-white" />
-
-        <!-- Nav Items -->
-
-        <div class="nav-item cursor-pointer">
-          <a
-            class="nav-link collapsed"
-            data-bs-toggle="collapse"
-            href="#collapseManga"
-          >
-            <i class="fas fa-fw fa-book text-white"></i>
-            <span class="text-white">Manga project</span>
-            <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
-          </a>
-          <div id="collapseManga" class="collapse">
-            <div class="bg-dark py-1 collapse-inner px-2 rounded">
-              <div class="nav-item">
-                <a onclick="navigateToPage('download_manga')" class="nav-link">
-                  <i class="fa-solid fa-book text-white"></i>
-                  <span class="text-white">Download Manga</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('create_metadata')" class="nav-link">
-                  <i class="fas fa-fw fa-file-code text-white"></i>
-                  <span class="text-white">Create metadata</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('archive')" class="nav-link">
-                  <i class="fas fa-fw fa-archive text-white"></i>
-                  <span class="text-white">Archive folder</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('download_cover')" class="nav-link">
-                  <i class="fas fa-fw fa-image text-white"></i>
-                  <span class="text-white">Download Cover</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('resize_images')" class="nav-link">
-                  <i class="fas fa-fw fa-compress text-white"></i>
-                  <span class="text-white">Resize Images</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('reformat')" class="nav-link">
-                  <i class="fas fa-fw fa-file text-white"></i>
-                  <span class="text-white">Reformat</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a
-                  onclick="navigateToPage('move_vol_chapter')"
-                  class="nav-link"
-                >
-                  <i class="fas fa-fw fa-exchange-alt text-white"></i>
-                  <span class="text-white">Move vol/chap</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            class="nav-link collapsed"
-            data-bs-toggle="collapse"
-            href="#collapseVideo"
-          >
-            <i class="fas fa-fw fa-video text-white"></i>
-            <span class="text-white">Video project</span>
-            <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
-          </a>
-          <div id="collapseVideo" class="collapse">
-            <div class="bg-dark py-1 collapse-inner px-2 rounded">
-              <div class="nav-item">
-                <a onclick="navigateToPage('download_yt')" class="nav-link">
-                  <i class="fas fa-fw fa-download text-white"></i>
-                  <span class="text-white">Download Youtube</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('download_m3u8')" class="nav-link">
-                  <i class="fas fa-fw fa-download text-white"></i>
-                  <span class="text-white">Download m3u8</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a onclick="navigateToPage('convert_ts')" class="nav-link"> 
-                  <i class="fas fa-fw fa-compress text-white"></i>
-                  <span class="text-white">Convert ts to mp4</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="nav-item cursor-pointer">
-          <a
-            class="nav-link collapsed"
-            data-bs-toggle="collapse"
-            href="#collapseRename"
-          >
-            <i class="fas fa-fw fa-file-alt text-white"></i>
-            <span class="text-white">Rename project</span>
-            <i class="fas fa-fw fa-caret-down text-white ms-auto"></i>
-          </a>
-          <div id="collapseRename" class="collapse">
-            <div class="bg-dark py-1 collapse-inner px-2 rounded">
-              <div class="nav-item">
-                <a onclick="navigateToPage('rename_files')" class="nav-link">
-                  <i class="fas fa-fw fa-file-alt text-white"></i>
-                  <span class="text-white">Rename files</span>
-                </a>
-              </div>
-              <div class="nav-item">
-                <a
-                  onclick="navigateToPage('rename_with_file')"
-                  class="nav-link"
-                >
-                  <i class="fas fa-fw fa-file-alt text-white"></i>
-                  <span class="text-white">Rename with file</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      ></nav>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -237,6 +93,15 @@
           })
           .catch((error) => {
             console.error("Error loading dashboard:", error);
+          });
+
+        fetch("nav.html")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("accordionSidebar").innerHTML = data;
+          })
+          .catch((error) => {
+            console.error("Error loading nav:", error);
           });
       });
 
