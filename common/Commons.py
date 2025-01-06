@@ -105,37 +105,26 @@ def extract_number(s: str='', last: bool=False, is_float: bool=False):
         log_parameter("Is float", is_float, 1)
     
     # Extract the last number in the string
+    
+    if is_float:
+        match = re.findall(r'\d+\.\d+', s)
+    else:
+        match = re.findall(r'\d+', s)
+        
     if last:
-        if '.' in s:
-            match = re.findall(r'\d+\.\d+', s)
-        else:
-            match = re.findall(r'\d+', s)
-            
-        result = match[-1]
-        
-        result = (float(result) if is_float else int(result)) if match else 0
-        
-        # Debug print result
-        if COMMON_DEBUG and DEBUG_OBJ["extract_number"]:
-            log_parameter("Result", result, 2)
-            print(END_LOG)
-        
-        return result
-        
+        result = match[-1] if len(match) > 0 else 0
+    else:
+        result = match[0] if len(match) > 0 else 0
     
-    # Extract the first number in the string
-    match = re.search(r'\d+', s)
-
-    result = (float(match.group()) if is_float else int(match.group())) if match else 0
+    result = (float(result) if is_float else int(result)) if match else 0
     
-    result = float(result) if is_float else int(result)
-
     # Debug print result
     if COMMON_DEBUG and DEBUG_OBJ["extract_number"]:
         log_parameter("Result", result, 2)
         print(END_LOG)
 
     return result
+    
 
 def is_image_error(filename: str=''):
     """
@@ -205,8 +194,6 @@ def download_image(link: str, server: str, file: str):
                 download_success = True
                 break
             
-            return 200
-            
         except Exception as e:
             if COMMON_DEBUG and DEBUG_OBJ["download_image"]:
                 log_error("Common", "download_image", MSG_ERR_DOWN_IMG.format(i), False)
@@ -220,14 +207,14 @@ def download_image(link: str, server: str, file: str):
 
     return result
 
-def execute_process(func, obj_list):
+def execute_process(func, obj_list, use_thread: bool=using_thread):
     """
     Execute process with multithreading if supported
     :param func: function to execute
     :param obj_list: list of objects to execute
     :return: None
     """
-    if using_thread:
+    if use_thread:
         thread_count = os.cpu_count() // 2 if os.cpu_count() > 1 else 1
         COMMON_DEBUG and DEBUG_OBJ["execute_process"] and log_parameter("Thread count", thread_count, 2)
         with concurrent.futures.ThreadPoolExecutor(max_workers=thread_count) as executor:

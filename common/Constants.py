@@ -100,7 +100,7 @@ comic_pages_cl = "\t</Pages>"
 
 # example objects
 
-images_ext = [".jpg", ".jpeg", ".png"]
+images_ext = ["jpg", "jpeg", "png"]
 
 bookmark_obj = {
     "title": "",
