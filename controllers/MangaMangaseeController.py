@@ -8,10 +8,10 @@ from common.Messages import log_start_function, log_parameter, log_error, END_LO
 from common.Messages import MSG_ERR_CONTROLLER_MANGASEE
 
 DEBUG_OBJ = {
-    "generate_chapter_link_mangasee": False,
-    "generate_chapter_img": False,
-    "get_link_chapter_mangasee": False,
-    "get_list_image_mangasee": False,
+    "generate_chapter_link_mangasee": True,
+    "generate_chapter_img": True,
+    "get_link_chapter_mangasee": True,
+    "get_list_image_mangasee": True,
 }
 
 def generate_chapter_link_mangasee(chapter_str: str) -> str:
@@ -23,7 +23,7 @@ def generate_chapter_link_mangasee(chapter_str: str) -> str:
     
     # Debug print initial
     if MANGASEE_DEBUG and DEBUG_OBJ["generate_chapter_link_mangasee"]:
-        log_start_function("MangaMangaseeController", "generate_chapter_link_mangasee")
+        log_start_function("MangaMangaseeController", "generate_chapter_link_0000888mangasee")
         log_parameter("Chapter str", chapter_str, 1)
 
     try:
