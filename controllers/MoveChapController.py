@@ -25,11 +25,22 @@ def move_chap_vol(target_folder: str, start_chap: int = -1, end_chap: int = -1, 
         for i in range(start_chap, end_chap + 1):
             tmp_chap_folder = f'{prefix_chapter_folder} {generate_filename(idx=int(i))}'
             check_and_create_folder(tmp_chap_folder, alert=True)
-            chapters_folder_validation.append(tmp_chap_folder)
+
+            folders = os.listdir()
+            folders = [f for f in folders if os.path.isdir(f)]
+            folders = [f for f in folders if f.startswith(tmp_chap_folder)]
+            folders = sorted(folders, key=lambda x: extract_number(x, is_float=True))
+
+            chapters_folder_validation.extend(folders)
             
+        chapters_folder_validation = sorted(chapters_folder_validation, key=lambda x: extract_number(x, is_float=True))
+        
+        if MOVE_CHAP_VOL_DEBUG:
+            log_parameter("chapters_folder_validation", chapters_folder_validation, 2)
+
         list_chapters = []
         count = 1
-        
+
         for chap_folder in chapters_folder_validation:
             list_chapters.append({
                 "title": chap_folder,
