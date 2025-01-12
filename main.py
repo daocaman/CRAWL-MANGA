@@ -12,6 +12,7 @@ from tasks.CreateListFile import main_process as create_list_file_task
 from tasks.RenameWithFile import main_process as rename_with_file_task
 from tasks.ConvertTS import main_process as convert_ts_task
 from tasks.DownloadM3U8 import main_process as download_m3u8_task
+from common.Commons import init_app
 
 eel.init("web")
 
@@ -93,4 +94,5 @@ def download_m3u8(target_file):
     eel.showMessage("Download m3u8", "M3u8 downloaded successfully")
 
 if __name__ == "__main__":
+    init_app()
     eel.start("index.html", size=(1200, 800))
