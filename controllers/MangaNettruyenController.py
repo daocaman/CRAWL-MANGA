@@ -8,8 +8,8 @@ from common.Messages import log_start_function, log_parameter, log_error, END_LO
 from common.Messages import MSG_ERR_CONTROLLER_NETTRUYEN
 
 DEBUG_OBJ = {
-    "get_link_chapter_nettruyen": False,
-    "get_list_image_nettruyen": False,
+    "get_link_chapter_nettruyen": True,
+    "get_list_image_nettruyen": True,
 }
 
 nettruyen_req_headers = header_obj.copy()
