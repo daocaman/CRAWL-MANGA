@@ -28,7 +28,6 @@ video_menu = [
 
 manga_menu = [
     "Nettruyen",
-    "Mangasee",
     "Weebcentral",
 ]
 
