@@ -60,12 +60,17 @@ def get_link_chapter_nettruyen(link: str = '', num_chap: int = -1, start_idx: in
         if start_idx == -1:
             list_chapters = list_chapters[::-1]
 
+        
+        list_chapters = [chap if chap.startswith('https://') else f"{server}/{chap}" for chap in list_chapters]
+        
         # Debug print list_chapters
         if NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"]:
             log_parameter("List chapters", list_chapters, 2)
 
         # Debug print final
         NETTRUYEN_DEBUG and DEBUG_OBJ["get_link_chapter_nettruyen"] and print(END_LOG)
+
+
 
         return (server, list_chapters)
         
