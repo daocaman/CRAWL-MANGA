@@ -47,7 +47,7 @@ def resize_image(folder: str='', is_horizontal: bool = False):
             RESIZE_DEBUG and log_parameter("New size", new_size, 2)
 
             resized_image = image.resize(new_size)
-            resized_image.save(os.path.join(folder, f))
+            resized_image.convert("RGB").save(os.path.join(folder, f))
 
         # Debug print final
         RESIZE_DEBUG and print(END_LOG)
