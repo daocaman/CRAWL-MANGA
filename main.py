@@ -1,4 +1,7 @@
 import eel  
+import os
+import base64
+import shutil
 
 from tasks.DownloadManga import main_process as download_manga_task
 from tasks.ArchiveFolders import main_process as archive_manga_task
@@ -15,7 +18,6 @@ from tasks.DownloadM3U8 import main_process as download_m3u8_task
 from common.Commons import init_app
 
 eel.init("web")
-
 @eel.expose
 def change_page(page):
     # Navigate to a different HTML file
@@ -93,6 +95,50 @@ def download_m3u8(target_file):
     eel.noLoadingScreen()
     eel.showMessage("Download m3u8", "M3u8 downloaded successfully")
 
+@eel.expose
+def load_f_e_images():
+    folders = os.listdir()
+    folders = [folder for folder in folders if os.path.isdir(folder) and folder.startswith("Chapter")]
+
+    list_chaptes_images = []
+
+    if os.path.exists("web/Chapters"):
+        shutil.rmtree("web/Chapters")
+
+    os.makedirs("web/Chapters", exist_ok=True)
+
+    for folder in folders:
+        files = os.listdir(folder)
+        files.sort()
+        current_chap = dict()
+        current_chap["title"] = folder
+        current_chap["start_page"] = files[0]
+        current_chap["end_page"] = files[-1]
+      
+        target_folder = os.path.join("web/Chapters", folder)
+        
+        os.makedirs(target_folder, exist_ok=True)
+        
+        shutil.copy(os.path.join(folder, current_chap["start_page"]), target_folder)
+        shutil.copy(os.path.join(folder, current_chap["end_page"]), target_folder)
+        
+        list_chaptes_images.append(current_chap)
+
+    return list_chaptes_images
+
+@eel.expose
+def format_chapter(selected_chapters):
+    for chapter in selected_chapters:
+        info = chapter.split("_")
+        chapter_name = info[0]
+        page = info[1]
+
+        current_file = os.path.join(chapter_name, page)
+        os.remove(current_file)
+    eel.noLoadingScreen()
+    eel.showMessage("Format chapter", "Chapter formatted successfully")
+
 if __name__ == "__main__":
     init_app()
     eel.start("index.html", size=(1200, 800))
+

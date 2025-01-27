@@ -21,7 +21,10 @@
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
-      <div id="content-wrapper" class="d-flex flex-column flex-grow-1">
+      <div
+        id="content-wrapper"
+        class="d-flex flex-column flex-grow-1 overflow-auto"
+      >
         <!-- Main Content -->
         <div id="content" class="flex-grow-1"></div>
         <!-- End of Main Content -->
@@ -130,6 +133,8 @@
         document.getElementById("toastTitle").innerHTML = title;
       }
 
+      
+
       document.addEventListener("beforeunload", function () {
         eel.close_app();
       });
@@ -147,5 +152,6 @@
     <script src="js/rename_with_file.js"></script>
     <script src="js/download_m3u8.js"></script>
     <script src="js/convert_ts.js"></script>
+    <script src="js/fortmat_chapter.js"></script>
   </body>
 </html>
