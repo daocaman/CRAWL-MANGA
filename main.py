@@ -48,8 +48,8 @@ def create_metadata(bookmark_file, comic_info_file, target_folder, is_multiple_f
     eel.showMessage("Create metadata", "Metadata created successfully")
     
 @eel.expose
-def download_yt(youtube_link, yt_type, is_playlist, file_yt, quality, is_convert):
-    download_yt_task(youtube_link, yt_type, is_playlist, file_yt, quality, is_convert)
+def download_yt(youtube_link, yt_type, is_playlist, file_yt, quality):
+    download_yt_task(youtube_link, yt_type, is_playlist, file_yt, quality)
     eel.noLoadingScreen()
     eel.showMessage("Download youtube", "Youtube downloaded successfully")
 
