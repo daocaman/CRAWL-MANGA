@@ -108,6 +108,8 @@ def extract_number(s: str='', last: bool=False, is_float: bool=False):
     
     if is_float:
         match = re.findall(r'\d+\.\d+', s)
+        if len(match) == 0:
+            match = re.findall(r'\d+', s)
     else:
         match = re.findall(r'\d+', s)
         
