@@ -35,7 +35,7 @@ def get_link_chapter_nettruyen(link: str = '', num_chap: int = -1, start_idx: in
     server = '/'.join(link_splits[:3])
 
     container_chapters = "nt_listchapter"
-    ul_id = "desc"
+    ul_id = ["chapter_list", "desc"]
     
 
     try:
@@ -45,7 +45,10 @@ def get_link_chapter_nettruyen(link: str = '', num_chap: int = -1, start_idx: in
         soup = BeautifulSoup(htmlSource, 'html.parser')
 
         container_chapters_ele = soup.find(id=container_chapters)
-        ul_ele = container_chapters_ele.find(id=ul_id)
+        for id in ul_id:
+            ul_ele = container_chapters_ele.find(id=id)
+            if ul_ele:
+                break
         a_eles = ul_ele.find_all('a')
 
         list_chapters = [a['href'] for a in a_eles]
