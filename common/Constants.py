@@ -14,6 +14,7 @@ MOVE_CHAP_VOL_DEBUG = False
 NETTRUYEN_DEBUG = False
 MANGASEE_DEBUG = False   
 WEEBCENTRAL_DEBUG = False
+TRUYENGG_DEBUG = False
 
 ## Download video project debug
 DOWNLOAD_YOUTUBE_DEBUG = False
@@ -37,6 +38,7 @@ max_download_trial = 3
 server_nettruyen = "https://nettruyenviet.com"
 server_mangasee = "https://mangasee123.com"
 server_weebcentral = "https://weebcentral.com"
+server_truyengg = "https://truyengg.net"
 server_mangadex = "https://mangadex.org"
 
 ## api supporting download manga
@@ -46,6 +48,7 @@ link_yt_video = "https://www.youtube.com/watch?v="
 link_yt_playlist = "https://www.youtube.com/playlist?list="
 link_chapter_mangasee = "https://mangasee123.com/read-online/{0}.html"
 link_chapter_weebcentral = "https://weebcentral.com/series/{0}/full-chapter-list"
+link_chapter_truyengg = "https://truyengg.net/chapter/{0}"
 ## file/folder regex and default file/folder name
 
 ### prefix

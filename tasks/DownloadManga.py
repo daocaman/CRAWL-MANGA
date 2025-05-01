@@ -4,6 +4,7 @@ import sys
 
 from controllers.MangaNettruyenController import get_link_chapter_nettruyen, get_list_image_nettruyen
 from controllers.MangaWeebCentralController import get_link_chapter_weebcentral, get_list_image_weebcentral
+from controllers.MangaTruyenGGController import get_link_chapter_truyengg, get_list_image_truyengg
 from controllers.DownloadImageController import download_image_process
 from common.Commons import generate_filename, execute_process
 from common.Constants import DOWNLOAD_MANGA_DEBUG
@@ -31,6 +32,8 @@ def main_process(manga_link: str, number_of_chapters: int, server_type: int, sta
             (server, list_chapters) = get_link_chapter_nettruyen(manga_link, number_of_chapters, start_index)
         elif server_type == 2:
             (server, list_chapters) = get_link_chapter_weebcentral(manga_link, number_of_chapters, start_index )
+        elif server_type == 3:
+            (server, list_chapters) = get_link_chapter_truyengg(manga_link, number_of_chapters, start_index)
 
         if DOWNLOAD_MANGA_DEBUG:
             log_parameter("List chapters", list_chapters, 2)
@@ -40,6 +43,8 @@ def main_process(manga_link: str, number_of_chapters: int, server_type: int, sta
                 (chapter_name, list_images) = get_list_image_nettruyen(chapter)
             elif server_type == 2:
                 (chapter_name, list_images) = get_list_image_weebcentral(chapter)
+            elif server_type == 3:
+                (chapter_name, list_images) = get_list_image_truyengg(chapter)
 
             list_download_img = []
 
