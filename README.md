@@ -33,7 +33,7 @@ python -m tasks.DownloadManga
 | ------ | -------- | -------------------------------------------------------------------------- |
 | -l     | L        | Link to the manga page                                                     |
 | -n     | N        | Number of chapters to download (-1: all chapters, !-1: number of chapters) |
-| -s     | S        | Server to download from (1: nettruyen, 2: weebcentral)                     |
+| -s     | S        | Server to download from (1: nettruyen, 2: weebcentral, 3: truyengg)        |
 | -s_i   | S_I      | Start index (-1: top down -- default, !-1: start from index)               |
 
 Example 1: Download from nettruyen
@@ -46,6 +46,12 @@ Example 2: Download from Weeb
 
 ```
 python -m tasks.DownloadManga -l https://weebcentral.com/series/01J76XYC7KP5M48JAY8S4ZNDX5/Kanojo-Okarishimasu -n -1 -s 2 -s_i 0
+```
+
+Example 3: Download from Truyengg
+
+```
+python -m tasks.DownloadManga -l https://truyengg.net/truyen-tranh/than-dieu-hiep-lu-43472 -n -1 -s 3 -s_i 0
 ```
 
 2. Create metadata manga
