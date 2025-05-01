@@ -29,6 +29,7 @@ video_menu = [
 manga_menu = [
     "Nettruyen",
     "Weebcentral",
+    "Truyengg"
 ]
 
 radio_menu = [
